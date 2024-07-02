@@ -1,4 +1,4 @@
-package swm.virtuoso.userservice.adapter.`in`.web.controller
+package swm.virtuoso.reviewservice.adapter.`in`.web.controller
 
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/review-service")
+@RequestMapping("/")
 class ReviewController {
 
     @GetMapping("/health-check")
