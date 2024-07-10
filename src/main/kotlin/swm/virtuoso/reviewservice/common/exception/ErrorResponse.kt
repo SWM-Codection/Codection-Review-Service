@@ -1,4 +1,4 @@
-package swm.virtuoso.reviewservice.exception
+package swm.virtuoso.reviewservice.common.exception
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import org.springframework.http.HttpStatus

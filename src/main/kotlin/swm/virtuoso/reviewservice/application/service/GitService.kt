@@ -9,7 +9,7 @@ import org.eclipse.jgit.treewalk.TreeWalk
 import org.eclipse.jgit.treewalk.filter.PathFilter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import swm.virtuoso.reviewservice.exception.NoSuchGitPathException
+import swm.virtuoso.reviewservice.common.exception.NoSuchGitPathException
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException

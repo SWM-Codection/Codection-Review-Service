@@ -6,10 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 
 @RestController
 @RequestMapping("/")
-class ReviewController {
+class DiscussionController (
+    private val discussionUseCase: DiscussionUseCase
+) {
 
     @GetMapping("/health-check")
     @ResponseStatus(HttpStatus.OK)

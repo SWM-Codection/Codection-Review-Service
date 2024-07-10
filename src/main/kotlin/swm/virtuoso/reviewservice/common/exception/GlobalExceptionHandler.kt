@@ -1,4 +1,4 @@
-package swm.virtuoso.reviewservice.exception
+package swm.virtuoso.reviewservice.common.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler

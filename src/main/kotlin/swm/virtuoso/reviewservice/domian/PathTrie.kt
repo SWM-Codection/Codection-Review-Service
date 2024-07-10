@@ -1,7 +1,7 @@
 package swm.virtuoso.reviewservice.domian
 
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.PartResponse
-import swm.virtuoso.reviewservice.exception.EmptyPathException
+import swm.virtuoso.reviewservice.common.exception.EmptyPathException
 
 class PathTrie {
     val next: MutableMap<String, PathTrie> = mutableMapOf()
