@@ -1,32 +1,31 @@
-package swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion
+package swm.virtuoso.reviewservice.adapter.out.persistence
 
 import org.springframework.stereotype.Repository
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.CreateDiscussionRequest
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionCodeListResponse
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.model.DiscussionItem
-import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
-import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionFileEntity
-import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.IssueIndexEntity
-import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionUserEntity
-import swm.virtuoso.reviewservice.application.port.out.DiscussionFilePort
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.*
+import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.*
+import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
+import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
-import swm.virtuoso.reviewservice.domian.DiscussionFile
 
 @Repository
 class DiscussionPersistenceAdapter(
     private val discussionRepository: DiscussionRepository,
-    private val discussionFileRepository: DiscussionFileRepository,
+    private val discussionCodeRepository: DiscussionCodeRepository,
     private val discussionIndexRepository: DiscussionIndexRepository,
-    private val discussionUserRepository: DiscussionUserRepository
-): DiscussionPort, DiscussionFilePort, DiscussionUserPort {
+    private val discussionUserRepository: DiscussionUserRepository,
+    private val discussionCommentRepository: DiscussionCommentRepository
+): DiscussionPort, DiscussionCodePort, DiscussionUserPort, DiscussionCommentPort {
+
     private fun getIndex(repoId: Long): Long =
         discussionIndexRepository.findById(repoId)
             .map { it.maxIndex + 1 }
             .orElse(1)
 
-    override fun createDiscussion(
-        createDiscussionRequest: CreateDiscussionRequest,
+    override fun saveDiscussion(
+        createDiscussionRequest: PostDiscussionRequest,
         lastCommitHash: String?
     ): DiscussionEntity {
         val index = getIndex(createDiscussionRequest.repoId)
@@ -37,7 +36,7 @@ class DiscussionPersistenceAdapter(
         )
 
         createDiscussionRequest.discussionFiles.map { discussionFile ->
-            discussionFileRepository.save(DiscussionFileEntity.from(
+            discussionCodeRepository.save(DiscussionCodeEntity.from(
                 discussionFile = discussionFile,
                 discussionId = discussionEntity.id!!)
             )
@@ -51,7 +50,7 @@ class DiscussionPersistenceAdapter(
         return discussionEntity
     }
 
-    override fun addDiscussionUser(userId: Long, discussionId: Long) {
+    override fun saveDiscussionUser(userId: Long, discussionId: Long) {
         discussionUserRepository.save(DiscussionUserEntity(
             id = null,
             uid = userId,
@@ -61,16 +60,37 @@ class DiscussionPersistenceAdapter(
         )
     }
 
-    override fun getDiscussionCount(repoId: Long, isClosed: Boolean): Int {
+    override fun countDiscussion(repoId: Long, isClosed: Boolean): Int {
         return discussionRepository.countByRepoIdAndIsClosed(repoId, isClosed)
     }
 
-    override fun getDiscussionList(repoId: Long, isClosed: Boolean): List<DiscussionEntity> {
+    override fun findDiscussionList(repoId: Long, isClosed: Boolean): List<DiscussionEntity> {
         return discussionRepository.findAllByRepoIdAndIsClosed(repoId, isClosed)
     }
 
-    override fun getDiscussionFiles(discussionId: Long): List<DiscussionFileEntity> {
-        return discussionFileRepository.findAllByDiscussionId(discussionId)
+    override fun findDiscussionFiles(discussionId: Long): List<DiscussionCodeEntity> {
+        return discussionCodeRepository.findAllByDiscussionId(discussionId)
     }
 
+    override fun saveComment(postCommentRequest: PostCommentRequest): DiscussionCommentEntity {
+        saveDiscussionUser(
+            userId = postCommentRequest.posterId,
+            discussionId = postCommentRequest.discussionId
+        )
+
+        return discussionCommentRepository.save(DiscussionCommentEntity(
+            id = null,
+            discussionId = postCommentRequest.discussionId,
+            codeId = postCommentRequest.codeId,
+            posterId = postCommentRequest.posterId,
+            scope = postCommentRequest.scope,
+            startLine = postCommentRequest.startLine,
+            endLine = postCommentRequest.endLine,
+            content = postCommentRequest.content
+        ))
+    }
+
+    override fun findCommentsByDiscussionId(discussionId: Long): List<DiscussionCommentEntity> {
+        return discussionCommentRepository.findAllByDiscussionId(discussionId)
+    }
 }

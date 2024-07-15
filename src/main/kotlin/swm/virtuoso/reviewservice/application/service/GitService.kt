@@ -9,6 +9,7 @@ import org.eclipse.jgit.treewalk.TreeWalk
 import org.eclipse.jgit.treewalk.filter.PathFilter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
 import swm.virtuoso.reviewservice.common.exception.NoSuchGitPathException
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -17,8 +18,9 @@ import java.io.IOException
 @Service
 class GitService(
     @Value("\${git.baseUrl}") private val baseUrl: String
-) {
+): GitUseCase {
 
+    // TODO 개인 레포는 Owner/레포이름에 저장되고 조직 레포는 조직 밑에 저장되는 현재는 개인 레포에 대해서만 경로가 설정됨 수정 해야 함
     private fun getAbsoluteGitDirPath(userName: String, repoName: String): String {
         return "${baseUrl}/${userName}/${repoName}.git"
     }
@@ -32,11 +34,11 @@ class GitService(
     }
 
     @Throws(IOException::class)
-    fun listFiles(userName: String, repoName: String): List<String> {
-        val fileList = mutableListOf<String>()
+    override fun listFiles(userName: String, repoName: String): List<String> {
         val gitDir = File(getAbsoluteGitDirPath(userName, repoName))
         checkValidGitRepository(gitDir)
 
+        val fileList = mutableListOf<String>()
         FileRepositoryBuilder().setGitDir(gitDir).build().use { repository ->
             Git(repository).use { git ->
                 val treeWalk = TreeWalk(repository)
@@ -50,17 +52,9 @@ class GitService(
         return fileList
     }
 
-    fun extractLines(target: String, startLine: Int, endLine: Int): String {
-        val lines = target.lines()
-        if (startLine < 1 || endLine > lines.size || startLine > endLine) {
-            throw IllegalArgumentException("Invalid start or end line numbers")
-        }
-        return lines.subList(startLine - 1, endLine).joinToString("\n")
-    }
-
     @Throws(IOException::class)
-    fun getFileContent(userName: String, repoName: String, filePath: String): String {
-        val gitDir = File(getAbsoluteGitDirPath(userName, repoName))
+    override fun getFileContent(ownerName: String, repoName: String, filePath: String): String {
+        val gitDir = File(getAbsoluteGitDirPath(ownerName, repoName))
         checkValidGitRepository(gitDir)
 
         FileRepositoryBuilder().setGitDir(gitDir).build().use { repository ->
@@ -88,5 +82,20 @@ class GitService(
                 }
             }
         }
+    }
+
+    override fun getLastCommitHash(userName: String, repoName: String): String? {
+        val gitDir = File(getAbsoluteGitDirPath(userName, repoName))
+        checkValidGitRepository(gitDir)
+        return FileRepositoryBuilder()
+            .setGitDir(gitDir)
+            .readEnvironment()
+            .findGitDir()
+            .build().use { repository ->
+                Git(repository).use { git ->
+                    val head = repository.resolve("HEAD")
+                    head?.name
+                }
+            }
     }
 }
