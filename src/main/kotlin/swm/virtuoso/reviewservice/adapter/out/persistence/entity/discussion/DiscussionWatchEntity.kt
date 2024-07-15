@@ -4,21 +4,18 @@ import jakarta.persistence.*
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.BaseTimeEntity
 
 @Entity
-@Table(name = "discussion_user")
-data class DiscussionUser (
-    @Id
+@Table(name = "discussion_watch")
+data class DiscussionWatchEntity (
+    @field:Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    @Column(nullable = false, name = "uid")
-    val uid: Long,
+    @field:Column(name = "user_id", nullable = false)
+    val userId: Long,
 
-    @Column(nullable = false, name = "discussion_id")
+    @field:Column(name = "discussion_id", nullable = false)
     val discussionId: Long,
 
-    @Column(name = "is_read")
-    val isRead: Boolean,
-
-    @Column(name = "is_mentioned")
-    val isMentioned: Boolean
+    @field:Column(name = "is_watching", nullable = false)
+    val isWatching: Boolean = false,
 ): BaseTimeEntity()
