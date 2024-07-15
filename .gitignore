@@ -93,3 +93,7 @@ $RECYCLE.BIN/
 *.yml
 *.yaml
 
+.idea/
+.gradle/
+build/kotlin/
+gradle/
