@@ -10,7 +10,7 @@ import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
 @Service
 class DiscussionCommentService(
     private val discussionCommentPort: DiscussionCommentPort
-): DiscussionCommentUseCase {
+) : DiscussionCommentUseCase {
     @Transactional
     override fun createComment(request: PostCommentRequest): DiscussionCommentEntity {
         return discussionCommentPort.saveComment(request)

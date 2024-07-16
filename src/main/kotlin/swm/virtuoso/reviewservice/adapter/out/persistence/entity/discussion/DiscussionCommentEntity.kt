@@ -6,7 +6,7 @@ import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
 
 @Entity
 @Table(name = "discussion_comment")
-data class DiscussionCommentEntity (
+data class DiscussionCommentEntity(
     @field:Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
@@ -31,4 +31,4 @@ data class DiscussionCommentEntity (
 
     @field:Column(name = "content")
     val content: String
-): BaseTimeEntity()
+) : BaseTimeEntity()

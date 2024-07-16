@@ -17,7 +17,7 @@ class GiteaPersistenceAdapter(
     private val userRepository: UserRepository,
     private val discussionAvailableRepository: DiscussionAvailableRepository,
     private val discussionRepository: DiscussionRepository
-): GiteaPort {
+) : GiteaPort {
     override fun findUserById(userId: Long): UserEntity {
         return userRepository.findByIdOrNull(userId)
             ?: throw throw NoSuchElementException("유저 정보를 찾을 수 없습니다.")
@@ -34,10 +34,12 @@ class GiteaPersistenceAdapter(
     }
 
     override fun saveDiscussionAvailable(repoId: Long, enable: Boolean) {
-        discussionAvailableRepository.save(DiscussionAvailableEntity(
-            id = null,
-            repoId = repoId,
-            isDiscussionEnabled = enable)
+        discussionAvailableRepository.save(
+            DiscussionAvailableEntity(
+                id = null,
+                repoId = repoId,
+                isDiscussionEnabled = enable
+            )
         )
     }
 
@@ -48,5 +50,4 @@ class GiteaPersistenceAdapter(
         return repositoryRepository.findByIdOrNull(repoId)
             ?: throw IllegalArgumentException("Repository가 존재하지 않습니다.: $repoId")
     }
-
 }

@@ -5,7 +5,7 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.entity.BaseTimeEntity
 
 @Entity
 @Table(name = "discussion_reaction")
-data class DiscussionReactionEntity (
+data class DiscussionReactionEntity(
     @field:Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
@@ -20,5 +20,5 @@ data class DiscussionReactionEntity (
     val uid: Long,
 
     @field:Column(name = "type")
-    val type: String,
-): BaseTimeEntity()
+    val type: String
+) : BaseTimeEntity()

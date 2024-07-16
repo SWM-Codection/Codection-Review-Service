@@ -18,11 +18,11 @@ import java.io.IOException
 @Service
 class GitService(
     @Value("\${git.baseUrl}") private val baseUrl: String
-): GitUseCase {
+) : GitUseCase {
 
     // TODO 개인 레포는 Owner/레포이름에 저장되고 조직 레포는 조직 밑에 저장되는 현재는 개인 레포에 대해서만 경로가 설정됨 수정 해야 함
     private fun getAbsoluteGitDirPath(userName: String, repoName: String): String {
-        return "${baseUrl}/${userName}/${repoName}.git"
+        return "$baseUrl/$userName/$repoName.git"
     }
 
     private fun checkValidGitRepository(gitDir: File) {

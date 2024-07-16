@@ -5,7 +5,7 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.entity.BaseTimeEntity
 
 @Entity
 @Table(name = "discussion_user")
-data class DiscussionUserEntity (
+data class DiscussionUserEntity(
     @field:Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
@@ -21,4 +21,4 @@ data class DiscussionUserEntity (
 
     @field:Column(name = "is_mentioned")
     val isMentioned: Boolean
-): BaseTimeEntity()
+) : BaseTimeEntity()

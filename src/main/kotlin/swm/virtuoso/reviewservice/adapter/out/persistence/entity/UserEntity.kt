@@ -1,11 +1,11 @@
 package swm.virtuoso.reviewservice.adapter.out.persistence.entity
 
-import org.hibernate.annotations.ColumnDefault
 import jakarta.persistence.*
+import org.hibernate.annotations.ColumnDefault
 
 @Entity
 @Table(name = "user")
-data class UserEntity (
+data class UserEntity(
     @Id
     @ColumnDefault("nextval('user_id_seq'::regclass)")
     @Column(name = "id", nullable = false)

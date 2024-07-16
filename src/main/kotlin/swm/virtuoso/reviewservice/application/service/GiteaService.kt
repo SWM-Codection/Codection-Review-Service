@@ -9,7 +9,7 @@ import swm.virtuoso.reviewservice.application.port.out.GiteaPort
 @Service
 class GiteaService(
     private val giteaPort: GiteaPort
-): GiteaUseCase {
+) : GiteaUseCase {
     override fun getUserById(userId: Long): UserEntity {
         return giteaPort.findUserById(userId)
     }

@@ -1,11 +1,10 @@
 package swm.virtuoso.reviewservice.adapter.`in`.web.dto.request
 
-import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
-import swm.virtuoso.reviewservice.domian.DiscussionFile
+import swm.virtuoso.reviewservice.domian.DiscussionCode
 
-data class PostDiscussionRequest (
+data class PostDiscussionRequest(
     @field:NotNull(message = "Repository ID cannot be null")
     val repoId: Long,
 
@@ -16,6 +15,8 @@ data class PostDiscussionRequest (
 
     val content: String,
 
+    val commitHash: String,
+
     @field:NotEmpty(message = "Discussion files cannot be empty")
-    val discussionFiles: List<DiscussionFile>,
+    val codes: List<DiscussionCode>
 )

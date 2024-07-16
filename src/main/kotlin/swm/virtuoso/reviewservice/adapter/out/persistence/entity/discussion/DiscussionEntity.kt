@@ -2,12 +2,12 @@ package swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion
 
 import jakarta.persistence.*
 import org.hibernate.annotations.ColumnDefault
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.BaseTimeEntity
+import swm.virtuoso.reviewservice.domian.Discussion
 
 @Entity
 @Table(name = "discussion")
-data class DiscussionEntity (
+data class DiscussionEntity(
     @field:Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
@@ -49,17 +49,17 @@ data class DiscussionEntity (
 
     @field:Column(name = "is_locked")
     val isLocked: Boolean?
-): BaseTimeEntity() {
+) : BaseTimeEntity() {
     companion object {
-        fun from(createDiscussionRequest: PostDiscussionRequest, index: Long, commitHash: String?): DiscussionEntity {
+        fun from(discussion: Discussion, index: Long): DiscussionEntity {
             return DiscussionEntity(
                 id = null,
-                repoId = createDiscussionRequest.repoId,
+                repoId = discussion.repoId,
                 index = index,
-                posterId = createDiscussionRequest.posterId,
-                commitHash = commitHash,
-                name = createDiscussionRequest.name,
-                content = createDiscussionRequest.content,
+                posterId = discussion.posterId,
+                commitHash = discussion.commitHash,
+                name = discussion.name,
+                content = discussion.content,
                 isClosed = false,
                 numComments = 0,
                 pinOrder = 0,

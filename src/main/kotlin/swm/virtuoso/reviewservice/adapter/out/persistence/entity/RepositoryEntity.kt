@@ -1,7 +1,7 @@
 package swm.virtuoso.reviewservice.adapter.out.persistence.entity
 
-import org.hibernate.annotations.ColumnDefault
 import jakarta.persistence.*
+import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
 

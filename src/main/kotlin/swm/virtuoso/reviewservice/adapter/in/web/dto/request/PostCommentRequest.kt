@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
 
-data class PostCommentRequest (
+data class PostCommentRequest(
     @field:NotNull(message = "Discussion ID cannot be null")
     val discussionId: Long,
     @field:NotNull(message = "Code ID cannot be null")

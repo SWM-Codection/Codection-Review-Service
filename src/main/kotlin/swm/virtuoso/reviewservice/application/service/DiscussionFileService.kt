@@ -7,8 +7,8 @@ import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.model.CodeBlock
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.model.FileContent
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCodeUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
-import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
+import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
 import swm.virtuoso.reviewservice.application.port.out.GiteaPort
 import swm.virtuoso.reviewservice.domian.ExtractedLine
 
@@ -18,7 +18,7 @@ class DiscussionFileService(
     private val giteaPort: GiteaPort,
     private val gitUseCase: GitUseCase,
     private val discussionCommentPort: DiscussionCommentPort
-): DiscussionCodeUseCase {
+) : DiscussionCodeUseCase {
 
     override fun extractLinesWithNumbers(target: String, startLine: Int, endLine: Int): List<ExtractedLine> {
         val lines = target.lines()
@@ -42,7 +42,7 @@ class DiscussionFileService(
     // TODO 코드가 길어서 추후 리팩토링 할 예정
     override fun getDiscussionContents(discussionId: Long): DiscussionContentResponse {
         val repository = giteaPort.findRepositoryByDiscussionId(discussionId)
-        val codes = discussionCodePort.findDiscussionFiles(discussionId)
+        val codes = discussionCodePort.findDiscussionCodes(discussionId)
         val comments = discussionCommentPort.findCommentsByDiscussionId(discussionId)
 
         val fileContentMap = mutableMapOf<String, MutableList<CodeBlock>>()
@@ -84,5 +84,4 @@ class DiscussionFileService(
             contents = fileContents
         )
     }
-
 }

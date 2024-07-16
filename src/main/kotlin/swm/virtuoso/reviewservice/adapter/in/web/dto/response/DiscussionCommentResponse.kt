@@ -1,6 +1,6 @@
 package swm.virtuoso.reviewservice.adapter.`in`.web.dto.response
 
-data class DiscussionCommentResponse (
+data class DiscussionCommentResponse(
     val id: Long,
     val scope: String,
     val startLine: Int?,

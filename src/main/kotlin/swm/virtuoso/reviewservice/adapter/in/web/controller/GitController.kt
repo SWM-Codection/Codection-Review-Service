@@ -11,7 +11,7 @@ import swm.virtuoso.reviewservice.domian.PathTrie
 
 @RestController
 @RequestMapping("/")
-class GitController (
+class GitController(
     private val gitUseCase: GitUseCase,
     private val discussionCodeUseCase: DiscussionCodeUseCase
 ) {
@@ -28,7 +28,7 @@ class GitController (
         val pathTrie = PathTrie()
         files.forEach { pathTrie.insert(it) }
 
-        return pathTrie.toTree(repoName,"")
+        return pathTrie.toTree(repoName, "")
     }
 
     @GetMapping("/{username}/{reponame}/discussions/contents")

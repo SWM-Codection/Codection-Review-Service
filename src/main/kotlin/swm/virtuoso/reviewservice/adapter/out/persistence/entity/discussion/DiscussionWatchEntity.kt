@@ -5,7 +5,7 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.entity.BaseTimeEntity
 
 @Entity
 @Table(name = "discussion_watch")
-data class DiscussionWatchEntity (
+data class DiscussionWatchEntity(
     @field:Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
@@ -17,5 +17,5 @@ data class DiscussionWatchEntity (
     val discussionId: Long,
 
     @field:Column(name = "is_watching", nullable = false)
-    val isWatching: Boolean = false,
-): BaseTimeEntity()
+    val isWatching: Boolean = false
+) : BaseTimeEntity()
