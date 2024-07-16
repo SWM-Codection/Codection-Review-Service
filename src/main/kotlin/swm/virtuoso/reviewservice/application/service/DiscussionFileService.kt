@@ -42,7 +42,7 @@ class DiscussionFileService(
     // TODO 코드가 길어서 추후 리팩토링 할 예정
     override fun getDiscussionContents(discussionId: Long): DiscussionContentResponse {
         val repository = giteaPort.findRepositoryByDiscussionId(discussionId)
-        val codes = discussionCodePort.findDiscussionFiles(discussionId)
+        val codes = discussionCodePort.findDiscussionCodes(discussionId)
         val comments = discussionCommentPort.findCommentsByDiscussionId(discussionId)
 
         val fileContentMap = mutableMapOf<String, MutableList<CodeBlock>>()

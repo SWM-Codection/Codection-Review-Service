@@ -15,6 +15,7 @@ class GlobalExceptionHandler {
         private const val EMPTY_PATH_EXCEPTION = "Git-002"
         private const val RESPONSE_STATUS_EXCEPTION = "Git-003"
         private const val NO_SUCH_GIT_PATH_EXCEPTION = "Git-004"
+        private const val NO_SUCH_Discussion_EXCEPTION = "Git-005"
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -39,5 +40,11 @@ class GlobalExceptionHandler {
     @ExceptionHandler(NoSuchGitPathException::class)
     fun handlerNoSuchGitPathException(exception: NoSuchGitPathException): ErrorResponse {
         return ErrorResponse(HttpStatus.NOT_FOUND, NO_SUCH_GIT_PATH_EXCEPTION, exception.message!!)
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoSuchDiscussionException::class)
+    fun handlerNoSuchDiscussionException(exception: NoSuchDiscussionException): ErrorResponse {
+        return ErrorResponse(HttpStatus.NOT_FOUND, NO_SUCH_Discussion_EXCEPTION, exception.message!!)
     }
 }
