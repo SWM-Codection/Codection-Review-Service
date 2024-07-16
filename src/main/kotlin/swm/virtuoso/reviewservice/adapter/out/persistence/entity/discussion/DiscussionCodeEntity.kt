@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.BaseTimeEntity
-import swm.virtuoso.reviewservice.domian.DiscussionFile
+import swm.virtuoso.reviewservice.domian.DiscussionCode
 
 @Entity
 @Table(name = "discussion_code")
@@ -29,7 +29,7 @@ data class DiscussionCodeEntity(
     val endLine: Int
 ) : BaseTimeEntity() {
     companion object {
-        fun from(discussionFile: DiscussionFile, discussionId: Long): DiscussionCodeEntity {
+        fun from(discussionFile: DiscussionCode, discussionId: Long): DiscussionCodeEntity {
             return DiscussionCodeEntity(
                 id = null,
                 discussionId = discussionId,
