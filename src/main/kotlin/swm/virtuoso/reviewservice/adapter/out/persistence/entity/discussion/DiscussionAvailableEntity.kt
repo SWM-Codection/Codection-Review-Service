@@ -18,6 +18,6 @@ data class DiscussionAvailableEntity(
     @field:Column(nullable = false, name = "repo_id")
     val repoId: Long,
 
-    @field:Column(name = "is_discussion_enabled")
-    val isDiscussionEnabled: Boolean
+    @field:Column(name = "is_discussion_availabled")
+    val available: Boolean
 ) : BaseTimeEntity()

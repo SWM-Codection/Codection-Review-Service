@@ -19,8 +19,8 @@ data class DiscussionCommentEntity(
     @field:Column(nullable = false, name = "discussion_id")
     val discussionId: Long,
 
-    @field:Column(nullable = false, name = "code_id")
-    val codeId: Long,
+    @field:Column(name = "code_id")
+    val codeId: Long? = null,
 
     @field:Column(nullable = false, name = "poster_id")
     val posterId: Long,

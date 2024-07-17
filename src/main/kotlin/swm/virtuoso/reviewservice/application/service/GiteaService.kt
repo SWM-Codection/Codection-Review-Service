@@ -5,6 +5,7 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.entity.RepositoryEntit
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.UserEntity
 import swm.virtuoso.reviewservice.application.port.`in`.GiteaUseCase
 import swm.virtuoso.reviewservice.application.port.out.GiteaPort
+import swm.virtuoso.reviewservice.domian.DiscussionAvailability
 
 @Service
 class GiteaService(
@@ -22,7 +23,7 @@ class GiteaService(
         return giteaPort.findRepositoryById(repoId)
     }
 
-    override fun setDiscussionAvailable(repoId: Long, enable: Boolean) {
-        giteaPort.saveDiscussionAvailable(repoId, enable)
+    override fun setDiscussionAvailable(discussionAvailability: DiscussionAvailability) {
+        giteaPort.saveDiscussionAvailable(discussionAvailability)
     }
 }

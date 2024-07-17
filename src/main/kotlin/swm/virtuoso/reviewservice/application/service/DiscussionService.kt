@@ -37,7 +37,7 @@ class DiscussionService(
     @Transactional
     override fun modifyDiscussion(modifyDiscussionRequest: ModifyDiscussionRequest) : DiscussionEntity {
         // 테스트의 편의성을 위해 도메인 로직을 pojo에 위임하기 위해 Entity-domain 객체 변환해서 가져옴
-        val targetDiscussion: Discussion = discussionPort.findDiscussion(modifyDiscussionRequest.discussionId)
+        val targetDiscussion = discussionPort.findDiscussion(modifyDiscussionRequest.discussionId)
 
         val deletedCodeIds: List<Long> = targetDiscussion.calculateDeletedCodes(modifyDiscussionRequest.codes).map { it.id!! }
 
