@@ -5,23 +5,23 @@ import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionEnableRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionAvailableRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionContentResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.out.persistence.DiscussionMapper
-import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
 import swm.virtuoso.reviewservice.application.port.`in`.*
+import swm.virtuoso.reviewservice.domian.DiscussionComment
 
 @RestController
 @RequestMapping("/discussion")
 class DiscussionController(
     private val discussionUseCase: DiscussionUseCase,
     private val discussionCommentUseCase: DiscussionCommentUseCase,
-    private val gitUseCase: GitUseCase,
     private val giteaUseCase: GiteaUseCase,
+    private val gitUseCase: GitUseCase,
     private val discussionCodeUseCase: DiscussionCodeUseCase,
     private val converter: DiscussionMapper
 ) {
@@ -38,8 +38,12 @@ class DiscussionController(
         @Valid @RequestBody
         request: PostDiscussionRequest
     ): DiscussionEntity {
-        val discussion = converter.postRequestToDiscussion(request)
-
+        val repository = giteaUseCase.getRepositories(request.repoId)
+        val discussion = converter.postDiscussionRequestToDiscussion(request)
+        discussion.commitHash = gitUseCase.getLastCommitHash(
+            userName = repository.ownerName!!,
+            repoName = repository.lowerName
+        )
         return discussionUseCase.createDiscussion(discussion)
     }
 
@@ -48,13 +52,19 @@ class DiscussionController(
     fun getDiscussionCount(
         @PathVariable repoId: Long,
         @RequestParam isClosed: Boolean
-    ): Int = discussionUseCase.countDiscussion(repoId, isClosed)
+    ): Int {
+        return discussionUseCase.countDiscussion(repoId, isClosed)
+    }
 
     @PostMapping("/available")
     @ResponseStatus(HttpStatus.CREATED)
     fun handleDiscussionAvailable(
-        @RequestBody request: DiscussionEnableRequest
-    ) = giteaUseCase.setDiscussionAvailable(repoId = request.repoId, enable = request.enable)
+        @RequestBody request: DiscussionAvailableRequest
+    ) {
+        return giteaUseCase.setDiscussionAvailable(
+            converter.DiscussionAvailableRequestToDiscussionAvailability(request)
+        )
+    }
 
     @GetMapping("/{discussionId}/codes")
     @ResponseStatus(HttpStatus.OK)
@@ -69,7 +79,7 @@ class DiscussionController(
     fun postComment(
         @Valid @RequestBody
         request: PostCommentRequest
-    ): DiscussionCommentEntity {
+    ): DiscussionComment {
         return discussionCommentUseCase.createComment(request)
     }
 

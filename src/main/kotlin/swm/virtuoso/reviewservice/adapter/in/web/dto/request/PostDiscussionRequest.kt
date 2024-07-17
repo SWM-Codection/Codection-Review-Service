@@ -15,8 +15,6 @@ data class PostDiscussionRequest(
 
     val content: String,
 
-    val commitHash: String,
-
     @field:NotEmpty(message = "Discussion files cannot be empty")
     val codes: List<DiscussionCode>
 )

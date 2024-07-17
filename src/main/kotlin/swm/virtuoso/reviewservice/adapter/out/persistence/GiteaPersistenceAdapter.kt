@@ -10,12 +10,14 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.repository.UserReposit
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionAvailableRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
 import swm.virtuoso.reviewservice.application.port.out.GiteaPort
+import swm.virtuoso.reviewservice.domian.DiscussionAvailability
 
 @Repository
 class GiteaPersistenceAdapter(
     private val repositoryRepository: RepositoryRepository,
     private val userRepository: UserRepository,
     private val discussionAvailableRepository: DiscussionAvailableRepository,
+    private val mapper: DiscussionMapper,
     private val discussionRepository: DiscussionRepository
 ) : GiteaPort {
     override fun findUserById(userId: Long): UserEntity {
@@ -33,13 +35,10 @@ class GiteaPersistenceAdapter(
             ?: throw NoSuchElementException("레포지토리 정보를 찾을 수 없습니다.")
     }
 
-    override fun saveDiscussionAvailable(repoId: Long, enable: Boolean) {
+    override fun saveDiscussionAvailable(discussionAvailability: DiscussionAvailability) {
+        discussionAvailability.id = discussionAvailableRepository.findByRepoId(discussionAvailability.repoId)?.id
         discussionAvailableRepository.save(
-            DiscussionAvailableEntity(
-                id = null,
-                repoId = repoId,
-                isDiscussionEnabled = enable
-            )
+            mapper.discussionAvailabilityToDiscussionAvailableEntity(discussionAvailability)
         )
     }
 

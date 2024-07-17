@@ -29,13 +29,13 @@ data class DiscussionCodeEntity(
     val endLine: Int
 ) : BaseTimeEntity() {
     companion object {
-        fun from(discussionFile: DiscussionCode, discussionId: Long): DiscussionCodeEntity {
+        fun from(discussionCode: DiscussionCode, discussionId: Long): DiscussionCodeEntity {
             return DiscussionCodeEntity(
                 id = null,
                 discussionId = discussionId,
-                filePath = discussionFile.filePath,
-                startLine = discussionFile.startLine,
-                endLine = discussionFile.endLine
+                filePath = discussionCode.filePath,
+                startLine = discussionCode.startLine,
+                endLine = discussionCode.endLine
             )
         }
     }

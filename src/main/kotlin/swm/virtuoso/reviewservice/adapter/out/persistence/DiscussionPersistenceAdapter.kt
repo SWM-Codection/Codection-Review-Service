@@ -2,8 +2,16 @@ package swm.virtuoso.reviewservice.adapter.out.persistence
 
 import org.springframework.stereotype.Repository
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
-import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.*
-import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.*
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCodeEntity
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionUserEntity
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.IssueIndexEntity
+import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCodeRepository
+import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCommentRepository
+import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionIndexRepository
+import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
+import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionUserRepository
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
@@ -11,6 +19,7 @@ import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
 import swm.virtuoso.reviewservice.common.exception.NoSuchDiscussionException
 import swm.virtuoso.reviewservice.domian.Discussion
 import swm.virtuoso.reviewservice.domian.DiscussionCode
+import swm.virtuoso.reviewservice.domian.DiscussionComment
 
 @Repository
 class DiscussionPersistenceAdapter(
@@ -18,7 +27,8 @@ class DiscussionPersistenceAdapter(
     private val discussionCodeRepository: DiscussionCodeRepository,
     private val discussionIndexRepository: DiscussionIndexRepository,
     private val discussionUserRepository: DiscussionUserRepository,
-    private val discussionCommentRepository: DiscussionCommentRepository
+    private val discussionCommentRepository: DiscussionCommentRepository,
+    private val mapper: DiscussionMapper
 ) : DiscussionPort, DiscussionCodePort, DiscussionUserPort, DiscussionCommentPort {
 
     private fun getIndex(repoId: Long): Long =
@@ -40,7 +50,7 @@ class DiscussionPersistenceAdapter(
         discussion.codes.map { discussionCode ->
             discussionCodeRepository.save(
                 DiscussionCodeEntity.from(
-                    discussionFile = discussionCode,
+                    discussionCode = discussionCode,
                     discussionId = discussionEntity.id!!
                 )
             )
@@ -100,8 +110,9 @@ class DiscussionPersistenceAdapter(
         )
     }
 
-    override fun findDiscussionCodes(discussionId: Long): List<DiscussionCodeEntity> {
+    override fun findDiscussionCodes(discussionId: Long): List<DiscussionCode> {
         return discussionCodeRepository.findAllByDiscussionId(discussionId)
+            .map { mapper.discussionCodeEntityToDiscussionCode(it) }
     }
 
     override fun deleteDiscussionCodeAllById(id: List<Long>) {
@@ -109,13 +120,13 @@ class DiscussionPersistenceAdapter(
         return discussionCodeRepository.deleteAllById(id)
     }
 
-    override fun saveComment(postCommentRequest: PostCommentRequest): DiscussionCommentEntity {
+    override fun saveComment(postCommentRequest: PostCommentRequest): DiscussionComment {
         saveDiscussionUser(
             userId = postCommentRequest.posterId,
             discussionId = postCommentRequest.discussionId
         )
 
-        return discussionCommentRepository.save(
+        val savedEntity = discussionCommentRepository.save(
             DiscussionCommentEntity(
                 id = null,
                 discussionId = postCommentRequest.discussionId,
@@ -127,9 +138,12 @@ class DiscussionPersistenceAdapter(
                 content = postCommentRequest.content
             )
         )
+
+        return mapper.discussionCommentEntityToDiscussionComment(savedEntity)
     }
 
-    override fun findCommentsByDiscussionId(discussionId: Long): List<DiscussionCommentEntity> {
+    override fun findCommentsByDiscussionId(discussionId: Long): List<DiscussionComment> {
         return discussionCommentRepository.findAllByDiscussionId(discussionId)
+            .map { mapper.discussionCommentEntityToDiscussionComment(it) }
     }
 }
