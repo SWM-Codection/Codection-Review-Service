@@ -8,6 +8,7 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.Disc
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionAvailableEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCodeEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionReactionEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionUserEntity
 import swm.virtuoso.reviewservice.domian.Discussion
@@ -25,6 +26,7 @@ interface DiscussionMapper {
     fun DiscussionAvailableRequestToDiscussionAvailability(request: DiscussionAvailableRequest): DiscussionAvailability
 
     // Entity to Domain
+    fun discussionEntityToDiscussion(discussionEntity: DiscussionEntity): Discussion
     fun discussionCommentEntityToDiscussionComment(discussionCommentEntity: DiscussionCommentEntity): DiscussionComment
     fun discussionCodeEntityToDiscussionCode(discussionCodeEntity: DiscussionCodeEntity): DiscussionCode
     fun discussionAssigneesEntityToDiscussionAssignee(entity: DiscussionAssigneesEntity): DiscussionAssignee
@@ -33,6 +35,7 @@ interface DiscussionMapper {
     fun discussionUserEntityToDiscussionUser(entity: DiscussionUserEntity): DiscussionUser
 
     // Domain to Entity
+    fun discussionToDiscussionEntity(discussion: Discussion): DiscussionEntity
     fun discussionCommentToDiscussionCommentEntity(discussionComment: DiscussionComment): DiscussionCommentEntity
     fun discussionCodeToDiscussionCodeEntity(discussionCode: DiscussionCode): DiscussionCodeEntity
     fun discussionAssigneeToDiscussionAssigneesEntity(discussionAssignee: DiscussionAssignee): DiscussionAssigneesEntity

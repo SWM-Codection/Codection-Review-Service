@@ -12,7 +12,7 @@ class DiscussionCommentService(
     private val discussionCommentPort: DiscussionCommentPort
 ) : DiscussionCommentUseCase {
     @Transactional
-    override fun createComment(request: PostCommentRequest): DiscussionComment {
-        return discussionCommentPort.saveComment(request)
+    override fun createComment(discussionComment: DiscussionComment): DiscussionComment {
+        return discussionCommentPort.saveComment(discussionComment)
     }
 }

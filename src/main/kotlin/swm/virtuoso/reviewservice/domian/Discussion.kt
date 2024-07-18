@@ -1,6 +1,6 @@
 package swm.virtuoso.reviewservice.domian
 
-class Discussion(
+data class Discussion (
     val id: Long?,
 
     var name: String?,
@@ -11,12 +11,5 @@ class Discussion(
 
     val posterId: Long,
 
-    val commitHash: String?,
-
-    var codes: List<DiscussionCode>
-) {
-
-    fun calculateDeletedCodes(modifiedDiscussionCodes: List<DiscussionCode>): List<DiscussionCode> {
-        return codes.filterNot { it in modifiedDiscussionCodes }
-    }
-}
+    var commitHash: String?,
+)

@@ -5,6 +5,6 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.Disc
 import swm.virtuoso.reviewservice.domian.DiscussionComment
 
 public interface DiscussionCommentPort {
-    fun saveComment(postCommentRequest: PostCommentRequest): DiscussionComment
+    fun saveComment(discussionComment: DiscussionComment): DiscussionComment
     fun findCommentsByDiscussionId(discussionId: Long): List<DiscussionComment>
 }

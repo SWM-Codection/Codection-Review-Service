@@ -5,11 +5,15 @@ import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionCommen
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionContentResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.model.CodeBlock
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.model.FileContent
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.RepositoryEntity
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCodeUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
+import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.GiteaPort
+import swm.virtuoso.reviewservice.domian.DiscussionCode
+import swm.virtuoso.reviewservice.domian.DiscussionComment
 import swm.virtuoso.reviewservice.domian.ExtractedLine
 
 @Service
@@ -17,7 +21,8 @@ class DiscussionFileService(
     private val discussionCodePort: DiscussionCodePort,
     private val giteaPort: GiteaPort,
     private val gitUseCase: GitUseCase,
-    private val discussionCommentPort: DiscussionCommentPort
+    private val discussionCommentPort: DiscussionCommentPort,
+    private val discussionPort: DiscussionPort
 ) : DiscussionCodeUseCase {
 
     override fun extractLinesWithNumbers(target: String, startLine: Int, endLine: Int): List<ExtractedLine> {
@@ -40,18 +45,78 @@ class DiscussionFileService(
      */
     // TODO 최신 커밋 기반으로 가져오는 중 -> 디비에 저장된 커밋 해시 기반으로 가져오도록 수정
     // TODO 코드가 길어서 추후 리팩토링 할 예정
+    private fun createCodeBlock(
+        codeId: Long,
+        lines: List<ExtractedLine>,
+        comments: List<DiscussionComment>
+    ): CodeBlock {
+        return CodeBlock(
+            codeId = codeId,
+            lines = lines,
+            comments = comments.map {
+                DiscussionCommentResponse(
+                    id = it.id!!,
+                    scope = it.scope.toString(),
+                    startLine = it.startLine,
+                    endLine = it.endLine,
+                    content = it.content
+                )
+            }
+        )
+    }
+
+    private fun buildFileContentMap(
+        codes: List<DiscussionCode>,
+        comments: List<DiscussionComment>,
+        repository: RepositoryEntity,
+        commitHash: String
+    ): Map<String, MutableList<CodeBlock>> {
+        return codes.groupBy { it.filePath }.mapValues { (filePath, codes) ->
+            codes.map { code ->
+                val fileContent = gitUseCase.getFileContentByHashCode(
+                    ownerName = repository.ownerName!!,
+                    repoName = repository.lowerName,
+                    filePath = filePath,
+                    hashCode = commitHash
+                )
+                val lines = extractLinesWithNumbers(fileContent, code.startLine, code.endLine)
+                val commentsForCode = comments.filter { it.codeId == code.id }
+                createCodeBlock(code.id!!, lines, commentsForCode)
+            }.toMutableList()
+        }
+    }
+
     override fun getDiscussionContents(discussionId: Long): DiscussionContentResponse {
         val repository = giteaPort.findRepositoryByDiscussionId(discussionId)
+        val discussion = discussionPort.findDiscussion(discussionId)
+        val commitHash = discussion.commitHash ?: throw IllegalArgumentException("Commit hash not found")
+        val codes = discussionCodePort.findDiscussionCodes(discussionId)
+        val comments = discussionCommentPort.findCommentsByDiscussionId(discussionId)
+
+        val fileContentMap = buildFileContentMap(codes, comments, repository, commitHash)
+
+        return DiscussionContentResponse(
+            discussionId = discussionId,
+            contents = fileContentMap.map { (filePath, codeBlocks) ->
+                FileContent(filePath = filePath, codeBlocks = codeBlocks)
+            }
+        )
+    }
+
+    /*override fun getDiscussionContents(discussionId: Long): DiscussionContentResponse {
+        val repository = giteaPort.findRepositoryByDiscussionId(discussionId)
+        val commitHash = discussionPort.findDiscussion(discussionId).commitHash!!
         val codes = discussionCodePort.findDiscussionCodes(discussionId)
         val comments = discussionCommentPort.findCommentsByDiscussionId(discussionId)
 
         val fileContentMap = mutableMapOf<String, MutableList<CodeBlock>>()
 
         codes.forEach { code ->
-            val fileContent = gitUseCase.getFileContent(
+            val fileContent = gitUseCase.getFileContentByHashCode(
                 ownerName = repository.ownerName!!,
                 repoName = repository.lowerName,
-                filePath = code.filePath
+                filePath = code.filePath,
+                hashCode = commitHash
             )
             val lines = extractLinesWithNumbers(fileContent, code.startLine, code.endLine)
 
@@ -73,7 +138,7 @@ class DiscussionFileService(
             fileContentMap.computeIfAbsent(code.filePath) { mutableListOf() }.add(codeBlock)
         }
 
-        //
+        // File 단위의 코드와 코멘트 집합
         val fileContents = fileContentMap.map { (fileUrl, codeBlocks) ->
             FileContent(filePath = fileUrl, codeBlocks = codeBlocks)
         }
@@ -83,5 +148,5 @@ class DiscussionFileService(
             discussionId = discussionId,
             contents = fileContents
         )
-    }
+    }*/
 }
