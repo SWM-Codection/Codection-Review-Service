@@ -10,6 +10,7 @@ import org.eclipse.jgit.treewalk.filter.PathFilter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
+import swm.virtuoso.reviewservice.common.exception.CommitNotExistException
 import swm.virtuoso.reviewservice.common.exception.NoSuchGitPathException
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -53,15 +54,12 @@ class GitService(
     }
 
     @Throws(IOException::class)
-    override fun getFileContent(ownerName: String, repoName: String, filePath: String): String {
-        val gitDir = File(getAbsoluteGitDirPath(ownerName, repoName))
-        checkValidGitRepository(gitDir)
-
+    private fun getFileContentByCommitRef(gitDir: File, commitRef: String, filePath: String): String {
         FileRepositoryBuilder().setGitDir(gitDir).build().use { repository ->
-            val headId = repository.resolve("HEAD")
+            val commitId = repository.resolve(commitRef)
             repository.newObjectReader().use { objectReader ->
                 val revWalk = RevWalk(repository)
-                val commit = revWalk.parseCommit(headId)
+                val commit = revWalk.parseCommit(commitId)
                 val tree = commit.tree
 
                 val treeWalk = TreeWalk(repository).apply {
@@ -84,7 +82,23 @@ class GitService(
         }
     }
 
-    override fun getLastCommitHash(userName: String, repoName: String): String? {
+    @Throws(IOException::class)
+    override fun getFileContent(ownerName: String, repoName: String, filePath: String): String {
+        val gitDir = File(getAbsoluteGitDirPath(ownerName, repoName))
+        checkValidGitRepository(gitDir)
+
+        return getFileContentByCommitRef(gitDir, "HEAD", filePath)
+    }
+
+    @Throws(IOException::class)
+    override fun getFileContentByHashCode(ownerName: String, repoName: String, hashCode: String, filePath: String): String {
+        val gitDir = File(getAbsoluteGitDirPath(ownerName, repoName))
+        checkValidGitRepository(gitDir)
+
+        return getFileContentByCommitRef(gitDir, hashCode, filePath)
+    }
+
+    override fun getLastCommitHash(userName: String, repoName: String): String {
         val gitDir = File(getAbsoluteGitDirPath(userName, repoName))
         checkValidGitRepository(gitDir)
         return FileRepositoryBuilder()
@@ -94,7 +108,7 @@ class GitService(
             .build().use { repository ->
                 Git(repository).use { git ->
                     val head = repository.resolve("HEAD")
-                    head?.name
+                    head?.name ?: throw CommitNotExistException()
                 }
             }
     }

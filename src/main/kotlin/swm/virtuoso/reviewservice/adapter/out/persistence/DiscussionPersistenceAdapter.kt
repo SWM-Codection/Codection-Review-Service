@@ -1,9 +1,8 @@
 package swm.virtuoso.reviewservice.adapter.out.persistence
 
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCodeEntity
-import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionUserEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.IssueIndexEntity
@@ -18,6 +17,7 @@ import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
 import swm.virtuoso.reviewservice.common.exception.NoSuchDiscussionException
 import swm.virtuoso.reviewservice.domian.Discussion
+import swm.virtuoso.reviewservice.domian.DiscussionAllContent
 import swm.virtuoso.reviewservice.domian.DiscussionCode
 import swm.virtuoso.reviewservice.domian.DiscussionComment
 
@@ -36,46 +36,8 @@ class DiscussionPersistenceAdapter(
             .map { it.maxIndex + 1 }
             .orElse(1)
 
-    override fun saveDiscussion(
-        discussion: Discussion
-    ): DiscussionEntity {
-        val index = getIndex(discussion.repoId)
-        val discussionEntity = discussionRepository.save(
-            DiscussionEntity.from(
-                discussion = discussion,
-                index = index,
-            )
-        )
-
-        discussion.codes.map { discussionCode ->
-            discussionCodeRepository.save(
-                DiscussionCodeEntity.from(
-                    discussionCode = discussionCode,
-                    discussionId = discussionEntity.id!!
-                )
-            )
-        }
-
-        discussionIndexRepository.save(
-            IssueIndexEntity(
-                groupId = discussion.repoId,
-                maxIndex = index
-            )
-        )
-
-        return discussionEntity
-    }
-
-    override fun saveDiscussionUser(userId: Long, discussionId: Long) {
-        discussionUserRepository.save(
-            DiscussionUserEntity(
-                id = null,
-                uid = userId,
-                discussionId = discussionId,
-                isRead = true,
-                isMentioned = false
-            )
-        )
+    override fun saveDiscussion(discussion: Discussion): DiscussionEntity {
+        return discussionRepository.save(mapper.discussionToDiscussionEntity(discussion))
     }
 
     override fun countDiscussion(repoId: Long, isClosed: Boolean): Int {
@@ -87,12 +49,49 @@ class DiscussionPersistenceAdapter(
     }
 
     override fun findDiscussion(discussionId: Long): Discussion {
+        val discussionEntity = discussionRepository.findByIdOrNull(discussionId)
+            ?: throw NoSuchElementException("디스커션 정보를 찾을 수 없습니다.")
+
+        return mapper.discussionEntityToDiscussion(discussionEntity)
+    }
+
+    override fun saveDiscussionAllContent(
+        discussionAllContent: DiscussionAllContent
+    ): DiscussionEntity {
+        val index = getIndex(discussionAllContent.repoId)
+        val discussionEntity = discussionRepository.save(
+            DiscussionEntity.fromDiscussionAllContent(
+                discussion = discussionAllContent,
+                index = index,
+            )
+        )
+
+        discussionAllContent.codes.map { discussionCode ->
+            discussionCodeRepository.save(
+                DiscussionCodeEntity.from(
+                    discussionCode = discussionCode,
+                    discussionId = discussionEntity.id!!
+                )
+            )
+        }
+
+        discussionIndexRepository.save(
+            IssueIndexEntity(
+                groupId = discussionAllContent.repoId,
+                maxIndex = index
+            )
+        )
+
+        return discussionEntity
+    }
+
+    override fun findDiscussionAllContent(discussionId: Long): DiscussionAllContent {
         val discussionEntity = discussionRepository.findById(discussionId).orElseThrow {
             NoSuchDiscussionException()
         }
         val discussionCodes = discussionCodeRepository.findAllByDiscussionId(discussionId)
 
-        return Discussion(
+        return DiscussionAllContent(
             id = discussionEntity.id,
             name = discussionEntity.name,
             posterId = discussionEntity.posterId,
@@ -110,6 +109,18 @@ class DiscussionPersistenceAdapter(
         )
     }
 
+    override fun saveDiscussionUser(userId: Long, discussionId: Long) {
+        discussionUserRepository.save(
+            DiscussionUserEntity(
+                id = null,
+                uid = userId,
+                discussionId = discussionId,
+                isRead = true,
+                isMentioned = false
+            )
+        )
+    }
+
     override fun findDiscussionCodes(discussionId: Long): List<DiscussionCode> {
         return discussionCodeRepository.findAllByDiscussionId(discussionId)
             .map { mapper.discussionCodeEntityToDiscussionCode(it) }
@@ -120,23 +131,21 @@ class DiscussionPersistenceAdapter(
         return discussionCodeRepository.deleteAllById(id)
     }
 
-    override fun saveComment(postCommentRequest: PostCommentRequest): DiscussionComment {
+    override fun saveDiscussionCodes(discussionCodes: List<DiscussionCode>) {
+        val entities: List<DiscussionCodeEntity> = discussionCodes.map { discussionCode ->
+            mapper.discussionCodeToDiscussionCodeEntity(discussionCode)
+        }
+        discussionCodeRepository.saveAll(entities)
+    }
+
+    override fun saveComment(discussionComment: DiscussionComment): DiscussionComment {
         saveDiscussionUser(
-            userId = postCommentRequest.posterId,
-            discussionId = postCommentRequest.discussionId
+            userId = discussionComment.posterId,
+            discussionId = discussionComment.discussionId
         )
 
         val savedEntity = discussionCommentRepository.save(
-            DiscussionCommentEntity(
-                id = null,
-                discussionId = postCommentRequest.discussionId,
-                codeId = postCommentRequest.codeId,
-                posterId = postCommentRequest.posterId,
-                scope = postCommentRequest.scope,
-                startLine = postCommentRequest.startLine,
-                endLine = postCommentRequest.endLine,
-                content = postCommentRequest.content
-            )
+            mapper.discussionCommentToDiscussionCommentEntity(discussionComment)
         )
 
         return mapper.discussionCommentEntityToDiscussionComment(savedEntity)

@@ -3,7 +3,7 @@ package swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion
 import jakarta.persistence.*
 import org.hibernate.annotations.ColumnDefault
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.BaseTimeEntity
-import swm.virtuoso.reviewservice.domian.Discussion
+import swm.virtuoso.reviewservice.domian.DiscussionAllContent
 
 @Entity
 @Table(name = "discussion")
@@ -21,8 +21,8 @@ data class DiscussionEntity(
     @field:Column(nullable = false, name = "poster_id")
     val posterId: Long,
 
-    @field:Column(nullable = false, name = "commit_hash")
-    val commitHash: String? = null,
+    @field:Column(name = "commit_hash")
+    val commitHash: String,
 
     @field:Column(name = "name")
     val name: String? = null,
@@ -51,13 +51,13 @@ data class DiscussionEntity(
     val isLocked: Boolean?
 ) : BaseTimeEntity() {
     companion object {
-        fun from(discussion: Discussion, index: Long): DiscussionEntity {
+        fun fromDiscussionAllContent(discussion: DiscussionAllContent, index: Long): DiscussionEntity {
             return DiscussionEntity(
                 id = null,
                 repoId = discussion.repoId,
                 index = index,
                 posterId = discussion.posterId,
-                commitHash = discussion.commitHash,
+                commitHash = discussion.commitHash!!,
                 name = discussion.name,
                 content = discussion.content,
                 isClosed = false,

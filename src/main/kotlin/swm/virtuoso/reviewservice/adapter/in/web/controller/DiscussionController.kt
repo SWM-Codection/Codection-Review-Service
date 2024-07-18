@@ -39,12 +39,15 @@ class DiscussionController(
         request: PostDiscussionRequest
     ): DiscussionEntity {
         val repository = giteaUseCase.getRepositories(request.repoId)
+
         val discussion = converter.postDiscussionRequestToDiscussion(request)
         discussion.commitHash = gitUseCase.getLastCommitHash(
             userName = repository.ownerName!!,
             repoName = repository.lowerName
         )
-        return discussionUseCase.createDiscussion(discussion)
+        val codes = request.codes
+
+        return discussionUseCase.createDiscussion(discussion, codes)
     }
 
     @GetMapping("/{repoId}/count")
@@ -80,7 +83,9 @@ class DiscussionController(
         @Valid @RequestBody
         request: PostCommentRequest
     ): DiscussionComment {
-        return discussionCommentUseCase.createComment(request)
+        return discussionCommentUseCase.createComment(
+            converter.postCommentRequestToDiscussionComment(request)
+        )
     }
 
 
