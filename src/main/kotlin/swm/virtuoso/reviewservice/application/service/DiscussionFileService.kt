@@ -43,8 +43,6 @@ class DiscussionFileService(
      * FileContents: 하나의 파일에 작성된 코드 블록의 집합
      * DiscussionContents: discussion에 있는 fileContents의 집합
      */
-    // TODO 최신 커밋 기반으로 가져오는 중 -> 디비에 저장된 커밋 해시 기반으로 가져오도록 수정
-    // TODO 코드가 길어서 추후 리팩토링 할 예정
     private fun createCodeBlock(
         codeId: Long,
         lines: List<ExtractedLine>,
@@ -53,15 +51,7 @@ class DiscussionFileService(
         return CodeBlock(
             codeId = codeId,
             lines = lines,
-            comments = comments.map {
-                DiscussionCommentResponse(
-                    id = it.id!!,
-                    scope = it.scope.toString(),
-                    startLine = it.startLine,
-                    endLine = it.endLine,
-                    content = it.content
-                )
-            }
+            comments = comments.map { DiscussionCommentResponse.fromDiscussionComment(it) }
         )
     }
 
@@ -79,9 +69,11 @@ class DiscussionFileService(
                     filePath = filePath,
                     hashCode = commitHash
                 )
-                val lines = extractLinesWithNumbers(fileContent, code.startLine, code.endLine)
-                val commentsForCode = comments.filter { it.codeId == code.id }
-                createCodeBlock(code.id!!, lines, commentsForCode)
+                createCodeBlock(
+                    code.id!!,
+                    extractLinesWithNumbers(fileContent, code.startLine, code.endLine),
+                    comments.filter { it.codeId == code.id }
+                )
             }.toMutableList()
         }
     }
@@ -95,58 +87,16 @@ class DiscussionFileService(
 
         val fileContentMap = buildFileContentMap(codes, comments, repository, commitHash)
 
+        val globalComments = comments.filter { it.codeId == null }.map {
+            DiscussionCommentResponse.fromDiscussionComment(it)
+        }
+
         return DiscussionContentResponse(
             discussionId = discussionId,
             contents = fileContentMap.map { (filePath, codeBlocks) ->
                 FileContent(filePath = filePath, codeBlocks = codeBlocks)
-            }
+            },
+            globalComments = globalComments
         )
     }
-
-    /*override fun getDiscussionContents(discussionId: Long): DiscussionContentResponse {
-        val repository = giteaPort.findRepositoryByDiscussionId(discussionId)
-        val commitHash = discussionPort.findDiscussion(discussionId).commitHash!!
-        val codes = discussionCodePort.findDiscussionCodes(discussionId)
-        val comments = discussionCommentPort.findCommentsByDiscussionId(discussionId)
-
-        val fileContentMap = mutableMapOf<String, MutableList<CodeBlock>>()
-
-        codes.forEach { code ->
-            val fileContent = gitUseCase.getFileContentByHashCode(
-                ownerName = repository.ownerName!!,
-                repoName = repository.lowerName,
-                filePath = code.filePath,
-                hashCode = commitHash
-            )
-            val lines = extractLinesWithNumbers(fileContent, code.startLine, code.endLine)
-
-            val commentsForFile = comments.filter { it.codeId == code.id }
-            val codeBlock = CodeBlock(
-                codeId = code.id!!,
-                lines = lines,
-                comments = commentsForFile.map {
-                    DiscussionCommentResponse(
-                        id = it.id!!,
-                        scope = it.scope.toString(),
-                        startLine = it.startLine,
-                        endLine = it.endLine,
-                        content = it.content
-                    )
-                }
-            )
-
-            fileContentMap.computeIfAbsent(code.filePath) { mutableListOf() }.add(codeBlock)
-        }
-
-        // File 단위의 코드와 코멘트 집합
-        val fileContents = fileContentMap.map { (fileUrl, codeBlocks) ->
-            FileContent(filePath = fileUrl, codeBlocks = codeBlocks)
-        }
-
-        // Discussion 단위의 코드와 코멘트 집합
-        return DiscussionContentResponse(
-            discussionId = discussionId,
-            contents = fileContents
-        )
-    }*/
 }

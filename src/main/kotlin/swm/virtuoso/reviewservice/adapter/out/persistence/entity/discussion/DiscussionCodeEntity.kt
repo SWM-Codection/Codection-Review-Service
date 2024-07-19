@@ -29,7 +29,7 @@ data class DiscussionCodeEntity(
     val endLine: Int
 ) : BaseTimeEntity() {
     companion object {
-        fun from(discussionCode: DiscussionCode, discussionId: Long): DiscussionCodeEntity {
+        fun fromDiscussionCode(discussionCode: DiscussionCode, discussionId: Long): DiscussionCodeEntity {
             return DiscussionCodeEntity(
                 id = null,
                 discussionId = discussionId,

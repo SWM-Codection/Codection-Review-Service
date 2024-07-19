@@ -8,6 +8,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.BaseTimeEntity
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
+import swm.virtuoso.reviewservice.domian.DiscussionComment
 
 @Entity
 @Table(name = "discussion_comment")
@@ -28,12 +29,27 @@ data class DiscussionCommentEntity(
     @field:Column(name = "scope")
     val scope: CommentScopeEnum,
 
-    @field:Column(name = "start_line")
-    val startLine: Int?,
+    @field:Column(nullable = true, name = "start_line")
+    val startLine: Int? = null,
 
-    @field:Column(name = "end_line")
-    val endLine: Int?,
+    @field:Column(nullable = true, name = "end_line")
+    val endLine: Int? = null,
 
     @field:Column(name = "content")
     val content: String
-) : BaseTimeEntity()
+) : BaseTimeEntity() {
+    companion object {
+        fun fromDiscussionComment(domain: DiscussionComment): DiscussionCommentEntity {
+            return DiscussionCommentEntity(
+                id = domain.id,
+                discussionId = domain.discussionId,
+                codeId = domain.codeId,
+                posterId = domain.posterId,
+                scope = domain.scope,
+                startLine = domain.startLine,
+                endLine = domain.endLine,
+                content = domain.content
+            )
+        }
+    }
+}
