@@ -13,6 +13,8 @@ class DiscussionAllContent(
 
     var commitHash: String?,
 
+    var index: Long?,
+
     var codes: List<DiscussionCode>
 ) {
 

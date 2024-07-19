@@ -10,9 +10,10 @@ import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentReques
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionContentResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
-import swm.virtuoso.reviewservice.adapter.out.persistence.DiscussionMapper
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
 import swm.virtuoso.reviewservice.application.port.`in`.*
+import swm.virtuoso.reviewservice.domian.Discussion
+import swm.virtuoso.reviewservice.domian.DiscussionAvailability
 import swm.virtuoso.reviewservice.domian.DiscussionComment
 
 @RestController
@@ -23,7 +24,6 @@ class DiscussionController(
     private val giteaUseCase: GiteaUseCase,
     private val gitUseCase: GitUseCase,
     private val discussionCodeUseCase: DiscussionCodeUseCase,
-    private val converter: DiscussionMapper
 ) {
 
     @GetMapping("/health-check")
@@ -40,14 +40,13 @@ class DiscussionController(
     ): DiscussionEntity {
         val repository = giteaUseCase.getRepositories(request.repoId)
 
-        val discussion = converter.postDiscussionRequestToDiscussion(request)
+        val discussion = Discussion.fromPostRequest(request)
         discussion.commitHash = gitUseCase.getLastCommitHash(
             userName = repository.ownerName!!,
             repoName = repository.lowerName
         )
-        val codes = request.codes
 
-        return discussionUseCase.createDiscussion(discussion, codes)
+        return discussionUseCase.createDiscussion(discussion, request.codes)
     }
 
     @GetMapping("/{repoId}/count")
@@ -65,11 +64,11 @@ class DiscussionController(
         @RequestBody request: DiscussionAvailableRequest
     ) {
         return giteaUseCase.setDiscussionAvailable(
-            converter.DiscussionAvailableRequestToDiscussionAvailability(request)
+            DiscussionAvailability.fromRequest(request)
         )
     }
 
-    @GetMapping("/{discussionId}/codes")
+    @GetMapping("/{discussionId}/contents")
     @ResponseStatus(HttpStatus.OK)
     fun getDiscussionContents(
         @PathVariable discussionId: Long
@@ -84,7 +83,7 @@ class DiscussionController(
         request: PostCommentRequest
     ): DiscussionComment {
         return discussionCommentUseCase.createComment(
-            converter.postCommentRequestToDiscussionComment(request)
+            DiscussionComment.fromPostRequest(request)
         )
     }
 

@@ -17,7 +17,6 @@ class GiteaPersistenceAdapter(
     private val repositoryRepository: RepositoryRepository,
     private val userRepository: UserRepository,
     private val discussionAvailableRepository: DiscussionAvailableRepository,
-    private val mapper: DiscussionMapper,
     private val discussionRepository: DiscussionRepository
 ) : GiteaPort {
     override fun findUserById(userId: Long): UserEntity {
@@ -38,7 +37,7 @@ class GiteaPersistenceAdapter(
     override fun saveDiscussionAvailable(discussionAvailability: DiscussionAvailability) {
         discussionAvailability.id = discussionAvailableRepository.findByRepoId(discussionAvailability.repoId)?.id
         discussionAvailableRepository.save(
-            mapper.discussionAvailabilityToDiscussionAvailableEntity(discussionAvailability)
+            DiscussionAvailableEntity.fromDiscussionAvailability(discussionAvailability)
         )
     }
 

@@ -4,5 +4,6 @@ import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.model.FileConten
 
 data class DiscussionContentResponse(
     val discussionId: Long,
-    val contents: List<FileContent>
+    val contents: List<FileContent>,
+    val globalComments: List<DiscussionCommentResponse>
 )

@@ -10,7 +10,7 @@ data class PostCommentRequest(
     val codeId: Long? = null,
     @field:NotNull(message = "Poster ID cannot be null")
     val posterId: Long,
-    @field:NotEmpty(message = "Scope cannot be empty")
+    @field:NotNull(message = "Scope cannot be empty")
     val scope: CommentScopeEnum,
     val startLine: Int?,
     val endLine: Int?,

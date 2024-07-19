@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
-import swm.virtuoso.reviewservice.adapter.out.persistence.DiscussionMapper
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
@@ -26,8 +25,8 @@ class DiscussionService(
         codes: List<DiscussionCode>
     ): DiscussionEntity {
         val newDiscussion = discussionPort.saveDiscussion(discussion = discussion)
-        discussionCodePort.saveDiscussionCodes(codes)
-        discussionUserPort.saveDiscussionUser(newDiscussion.posterId, newDiscussion.id!!)
+        discussionCodePort.saveDiscussionCodes(codes, newDiscussion.id!!)
+        discussionUserPort.saveDiscussionUser(newDiscussion.posterId, newDiscussion.id)
         return newDiscussion
     }
 
