@@ -2,7 +2,6 @@ package swm.virtuoso.reviewservice.application.service
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
@@ -23,7 +22,7 @@ class DiscussionService(
     override fun createDiscussion(
         discussion: Discussion,
         codes: List<DiscussionCode>
-    ): DiscussionEntity {
+    ): Discussion {
         val newDiscussion = discussionPort.saveDiscussion(discussion = discussion)
         discussionCodePort.saveDiscussionCodes(codes, newDiscussion.id!!)
         discussionUserPort.saveDiscussionUser(newDiscussion.posterId, newDiscussion.id)
@@ -37,7 +36,7 @@ class DiscussionService(
     // TODO modify 하는 유저와 discussion 작성 유저가 동일인인지 체크
     // TODO 이미 comment가 달린 discussion code 부분은 삭제에서 제외하도록 함 ->
     @Transactional
-    override fun modifyDiscussion(modifyDiscussionRequest: ModifyDiscussionRequest) : DiscussionEntity {
+    override fun modifyDiscussion(modifyDiscussionRequest: ModifyDiscussionRequest): DiscussionEntity {
         // 테스트의 편의성을 위해 도메인 로직을 pojo에 위임하기 위해 Entity-domain 객체 변환해서 가져옴
         val targetDiscussion = discussionPort.findDiscussionAllContent(modifyDiscussionRequest.discussionId)
 

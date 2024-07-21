@@ -4,14 +4,25 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionAvailableRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionContentResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
-import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
-import swm.virtuoso.reviewservice.application.port.`in`.*
+import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCodeUseCase
+import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCommentUseCase
+import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
+import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
+import swm.virtuoso.reviewservice.application.port.`in`.GiteaUseCase
 import swm.virtuoso.reviewservice.domian.Discussion
 import swm.virtuoso.reviewservice.domian.DiscussionAvailability
 import swm.virtuoso.reviewservice.domian.DiscussionComment
@@ -23,7 +34,7 @@ class DiscussionController(
     private val discussionCommentUseCase: DiscussionCommentUseCase,
     private val giteaUseCase: GiteaUseCase,
     private val gitUseCase: GitUseCase,
-    private val discussionCodeUseCase: DiscussionCodeUseCase,
+    private val discussionCodeUseCase: DiscussionCodeUseCase
 ) {
 
     @GetMapping("/health-check")
@@ -37,7 +48,7 @@ class DiscussionController(
     fun postDiscussion(
         @Valid @RequestBody
         request: PostDiscussionRequest
-    ): DiscussionEntity {
+    ): Discussion {
         val repository = giteaUseCase.getRepositories(request.repoId)
 
         val discussion = Discussion.fromPostRequest(request)
@@ -87,18 +98,14 @@ class DiscussionController(
         )
     }
 
-
     @PutMapping("")
     @ResponseStatus(HttpStatus.FOUND)
     fun modifyDiscussion(
         @Valid @RequestBody
         request: ModifyDiscussionRequest
     ): ResponseEntity<Void> {
-
         discussionUseCase.modifyDiscussion(request)
         // 프론트에서 modify를 호출한 뒤 완료되면 페이지를 리로드 하면서 각 페이지를 가져오는 방식으로 해야 할듯
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
-
-
 }

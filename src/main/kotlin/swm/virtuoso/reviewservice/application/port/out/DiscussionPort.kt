@@ -5,10 +5,10 @@ import swm.virtuoso.reviewservice.domian.Discussion
 import swm.virtuoso.reviewservice.domian.DiscussionAllContent
 
 public interface DiscussionPort {
-    fun saveDiscussion(discussion: Discussion): DiscussionEntity
+    fun saveDiscussion(discussion: Discussion): Discussion
     fun saveDiscussionAllContent(discussionAllContent: DiscussionAllContent): DiscussionEntity
     fun countDiscussion(repoId: Long, isClosed: Boolean): Int
-    fun findDiscussionList(repoId: Long, isClosed: Boolean): List<DiscussionEntity>
+    fun findDiscussionList(repoId: Long, isClosed: Boolean): List<Discussion>
     fun findDiscussion(discussionId: Long): Discussion
     fun findDiscussionAllContent(discussionId: Long): DiscussionAllContent
 }

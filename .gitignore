@@ -96,3 +96,4 @@ $RECYCLE.BIN/
 .idea/
 build/
 
+!application-test.yml

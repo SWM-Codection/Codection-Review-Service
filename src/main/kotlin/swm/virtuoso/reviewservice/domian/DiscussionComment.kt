@@ -4,7 +4,7 @@ import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentReques
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
 
-data class DiscussionComment (
+data class DiscussionComment(
     val id: Long? = null,
     val discussionId: Long,
     val codeId: Long? = null,
@@ -41,4 +41,4 @@ data class DiscussionComment (
             )
         }
     }
-    }
+}

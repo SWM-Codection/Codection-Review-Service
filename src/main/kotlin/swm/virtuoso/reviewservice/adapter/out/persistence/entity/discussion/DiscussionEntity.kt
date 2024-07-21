@@ -1,10 +1,14 @@
 package swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion
 
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import org.hibernate.annotations.ColumnDefault
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.BaseTimeEntity
 import swm.virtuoso.reviewservice.domian.Discussion
-import swm.virtuoso.reviewservice.domian.DiscussionAllContent
 
 @Entity
 @Table(name = "discussion")
@@ -16,7 +20,7 @@ data class DiscussionEntity(
     @field:Column(nullable = false, name = "repo_id")
     val repoId: Long,
 
-    @field:Column(name = "index")
+    @field:Column(name = "idx")
     val index: Long? = null,
 
     @field:Column(nullable = false, name = "poster_id")
