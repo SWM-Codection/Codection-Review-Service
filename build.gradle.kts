@@ -23,6 +23,10 @@ repositories {
 
 extra["springCloudVersion"] = "2023.0.2"
 
+ext {
+    set("hibernate.version", "6.4.8.Final")
+}
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
