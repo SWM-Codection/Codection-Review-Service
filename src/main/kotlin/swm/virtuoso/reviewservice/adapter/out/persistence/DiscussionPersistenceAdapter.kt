@@ -21,6 +21,7 @@ import swm.virtuoso.reviewservice.domian.Discussion
 import swm.virtuoso.reviewservice.domian.DiscussionAllContent
 import swm.virtuoso.reviewservice.domian.DiscussionCode
 import swm.virtuoso.reviewservice.domian.DiscussionComment
+import swm.virtuoso.reviewservice.domian.DiscussionUser
 
 @Repository
 class DiscussionPersistenceAdapter(
@@ -28,7 +29,7 @@ class DiscussionPersistenceAdapter(
     private val discussionCodeRepository: DiscussionCodeRepository,
     private val discussionIndexRepository: DiscussionIndexRepository,
     private val discussionUserRepository: DiscussionUserRepository,
-    private val discussionCommentRepository: DiscussionCommentRepository,
+    private val discussionCommentRepository: DiscussionCommentRepository
 ) : DiscussionPort, DiscussionCodePort, DiscussionUserPort, DiscussionCommentPort {
 
     private fun getIndex(repoId: Long): Long {
@@ -37,7 +38,7 @@ class DiscussionPersistenceAdapter(
             .orElse(1)
     }
 
-    override fun saveDiscussion(discussion: Discussion): DiscussionEntity {
+    override fun saveDiscussion(discussion: Discussion): Discussion {
         discussion.index = getIndex(discussion.repoId)
         val newDiscussion = discussionRepository.save(DiscussionEntity.fromDiscussion(discussion))
 
@@ -47,15 +48,16 @@ class DiscussionPersistenceAdapter(
                 maxIndex = newDiscussion.index!!
             )
         )
-        return newDiscussion
+        return Discussion.fromEntity(newDiscussion)
     }
 
     override fun countDiscussion(repoId: Long, isClosed: Boolean): Int {
         return discussionRepository.countByRepoIdAndIsClosed(repoId, isClosed)
     }
 
-    override fun findDiscussionList(repoId: Long, isClosed: Boolean): List<DiscussionEntity> {
+    override fun findDiscussionList(repoId: Long, isClosed: Boolean): List<Discussion> {
         return discussionRepository.findAllByRepoIdAndIsClosed(repoId, isClosed)
+            .map { Discussion.fromEntity(it) }
     }
 
     override fun findDiscussion(discussionId: Long): Discussion {
@@ -79,7 +81,7 @@ class DiscussionPersistenceAdapter(
                     commitHash = discussionAllContent.commitHash,
                     index = discussionAllContent.index,
                     posterId = discussionAllContent.posterId
-                ),
+                )
             )
         )
 
@@ -124,18 +126,20 @@ class DiscussionPersistenceAdapter(
             content = discussionEntity.content,
             repoId = discussionEntity.repoId,
             commitHash = discussionEntity.commitHash,
-            index = discussionEntity.index,
+            index = discussionEntity.index
         )
     }
 
-    override fun saveDiscussionUser(userId: Long, discussionId: Long) {
-        discussionUserRepository.save(
-            DiscussionUserEntity(
-                id = null,
-                uid = userId,
-                discussionId = discussionId,
-                isRead = true,
-                isMentioned = false
+    override fun saveDiscussionUser(userId: Long, discussionId: Long): DiscussionUser {
+        return DiscussionUser.fromEntity(
+            discussionUserRepository.save(
+                DiscussionUserEntity(
+                    id = null,
+                    uid = userId,
+                    discussionId = discussionId,
+                    isRead = true,
+                    isMentioned = false
+                )
             )
         )
     }

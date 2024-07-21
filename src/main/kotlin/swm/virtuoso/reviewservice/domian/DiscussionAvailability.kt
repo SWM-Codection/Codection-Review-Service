@@ -1,7 +1,6 @@
 package swm.virtuoso.reviewservice.domian
 
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionAvailableRequest
-import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionAvailableEntity
 
 data class DiscussionAvailability(
     var id: Long? = null,
