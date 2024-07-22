@@ -33,6 +33,10 @@ class DiscussionService(
         return discussionPort.countDiscussion(repoId, isClosed)
     }
 
+    override fun getDiscussionList(repoId: Long, isClosed: Boolean): List<Discussion> {
+        return discussionPort.findDiscussionList(repoId, isClosed)
+    }
+
     // TODO modify 하는 유저와 discussion 작성 유저가 동일인인지 체크
     // TODO 이미 comment가 달린 discussion code 부분은 삭제에서 제외하도록 함 ->
     @Transactional

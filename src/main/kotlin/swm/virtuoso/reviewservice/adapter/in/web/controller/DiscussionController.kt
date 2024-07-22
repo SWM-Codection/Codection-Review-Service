@@ -69,6 +69,15 @@ class DiscussionController(
         return discussionUseCase.countDiscussion(repoId, isClosed)
     }
 
+    @GetMapping("/{repoId}/list")
+    @ResponseStatus(HttpStatus.OK)
+    fun getDiscussionList(
+        @PathVariable repoId: Long,
+        @RequestParam isClosed: Boolean
+    ): List<Discussion> {
+        return discussionUseCase.getDiscussionList(repoId, isClosed)
+    }
+
     @PostMapping("/available")
     @ResponseStatus(HttpStatus.CREATED)
     fun handleDiscussionAvailable(

@@ -138,6 +138,47 @@ class DiscussionControllerTest {
     }
 
     @Test
+    @DisplayName("디스커션 목록 반환")
+    fun `should get discussion list`() {
+        // Given
+        val repoId = 1L
+        val isClosed = true
+        val expectedDiscussions: List<Discussion> = listOf(
+            Discussion(
+                id = 1L,
+                name = "discussion 1",
+                content = "content 1",
+                repoId = repoId,
+                posterId = 1L,
+                commitHash = "commitHash1"
+            ),
+            Discussion(
+                id = 2L,
+                name = "discussion 2",
+                content = "content 2",
+                repoId = repoId,
+                posterId = 2L,
+                commitHash = "commitHash2"
+            )
+        )
+
+        whenever(discussionUseCase.getDiscussionList(repoId, isClosed)).thenReturn(expectedDiscussions)
+
+        // When & Then
+        mockMvc.perform(
+            get("/discussion/$repoId/list")
+                .param("isClosed", isClosed.toString())
+        )
+            .andExpect(status().isOk)
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.length()").value(expectedDiscussions.size))
+            .andExpect(jsonPath("$[0].id").value(expectedDiscussions[0].id))
+            .andExpect(jsonPath("$[0].name").value(expectedDiscussions[0].name))
+            .andExpect(jsonPath("$[1].id").value(expectedDiscussions[1].id))
+            .andExpect(jsonPath("$[1].name").value(expectedDiscussions[1].name))
+    }
+
+    @Test
     @DisplayName("디스커션 활성화 상태 변경")
     fun `should handle discussion available`() {
         // Given

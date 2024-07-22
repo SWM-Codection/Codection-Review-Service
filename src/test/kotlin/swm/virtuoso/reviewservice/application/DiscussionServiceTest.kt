@@ -112,4 +112,39 @@ class DiscussionServiceTest {
         // then
         assertEquals(expectedCount, result)
     }
+
+    @Test
+    @DisplayName("특정 레포의 디스커션 목록 반환")
+    fun `getDiscussionList should return discussion list`() {
+        // given
+        val repoId = 1L
+        val isClosed = false
+        val expectedDiscussions = listOf(
+            Discussion(
+                id = 1L,
+                name = "discussion 1",
+                content = "content 1",
+                repoId = repoId,
+                posterId = 1L,
+                commitHash = "commitHash1"
+            ),
+            Discussion(
+                id = 2L,
+                name = "discussion 2",
+                content = "content 2",
+                repoId = repoId,
+                posterId = 2L,
+                commitHash = "commitHash2"
+            )
+        )
+
+        doReturn(expectedDiscussions).`when`(discussionPort).findDiscussionList(repoId, isClosed)
+
+        // when
+        val result = discussionService.getDiscussionList(repoId, isClosed)
+
+        // then
+        assertEquals(expectedDiscussions.size, result.size)
+        assertEquals(expectedDiscussions, result)
+    }
 }
