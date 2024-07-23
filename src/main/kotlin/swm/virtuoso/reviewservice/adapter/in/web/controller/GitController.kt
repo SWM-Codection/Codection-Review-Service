@@ -1,5 +1,10 @@
 package swm.virtuoso.reviewservice.adapter.`in`.web.controller
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -23,6 +28,18 @@ class GitController(
 
     @GetMapping("/{username}/{reponame}/discussions")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "List Git files", description = "리포지토리의 파일 목록 반환")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "파일 목록 반환 성공",
+                content = [Content(schema = Schema(implementation = PartResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "204", description = "깃 저장소에 파일이 하나도 존재하지 않음"
+            )
+        ]
+    )
     fun listGitFiles(
         @PathVariable("username") userName: String,
         @PathVariable("reponame") repoName: String
@@ -38,6 +55,15 @@ class GitController(
 
     @GetMapping("/{username}/{reponame}/discussions/contents")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get file content", description = "파일 내용 반환")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "파일 내용 반환 성공",
+                content = [Content(schema = Schema(implementation = ExtractedLine::class))]
+            )
+        ]
+    )
     fun getFileContent(
         @PathVariable("username") userName: String,
         @PathVariable("reponame") repoName: String,

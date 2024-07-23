@@ -43,9 +43,9 @@ class GiteaPersistenceAdapter(
 
     override fun findRepositoryByDiscussionId(discussionId: Long): RepositoryEntity {
         val repoId = discussionRepository.findByIdOrNull(discussionId)?.repoId
-            ?: throw IllegalArgumentException("Discussion이 존재하지 않습니다. $discussionId")
+            ?: throw NoSuchElementException("Discussion이 존재하지 않습니다. $discussionId")
 
         return repositoryRepository.findByIdOrNull(repoId)
-            ?: throw IllegalArgumentException("Repository가 존재하지 않습니다.: $repoId")
+            ?: throw NoSuchElementException("Repository가 존재하지 않습니다.: $repoId")
     }
 }

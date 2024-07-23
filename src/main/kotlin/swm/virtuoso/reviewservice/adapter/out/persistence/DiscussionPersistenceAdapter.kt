@@ -16,7 +16,6 @@ import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
-import swm.virtuoso.reviewservice.common.exception.NoSuchDiscussionException
 import swm.virtuoso.reviewservice.domian.Discussion
 import swm.virtuoso.reviewservice.domian.DiscussionAllContent
 import swm.virtuoso.reviewservice.domian.DiscussionCode
@@ -106,7 +105,7 @@ class DiscussionPersistenceAdapter(
 
     override fun findDiscussionAllContent(discussionId: Long): DiscussionAllContent {
         val discussionEntity = discussionRepository.findById(discussionId).orElseThrow {
-            NoSuchDiscussionException()
+            throw NoSuchElementException("디스커션 정보를 찾을 수 없습니다.")
         }
         val discussionCodes = discussionCodeRepository.findAllByDiscussionId(discussionId)
 
