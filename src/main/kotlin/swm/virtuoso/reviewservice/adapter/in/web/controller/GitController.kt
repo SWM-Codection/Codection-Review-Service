@@ -36,7 +36,7 @@ class GitController(
                 content = [Content(schema = Schema(implementation = PartResponse::class))]
             ),
             ApiResponse(
-                responseCode = "204", description = "깃 저장소에 파일이 하나도 존재하지 않음"
+                responseCode = "404", description = "깃 저장소에 파일이 하나도 존재하지 않음"
             )
         ]
     )
@@ -45,7 +45,7 @@ class GitController(
         @PathVariable("reponame") repoName: String
     ): PartResponse {
         val files: List<String> = gitUseCase.listFiles(userName, repoName).takeIf { it.isNotEmpty() }
-            ?: throw ResponseStatusException(HttpStatus.NO_CONTENT)
+            ?: throw NoSuchElementException("지정 된 깃 저장소에 파일이 존재하지 않습니다.")
 
         val pathTrie = PathTrie()
         files.forEach { pathTrie.insert(it) }
