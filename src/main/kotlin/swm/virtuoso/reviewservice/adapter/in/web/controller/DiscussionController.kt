@@ -58,21 +58,25 @@ class DiscussionController(
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "201", description = "생성 성공",
+                responseCode = "201",
+                description = "생성 성공",
                 content = [Content(schema = Schema(implementation = Discussion::class))]
             ),
             ApiResponse(
-                responseCode = "404", description = "레포지토리 혹은 Git Path 정보를 찾을 수 없음",
+                responseCode = "404",
+                description = "레포지토리 혹은 Git Path 정보를 찾을 수 없음",
                 content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             ),
             ApiResponse(
-                responseCode = "204", description = "커밋 기록이 존재하지 않는 레포지토리임",
+                responseCode = "204",
+                description = "커밋 기록이 존재하지 않는 레포지토리임",
                 content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             )
         ]
     )
     fun postDiscussion(
-        @Valid @RequestBody request: PostDiscussionRequest
+        @Valid @RequestBody
+        request: PostDiscussionRequest
     ): Discussion {
         val repository = giteaUseCase.getRepositories(request.repoId)
 
@@ -91,7 +95,8 @@ class DiscussionController(
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200", description = "디스커션 수 반환 성공",
+                responseCode = "200",
+                description = "디스커션 수 반환 성공",
                 content = [Content(schema = Schema(type = "integer"))]
             )
         ]
@@ -109,7 +114,8 @@ class DiscussionController(
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200", description = "디스커션 목록 반환 성공",
+                responseCode = "200",
+                description = "디스커션 목록 반환 성공",
                 content = [Content(schema = Schema(implementation = Discussion::class, type = "array"))]
             )
         ]
@@ -127,7 +133,8 @@ class DiscussionController(
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "201", description = "활성화 모드 설정 성공"
+                responseCode = "201",
+                description = "활성화 모드 설정 성공"
             )
         ]
     )
@@ -145,15 +152,18 @@ class DiscussionController(
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200", description = "디스커션 내용 반환 성공",
+                responseCode = "200",
+                description = "디스커션 내용 반환 성공",
                 content = [Content(schema = Schema(implementation = DiscussionContentResponse::class))]
             ),
             ApiResponse(
-                responseCode = "404", description = "레포지토리 혹은 디스커션 정보를 찾을 수 없음",
+                responseCode = "404",
+                description = "레포지토리 혹은 디스커션 정보를 찾을 수 없음",
                 content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             ),
             ApiResponse(
-                responseCode = "400", description = "지정되었던 파일의 범위를 넘어선 범위임",
+                responseCode = "400",
+                description = "지정되었던 파일의 범위를 넘어선 범위임",
                 content = [Content(schema = Schema(implementation = ExtractedLine::class, type = "array"))]
             )
         ]
@@ -170,21 +180,25 @@ class DiscussionController(
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "201", description = "코멘트 작성 성공",
+                responseCode = "201",
+                description = "코멘트 작성 성공",
                 content = [Content(schema = Schema(implementation = DiscussionComment::class))]
             ),
             ApiResponse(
-                responseCode = "404", description = "레포지토리 혹은 Git Path 정보를 찾을 수 없음",
+                responseCode = "404",
+                description = "레포지토리 혹은 Git Path 정보를 찾을 수 없음",
                 content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             ),
             ApiResponse(
-                responseCode = "400", description = "레포지토리 정보와 디스커션 정보가 일치하지 않음",
+                responseCode = "400",
+                description = "레포지토리 정보와 디스커션 정보가 일치하지 않음",
                 content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             )
         ]
     )
     fun postComment(
-        @Valid @RequestBody request: PostCommentRequest
+        @Valid @RequestBody
+        request: PostCommentRequest
     ): DiscussionComment {
         return discussionCommentUseCase.createComment(
             DiscussionComment.fromPostRequest(request)
@@ -197,12 +211,14 @@ class DiscussionController(
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "204", description = "수정 성공"
+                responseCode = "204",
+                description = "수정 성공"
             )
         ]
     )
     fun modifyDiscussion(
-        @Valid @RequestBody request: ModifyDiscussionRequest
+        @Valid @RequestBody
+        request: ModifyDiscussionRequest
     ): ResponseEntity<Void> {
         discussionUseCase.modifyDiscussion(request)
         return ResponseEntity(HttpStatus.NO_CONTENT)

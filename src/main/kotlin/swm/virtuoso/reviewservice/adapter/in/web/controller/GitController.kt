@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.server.ResponseStatusException
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.PartResponse
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCodeUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
@@ -32,11 +31,13 @@ class GitController(
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200", description = "파일 목록 반환 성공",
+                responseCode = "200",
+                description = "파일 목록 반환 성공",
                 content = [Content(schema = Schema(implementation = PartResponse::class))]
             ),
             ApiResponse(
-                responseCode = "404", description = "깃 저장소에 파일이 하나도 존재하지 않음"
+                responseCode = "404",
+                description = "깃 저장소에 파일이 하나도 존재하지 않음"
             )
         ]
     )
@@ -59,7 +60,8 @@ class GitController(
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200", description = "파일 내용 반환 성공",
+                responseCode = "200",
+                description = "파일 내용 반환 성공",
                 content = [Content(schema = Schema(implementation = ExtractedLine::class))]
             )
         ]

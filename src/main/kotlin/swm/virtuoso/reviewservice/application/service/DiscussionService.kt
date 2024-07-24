@@ -25,9 +25,9 @@ class DiscussionService(
         discussion: Discussion,
         codes: List<DiscussionCode>
     ): Discussion {
-        val newDiscussion = discussionPort.saveDiscussion(discussion = discussion)
-        discussionCodePort.saveDiscussionCodes(codes, newDiscussion.id!!)
-        discussionUserPort.saveDiscussionUser(newDiscussion.posterId, newDiscussion.id)
+        val newDiscussion = discussionPort.insertDiscussion(discussion = discussion)
+        discussionCodePort.insertDiscussionCodes(codes, newDiscussion.id!!)
+        discussionUserPort.insertDiscussionUser(newDiscussion.posterId, newDiscussion.id)
         return newDiscussion
     }
 

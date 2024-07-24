@@ -12,6 +12,6 @@ class DiscussionCommentService(
 ) : DiscussionCommentUseCase {
     @Transactional
     override fun createComment(discussionComment: DiscussionComment): DiscussionComment {
-        return discussionCommentPort.saveComment(discussionComment)
+        return discussionCommentPort.insertComment(discussionComment)
     }
 }
