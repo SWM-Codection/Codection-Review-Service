@@ -1,5 +1,11 @@
 package swm.virtuoso.reviewservice.adapter.`in`.web.controller
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -23,12 +29,15 @@ import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCommentUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GiteaUseCase
+import swm.virtuoso.reviewservice.common.exception.ErrorResponse
 import swm.virtuoso.reviewservice.domian.Discussion
 import swm.virtuoso.reviewservice.domian.DiscussionAvailability
 import swm.virtuoso.reviewservice.domian.DiscussionComment
+import swm.virtuoso.reviewservice.domian.ExtractedLine
 
 @RestController
 @RequestMapping("/discussion")
+@Tag(name = "Discussion", description = "Discussion API")
 class DiscussionController(
     private val discussionUseCase: DiscussionUseCase,
     private val discussionCommentUseCase: DiscussionCommentUseCase,
@@ -45,6 +54,26 @@ class DiscussionController(
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Post new discussion", description = "새로운 디스커션 생성")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                description = "생성 성공",
+                content = [Content(schema = Schema(implementation = Discussion::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "레포지토리 혹은 Git Path 정보를 찾을 수 없음",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "204",
+                description = "커밋 기록이 존재하지 않는 레포지토리임",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
     fun postDiscussion(
         @Valid @RequestBody
         request: PostDiscussionRequest
@@ -62,6 +91,16 @@ class DiscussionController(
 
     @GetMapping("/{repoId}/count")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get discussion count", description = "특정 레포의 디스커션 수 반환")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "디스커션 수 반환 성공",
+                content = [Content(schema = Schema(type = "integer"))]
+            )
+        ]
+    )
     fun getDiscussionCount(
         @PathVariable repoId: Long,
         @RequestParam isClosed: Boolean
@@ -71,6 +110,16 @@ class DiscussionController(
 
     @GetMapping("/{repoId}/list")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get discussion list", description = "특정 레포의 디스커션 목록 반환")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "디스커션 목록 반환 성공",
+                content = [Content(schema = Schema(implementation = Discussion::class, type = "array"))]
+            )
+        ]
+    )
     fun getDiscussionList(
         @PathVariable repoId: Long,
         @RequestParam isClosed: Boolean
@@ -80,6 +129,15 @@ class DiscussionController(
 
     @PostMapping("/available")
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Handle discussion availability", description = "디스커션 활성화 모드 설정")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                description = "활성화 모드 설정 성공"
+            )
+        ]
+    )
     fun handleDiscussionAvailable(
         @RequestBody request: DiscussionAvailableRequest
     ) {
@@ -90,6 +148,26 @@ class DiscussionController(
 
     @GetMapping("/{discussionId}/contents")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get discussion contents", description = "디스커션 내용 반환")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "디스커션 내용 반환 성공",
+                content = [Content(schema = Schema(implementation = DiscussionContentResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "레포지토리 혹은 디스커션 정보를 찾을 수 없음",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "지정되었던 파일의 범위를 넘어선 범위임",
+                content = [Content(schema = Schema(implementation = ExtractedLine::class, type = "array"))]
+            )
+        ]
+    )
     fun getDiscussionContents(
         @PathVariable discussionId: Long
     ): DiscussionContentResponse {
@@ -98,6 +176,26 @@ class DiscussionController(
 
     @PostMapping("/comment")
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Post comment", description = "새로운 코멘트 작성")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                description = "코멘트 작성 성공",
+                content = [Content(schema = Schema(implementation = DiscussionComment::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "레포지토리 혹은 Git Path 정보를 찾을 수 없음",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "레포지토리 정보와 디스커션 정보가 일치하지 않음",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
     fun postComment(
         @Valid @RequestBody
         request: PostCommentRequest
@@ -108,13 +206,21 @@ class DiscussionController(
     }
 
     @PutMapping("")
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Modify discussion", description = "디스커션 수정 (수정 필요)")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "204",
+                description = "수정 성공"
+            )
+        ]
+    )
     fun modifyDiscussion(
         @Valid @RequestBody
         request: ModifyDiscussionRequest
     ): ResponseEntity<Void> {
         discussionUseCase.modifyDiscussion(request)
-        // 프론트에서 modify를 호출한 뒤 완료되면 페이지를 리로드 하면서 각 페이지를 가져오는 방식으로 해야 할듯
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 }

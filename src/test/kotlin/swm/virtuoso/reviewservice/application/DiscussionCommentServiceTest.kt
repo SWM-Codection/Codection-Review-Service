@@ -39,7 +39,7 @@ class DiscussionCommentServiceTest {
 
         val savedComment = discussionComment.copy(id = 1L)
 
-        doReturn(savedComment).`when`(discussionCommentPort).saveComment(discussionComment)
+        doReturn(savedComment).`when`(discussionCommentPort).insertComment(discussionComment)
 
         // when
         val result = discussionCommentService.createComment(discussionComment)

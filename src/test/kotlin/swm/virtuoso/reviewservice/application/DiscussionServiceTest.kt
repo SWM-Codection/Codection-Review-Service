@@ -76,9 +76,9 @@ class DiscussionServiceTest {
             isMentioned = false
         )
 
-        doReturn(savedDiscussion).`when`(discussionPort).saveDiscussion(discussion)
-        doNothing().`when`(discussionCodePort).saveDiscussionCodes(codes, savedDiscussion.id!!)
-        doReturn(savedDiscussionUser).`when`(discussionUserPort).saveDiscussionUser(savedDiscussion.posterId, savedDiscussion.id!!)
+        doReturn(savedDiscussion).`when`(discussionPort).insertDiscussion(discussion)
+        doNothing().`when`(discussionCodePort).insertDiscussionCodes(codes, savedDiscussion.id!!)
+        doReturn(savedDiscussionUser).`when`(discussionUserPort).insertDiscussionUser(savedDiscussion.posterId, savedDiscussion.id!!)
 
         // when
         val result = discussionService.createDiscussion(discussion, codes)
@@ -91,9 +91,9 @@ class DiscussionServiceTest {
         assertEquals(savedDiscussion.repoId, result.repoId)
         assertEquals(savedDiscussion.posterId, result.posterId)
 
-        verify(discussionPort, times(1)).saveDiscussion(discussion)
-        verify(discussionCodePort, times(1)).saveDiscussionCodes(codes, savedDiscussion.id!!)
-        verify(discussionUserPort, times(1)).saveDiscussionUser(savedDiscussion.posterId, savedDiscussion.id!!)
+        verify(discussionPort, times(1)).insertDiscussion(discussion)
+        verify(discussionCodePort, times(1)).insertDiscussionCodes(codes, savedDiscussion.id!!)
+        verify(discussionUserPort, times(1)).insertDiscussionUser(savedDiscussion.posterId, savedDiscussion.id!!)
     }
 
     @Test

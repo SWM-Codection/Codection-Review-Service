@@ -78,8 +78,8 @@ class DiscussionPersistenceAdapterTest {
             commitHash = "commitHash2"
         )
 
-        discussionPersistenceAdapter.saveDiscussion(discussion1)
-        discussionPersistenceAdapter.saveDiscussion(discussion2)
+        discussionPersistenceAdapter.insertDiscussion(discussion1)
+        discussionPersistenceAdapter.insertDiscussion(discussion2)
 
         val repoId = 1L
         val isClosed = false
@@ -106,7 +106,7 @@ class DiscussionPersistenceAdapterTest {
         )
 
         // when
-        val savedDiscussionEntity = discussionPersistenceAdapter.saveDiscussion(discussion)
+        val savedDiscussionEntity = discussionPersistenceAdapter.insertDiscussion(discussion)
         logger.info("Saved Discussion ID: ${savedDiscussionEntity.id}")
 
         // then
@@ -129,7 +129,7 @@ class DiscussionPersistenceAdapterTest {
             posterId = 1,
             commitHash = "commitHash1"
         )
-        val discussionId = discussionPersistenceAdapter.saveDiscussion(discussion1).id!!
+        val discussionId = discussionPersistenceAdapter.insertDiscussion(discussion1).id!!
 
         // when
         val findDiscussion = discussionPersistenceAdapter.findDiscussion(discussionId)
@@ -164,12 +164,12 @@ class DiscussionPersistenceAdapterTest {
             posterId = 3,
             commitHash = "commitHash3"
         )
-        val discussionId = discussionPersistenceAdapter.saveDiscussion(discussion).id!!
+        val discussionId = discussionPersistenceAdapter.insertDiscussion(discussion).id!!
 
         val userId = 1L
 
         // when
-        val savedDiscussionUser = discussionPersistenceAdapter.saveDiscussionUser(userId, discussionId)
+        val savedDiscussionUser = discussionPersistenceAdapter.insertDiscussionUser(userId, discussionId)
 
         // then
         assertNotNull(savedDiscussionUser.id)
@@ -189,7 +189,7 @@ class DiscussionPersistenceAdapterTest {
             posterId = 1,
             commitHash = "commitHash1"
         )
-        val savedDiscussion = discussionPersistenceAdapter.saveDiscussion(discussion1)
+        val savedDiscussion = discussionPersistenceAdapter.insertDiscussion(discussion1)
 
         val discussionComment = DiscussionComment(
             id = null,
@@ -203,7 +203,7 @@ class DiscussionPersistenceAdapterTest {
         )
 
         // when
-        val savedComment = discussionPersistenceAdapter.saveComment(discussionComment)
+        val savedComment = discussionPersistenceAdapter.insertComment(discussionComment)
 
         // then
         assertNotNull(savedComment.id)
@@ -232,8 +232,8 @@ class DiscussionPersistenceAdapterTest {
             posterId = 2,
             commitHash = "commitHash2"
         )
-        discussionPersistenceAdapter.saveDiscussion(discussion1)
-        discussionPersistenceAdapter.saveDiscussion(discussion2)
+        discussionPersistenceAdapter.insertDiscussion(discussion1)
+        discussionPersistenceAdapter.insertDiscussion(discussion2)
 
         val repoId = 1L
         val isClosed = false
@@ -307,7 +307,7 @@ class DiscussionPersistenceAdapterTest {
             posterId = 1,
             commitHash = "commitHash1"
         )
-        val savedDiscussion = discussionPersistenceAdapter.saveDiscussion(discussion1)
+        val savedDiscussion = discussionPersistenceAdapter.insertDiscussion(discussion1)
 
         val discussionComment1 = DiscussionComment(
             id = null,
@@ -329,8 +329,8 @@ class DiscussionPersistenceAdapterTest {
             endLine = null,
             content = "Test comment 2"
         )
-        discussionPersistenceAdapter.saveComment(discussionComment1)
-        discussionPersistenceAdapter.saveComment(discussionComment2)
+        discussionPersistenceAdapter.insertComment(discussionComment1)
+        discussionPersistenceAdapter.insertComment(discussionComment2)
 
         // when
         val comments = discussionPersistenceAdapter.findCommentsByDiscussionId(savedDiscussion.id!!)

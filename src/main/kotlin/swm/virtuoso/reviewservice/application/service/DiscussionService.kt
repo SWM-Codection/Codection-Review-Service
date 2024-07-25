@@ -8,6 +8,7 @@ import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
+import swm.virtuoso.reviewservice.application.port.out.GiteaPort
 import swm.virtuoso.reviewservice.domian.Discussion
 import swm.virtuoso.reviewservice.domian.DiscussionCode
 
@@ -15,7 +16,8 @@ import swm.virtuoso.reviewservice.domian.DiscussionCode
 class DiscussionService(
     private val discussionPort: DiscussionPort,
     private val discussionUserPort: DiscussionUserPort,
-    private val discussionCodePort: DiscussionCodePort
+    private val discussionCodePort: DiscussionCodePort,
+    private val giteaPort: GiteaPort
 ) : DiscussionUseCase {
 
     @Transactional
@@ -23,9 +25,9 @@ class DiscussionService(
         discussion: Discussion,
         codes: List<DiscussionCode>
     ): Discussion {
-        val newDiscussion = discussionPort.saveDiscussion(discussion = discussion)
-        discussionCodePort.saveDiscussionCodes(codes, newDiscussion.id!!)
-        discussionUserPort.saveDiscussionUser(newDiscussion.posterId, newDiscussion.id)
+        val newDiscussion = discussionPort.insertDiscussion(discussion = discussion)
+        discussionCodePort.insertDiscussionCodes(codes, newDiscussion.id!!)
+        discussionUserPort.insertDiscussionUser(newDiscussion.posterId, newDiscussion.id)
         return newDiscussion
     }
 
@@ -34,6 +36,7 @@ class DiscussionService(
     }
 
     override fun getDiscussionList(repoId: Long, isClosed: Boolean): List<Discussion> {
+        giteaPort.findRepositoryById(repoId)
         return discussionPort.findDiscussionList(repoId, isClosed)
     }
 

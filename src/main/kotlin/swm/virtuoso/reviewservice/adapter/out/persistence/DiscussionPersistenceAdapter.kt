@@ -16,7 +16,6 @@ import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
-import swm.virtuoso.reviewservice.common.exception.NoSuchDiscussionException
 import swm.virtuoso.reviewservice.domian.Discussion
 import swm.virtuoso.reviewservice.domian.DiscussionAllContent
 import swm.virtuoso.reviewservice.domian.DiscussionCode
@@ -38,7 +37,7 @@ class DiscussionPersistenceAdapter(
             .orElse(1)
     }
 
-    override fun saveDiscussion(discussion: Discussion): Discussion {
+    override fun insertDiscussion(discussion: Discussion): Discussion {
         discussion.index = getIndex(discussion.repoId)
         val newDiscussion = discussionRepository.save(DiscussionEntity.fromDiscussion(discussion))
 
@@ -106,7 +105,7 @@ class DiscussionPersistenceAdapter(
 
     override fun findDiscussionAllContent(discussionId: Long): DiscussionAllContent {
         val discussionEntity = discussionRepository.findById(discussionId).orElseThrow {
-            NoSuchDiscussionException()
+            throw NoSuchElementException("디스커션 정보를 찾을 수 없습니다.")
         }
         val discussionCodes = discussionCodeRepository.findAllByDiscussionId(discussionId)
 
@@ -130,7 +129,7 @@ class DiscussionPersistenceAdapter(
         )
     }
 
-    override fun saveDiscussionUser(userId: Long, discussionId: Long): DiscussionUser {
+    override fun insertDiscussionUser(userId: Long, discussionId: Long): DiscussionUser {
         return DiscussionUser.fromEntity(
             discussionUserRepository.save(
                 DiscussionUserEntity(
@@ -160,14 +159,14 @@ class DiscussionPersistenceAdapter(
         return discussionCodeRepository.deleteAllById(id)
     }
 
-    override fun saveDiscussionCodes(discussionCodes: List<DiscussionCode>, discussionId: Long) {
+    override fun insertDiscussionCodes(discussionCodes: List<DiscussionCode>, discussionId: Long) {
         val entities = discussionCodes.map { discussionCode ->
             DiscussionCodeEntity.fromDiscussionCode(discussionCode, discussionId)
         }
         discussionCodeRepository.saveAll(entities)
     }
 
-    override fun saveComment(discussionComment: DiscussionComment): DiscussionComment {
+    override fun insertComment(discussionComment: DiscussionComment): DiscussionComment {
         val discussion = findDiscussion(discussionComment.discussionId)
         discussionComment.codeId?.let { codeId ->
             // 조건이 안맞으면 IllegalArgumentException 발생
@@ -175,7 +174,7 @@ class DiscussionPersistenceAdapter(
                 "코드의 정보와 디스커션 정보가 일치하지 않습니다."
             }
         }
-        saveDiscussionUser(
+        insertDiscussionUser(
             userId = discussionComment.posterId,
             discussionId = discussionComment.discussionId
         )
