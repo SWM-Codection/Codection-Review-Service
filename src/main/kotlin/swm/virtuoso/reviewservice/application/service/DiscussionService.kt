@@ -28,11 +28,11 @@ class DiscussionService(
         discussion: Discussion,
         codes: List<DiscussionCode>
     ): Discussion {
-        val newDiscussion = discussionPort.saveDiscussion(discussion = discussion)
-        discussionCodePort.saveDiscussionCodes(codes, newDiscussion.id!!)
+        val newDiscussion = discussionPort.insertDiscussion(discussion = discussion)
+        discussionCodePort.insertDiscussionCodes(codes, newDiscussion.id!!)
         logger.info("Saved discussion with ID: {}", newDiscussion.id)
 
-        val newDiscussionUser = discussionUserPort.saveDiscussionUser(newDiscussion.posterId, newDiscussion.id)
+        val newDiscussionUser = discussionUserPort.insertDiscussionUser(newDiscussion.posterId, newDiscussion.id)
         logger.info("Saved discussionUser with ID: {}", newDiscussionUser.id)
 
         return newDiscussion

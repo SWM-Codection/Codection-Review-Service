@@ -11,5 +11,5 @@ public interface GiteaPort {
     fun findRepositoryById(repoId: Long): RepositoryEntity
     fun findRepositoryByDiscussionId(discussionId: Long): RepositoryEntity
 
-    fun saveDiscussionAvailable(discussionAvailability: DiscussionAvailability)
+    fun switchDiscussionAvailable(discussionAvailability: DiscussionAvailability)
 }

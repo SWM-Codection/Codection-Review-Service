@@ -16,7 +16,7 @@ class DiscussionCommentService(
 
     @Transactional
     override fun createComment(discussionComment: DiscussionComment): DiscussionComment {
-        val newDiscussionComment = discussionCommentPort.saveComment(discussionComment)
+        val newDiscussionComment = discussionCommentPort.insertComment(discussionComment)
         logger.info("Saved discussionComment with ID: {}", newDiscussionComment.id)
         return newDiscussionComment
     }

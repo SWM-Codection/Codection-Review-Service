@@ -34,7 +34,7 @@ class GiteaPersistenceAdapter(
             ?: throw NoSuchElementException("레포지토리 정보를 찾을 수 없습니다.")
     }
 
-    override fun saveDiscussionAvailable(discussionAvailability: DiscussionAvailability) {
+    override fun switchDiscussionAvailable(discussionAvailability: DiscussionAvailability) {
         discussionAvailability.id = discussionAvailableRepository.findByRepoId(discussionAvailability.repoId)?.id
         discussionAvailableRepository.save(
             DiscussionAvailableEntity.fromDiscussionAvailability(discussionAvailability)

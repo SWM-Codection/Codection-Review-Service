@@ -59,7 +59,7 @@ class DiscussionController(
             ApiResponse(
                 responseCode = "201",
                 description = "생성 성공",
-                content = [Content(schema = Schema(implementation = Discussion::class))]
+                content = [Content(schema = Schema(implementation = Long::class))]
             ),
             ApiResponse(
                 responseCode = "404",
@@ -181,7 +181,7 @@ class DiscussionController(
             ApiResponse(
                 responseCode = "201",
                 description = "코멘트 작성 성공",
-                content = [Content(schema = Schema(implementation = DiscussionComment::class))]
+                content = [Content(schema = Schema(implementation = Long::class))]
             ),
             ApiResponse(
                 responseCode = "404",
@@ -219,8 +219,7 @@ class DiscussionController(
         @Valid @RequestBody
         request: ModifyDiscussionRequest
     ) {
-        discussionUseCase.modifyDiscussion(request)
         // TODO 프론트에서 modify를 호출한 뒤 완료되면 페이지를 리로드 하면서 각 페이지를 가져오는 방식으로 변경
-        return ResponseEntity(HttpStatus.NO_CONTENT)
+        discussionUseCase.modifyDiscussion(request)
     }
 }
