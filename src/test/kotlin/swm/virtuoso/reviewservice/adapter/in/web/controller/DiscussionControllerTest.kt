@@ -164,7 +164,6 @@ class DiscussionControllerTest {
                 .param("isClosed", isClosed.toString())
         )
             .andExpect(status().isOk)
-            .andExpect(status().isOk)
             .andExpect(jsonPath("$.length()").value(expectedDiscussions.size))
             .andExpect(jsonPath("$[0].id").value(expectedDiscussions[0].id))
             .andExpect(jsonPath("$[0].name").value(expectedDiscussions[0].name))
