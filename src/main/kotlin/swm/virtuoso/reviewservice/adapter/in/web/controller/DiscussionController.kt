@@ -3,7 +3,6 @@ package swm.virtuoso.reviewservice.adapter.`in`.web.controller
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -48,7 +47,7 @@ class DiscussionController(
     fun postDiscussion(
         @Valid @RequestBody
         request: PostDiscussionRequest
-    ): Discussion {
+    ): Long {
         val repository = giteaUseCase.getRepositories(request.repoId)
 
         val discussion = Discussion.fromPostRequest(request)
@@ -57,7 +56,7 @@ class DiscussionController(
             repoName = repository.lowerName
         )
 
-        return discussionUseCase.createDiscussion(discussion, request.codes)
+        return discussionUseCase.createDiscussion(discussion, request.codes).id!!
     }
 
     @GetMapping("/{repoId}/count")
@@ -101,20 +100,19 @@ class DiscussionController(
     fun postComment(
         @Valid @RequestBody
         request: PostCommentRequest
-    ): DiscussionComment {
+    ): Long {
         return discussionCommentUseCase.createComment(
             DiscussionComment.fromPostRequest(request)
-        )
+        ).id!!
     }
 
     @PutMapping("")
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     fun modifyDiscussion(
         @Valid @RequestBody
         request: ModifyDiscussionRequest
-    ): ResponseEntity<Void> {
+    ) {
         discussionUseCase.modifyDiscussion(request)
         // 프론트에서 modify를 호출한 뒤 완료되면 페이지를 리로드 하면서 각 페이지를 가져오는 방식으로 해야 할듯
-        return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 }

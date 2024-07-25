@@ -1,5 +1,6 @@
 package swm.virtuoso.reviewservice.application.service
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
@@ -18,6 +19,8 @@ class DiscussionService(
     private val discussionCodePort: DiscussionCodePort
 ) : DiscussionUseCase {
 
+    private val logger = LoggerFactory.getLogger(DiscussionService::class.java)
+
     @Transactional
     override fun createDiscussion(
         discussion: Discussion,
@@ -25,7 +28,9 @@ class DiscussionService(
     ): Discussion {
         val newDiscussion = discussionPort.saveDiscussion(discussion = discussion)
         discussionCodePort.saveDiscussionCodes(codes, newDiscussion.id!!)
-        discussionUserPort.saveDiscussionUser(newDiscussion.posterId, newDiscussion.id)
+        logger.info("Saved discussion with ID: {}", newDiscussion.id)
+        val newDiscussionUser = discussionUserPort.saveDiscussionUser(newDiscussion.posterId, newDiscussion.id)
+        logger.info("Saved discussionUser with ID: {}", newDiscussionUser.id)
         return newDiscussion
     }
 
