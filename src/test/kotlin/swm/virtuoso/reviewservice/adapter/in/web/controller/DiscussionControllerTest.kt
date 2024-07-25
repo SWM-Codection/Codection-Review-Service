@@ -102,20 +102,14 @@ class DiscussionControllerTest {
         whenever(gitUseCase.getLastCommitHash(repository.ownerName!!, repository.lowerName)).thenReturn("commitHash1")
         whenever(discussionUseCase.createDiscussion(any(), any())).thenReturn(savedDiscussion)
 
-        val result = mockMvc.perform(
+        // When & Then
+        mockMvc.perform(
             post("/discussion")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
         )
-
-        // when
-        result.andExpect(status().isCreated)
-            .andExpect(jsonPath("$.id").value(savedDiscussion.id))
-            .andExpect(jsonPath("$.name").value(savedDiscussion.name))
-            .andExpect(jsonPath("$.content").value(savedDiscussion.content))
-            .andExpect(jsonPath("$.repoId").value(savedDiscussion.repoId))
-            .andExpect(jsonPath("$.posterId").value(savedDiscussion.posterId))
-            .andExpect(jsonPath("$.commitHash").value(savedDiscussion.commitHash))
+            .andExpect(status().isCreated)
+            .andExpect(jsonPath("$").value(savedDiscussion.id))
     }
 
     @Test
@@ -245,8 +239,6 @@ class DiscussionControllerTest {
                 .content(objectMapper.writeValueAsString(request))
         )
             .andExpect(status().isCreated)
-            .andExpect(jsonPath("$.id").value(savedComment.id))
-            .andExpect(jsonPath("$.discussionId").value(savedComment.discussionId))
-            .andExpect(jsonPath("$.content").value(savedComment.content))
+            .andExpect(jsonPath("$").value(savedComment.id))
     }
 }

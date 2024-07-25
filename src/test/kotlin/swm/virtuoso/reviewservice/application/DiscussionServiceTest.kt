@@ -14,6 +14,7 @@ import org.mockito.kotlin.verify
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
+import swm.virtuoso.reviewservice.application.port.out.GiteaPort
 import swm.virtuoso.reviewservice.application.service.DiscussionService
 import swm.virtuoso.reviewservice.domian.Discussion
 import swm.virtuoso.reviewservice.domian.DiscussionCode
@@ -31,6 +32,9 @@ class DiscussionServiceTest {
 
     @Mock
     private lateinit var discussionCodePort: DiscussionCodePort
+
+    @Mock
+    private lateinit var giteaPort: GiteaPort
 
     @InjectMocks
     private lateinit var discussionService: DiscussionService

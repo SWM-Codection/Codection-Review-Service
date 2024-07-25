@@ -1,5 +1,7 @@
 package swm.virtuoso.reviewservice.application.service
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.RepositoryEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.UserEntity
@@ -11,6 +13,9 @@ import swm.virtuoso.reviewservice.domian.DiscussionAvailability
 class GiteaService(
     private val giteaPort: GiteaPort
 ) : GiteaUseCase {
+
+    val logger: Logger = LoggerFactory.getLogger(GiteaService::class.java)
+
     override fun getUserById(userId: Long): UserEntity {
         return giteaPort.findUserById(userId)
     }
@@ -24,6 +29,7 @@ class GiteaService(
     }
 
     override fun setDiscussionAvailable(discussionAvailability: DiscussionAvailability) {
-        giteaPort.saveDiscussionAvailable(discussionAvailability)
+        val newAvailability = giteaPort.switchDiscussionAvailable(discussionAvailability)
+        logger.info("Set discussion available with ID: {}", discussionAvailability.id)
     }
 }
