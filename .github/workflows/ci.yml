@@ -24,6 +24,4 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-
-      - name: setup codection-compose
-        uses: SWM-Codection/Codection-Compose/.github/workflows/ci.yml@main
+      - uses: SWM-Codection/Codection-Compose/.github/workflows/ci.yml@main
