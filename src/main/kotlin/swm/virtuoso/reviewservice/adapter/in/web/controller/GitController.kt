@@ -54,6 +54,30 @@ class GitController(
         return pathTrie.toTree(repoName, "")
     }
 
+    @GetMapping("/{username}/{reponame}/discussions/list")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "List Git files by list", description = "리포지토리의 파일 목록 리스트 형태로 반환")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "파일 목록 반환 성공",
+                content = [Content(schema = Schema(implementation = List::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "깃 저장소에 파일이 하나도 존재하지 않음"
+            )
+        ]
+    )
+    fun listGitFiles2(
+        @PathVariable("username") userName: String,
+        @PathVariable("reponame") repoName: String
+    ): List<String> {
+        return gitUseCase.listFiles(userName, repoName).takeIf { it.isNotEmpty() }
+            ?: throw NoSuchElementException("지정 된 깃 저장소에 파일이 존재하지 않습니다.")
+    }
+
     @GetMapping("/{username}/{reponame}/discussions/contents")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get file content", description = "파일 내용 반환")
