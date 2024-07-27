@@ -27,4 +27,8 @@ jobs:
       - name: setup compose
         uses: SWM-Codection/Codection-Compose@main
 
+      - name: test echo
+        run: |
+          echo "Am i working?"
+          
       
