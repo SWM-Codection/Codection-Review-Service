@@ -10,6 +10,7 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.repository.UserReposit
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionAvailableRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
 import swm.virtuoso.reviewservice.application.port.out.GiteaPort
+import swm.virtuoso.reviewservice.domian.DiscussionAvailability
 
 @Repository
 class GiteaPersistenceAdapter(
@@ -33,21 +34,18 @@ class GiteaPersistenceAdapter(
             ?: throw NoSuchElementException("레포지토리 정보를 찾을 수 없습니다.")
     }
 
-    override fun saveDiscussionAvailable(repoId: Long, enable: Boolean) {
+    override fun switchDiscussionAvailable(discussionAvailability: DiscussionAvailability) {
+        discussionAvailability.id = discussionAvailableRepository.findByRepoId(discussionAvailability.repoId)?.id
         discussionAvailableRepository.save(
-            DiscussionAvailableEntity(
-                id = null,
-                repoId = repoId,
-                isDiscussionEnabled = enable
-            )
+            DiscussionAvailableEntity.fromDiscussionAvailability(discussionAvailability)
         )
     }
 
     override fun findRepositoryByDiscussionId(discussionId: Long): RepositoryEntity {
         val repoId = discussionRepository.findByIdOrNull(discussionId)?.repoId
-            ?: throw IllegalArgumentException("Discussion이 존재하지 않습니다. $discussionId")
+            ?: throw NoSuchElementException("Discussion이 존재하지 않습니다. $discussionId")
 
         return repositoryRepository.findByIdOrNull(repoId)
-            ?: throw IllegalArgumentException("Repository가 존재하지 않습니다.: $repoId")
+            ?: throw NoSuchElementException("Repository가 존재하지 않습니다.: $repoId")
     }
 }

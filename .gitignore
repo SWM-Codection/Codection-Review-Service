@@ -95,4 +95,7 @@ $RECYCLE.BIN/
 
 .idea/
 build/
+.gradle/
 
+!application.yml
+!application-test.yml
