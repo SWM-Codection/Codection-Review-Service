@@ -30,7 +30,7 @@ jobs:
       - name: test echo
         run: |
           echo "Am i working?"
-          
+
   test:
     runs-on: ubuntu-latest
 
@@ -66,6 +66,11 @@ jobs:
         env:
           PGPASSWORD: postgres
 
+      # gradlew 권한 설정
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        shell: bash
+
       # Gradle을 사용하여 빌드 및 테스트 실행
       - name: Build and test
         run: ./gradlew clean build
@@ -78,5 +83,4 @@ jobs:
           GIT_BASEURL: /Users/testUser/Gitea/testDir
 
     needs: build
-          
-      
+
