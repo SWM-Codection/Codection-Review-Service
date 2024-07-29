@@ -99,4 +99,8 @@ build/
 
 !application.yml
 !application-test.yml
+
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
 !ci.yml
