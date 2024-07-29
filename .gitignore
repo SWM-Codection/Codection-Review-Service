@@ -99,3 +99,4 @@ build/
 
 !application.yml
 !application-test.yml
+!ci.yml
