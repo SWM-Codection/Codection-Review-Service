@@ -58,14 +58,6 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
-      # PostgreSQL 데이터베이스 설정
-      - name: Set up PostgreSQL database
-        run: |
-          sudo apt-get install postgresql-client
-          psql -h localhost -U postgres -c "CREATE DATABASE test_db;"
-        env:
-          PGPASSWORD: postgres
-
       # gradlew 권한 설정
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -75,7 +67,7 @@ jobs:
       - name: Build and test
         run: ./gradlew clean build
         env:
-          CODECTION_DATABASE_URL: jdbc:postgresql://localhost:5432/test_db
+          CODECTION_DATABASE_URL: jdbc:postgresql://localhost:5432/postgres
           CODECTION_DATABASE_USERNAME: postgres
           CODECTION_DATABASE_PASSWORD: postgres
           REVIEW_SERVICE_PORT: 8080
