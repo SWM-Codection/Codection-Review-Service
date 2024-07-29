@@ -27,9 +27,14 @@ jobs:
       - name: setup compose
         uses: SWM-Codection/Codection-Compose@main
 
+      - name: port open check
+        run: | 
+          sudo apt install net-tools
+          netstat -antp
+
       # 유레카 연결 테스트
       - name: eureka curl test
-        run: curl --fail http://localhost:8761/eureka/
+        run: curl http://localhost:8761/eureka
 
       # 데이터베이스 연결 테스트
       - name: db ping test
@@ -51,5 +56,5 @@ jobs:
           CODECTION_DATABASE_USERNAME: postgres
           CODECTION_DATABASE_PASSWORD: postgres
           REVIEW_SERVICE_PORT: 8080
-          EUREKA_SERVER_URL: http://localhost:8761/eureka/
+          EUREKA_SERVER_URL: http://localhost:8761/eureka
           GIT_BASEURL: /Users/testUser/Gitea/testDir
