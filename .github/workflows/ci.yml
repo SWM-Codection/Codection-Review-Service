@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: curl Eureka test
-        run: curl -v http://localhost:8761/eureka
+        run: sleep 5 && curl -v http://localhost:8761/eureka
 
       # gradlew 권한 설정
       - name: Grant execute permission for gradlew
