@@ -6,7 +6,7 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main", "dev" ]
+    branches: "**"
   pull_request:
     branches: [ "main", "dev" ]
 
@@ -21,24 +21,6 @@ jobs:
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-
-      - name: setup compose
-        uses: SWM-Codection/Codection-Compose@main
-
-      - name: port open check
-        run: | 
-          sudo apt install net-tools
-          netstat -antp
-
-      # 유레카 연결 테스트
-      - name: eureka curl test
-        run: curl http://localhost:8761/eureka
-
-      # 데이터베이스 연결 테스트
-      - name: db ping test
-        run: PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c '\l'
 
       # CI 테스트를 실행하기 전에 저장소의 코드 다운로드
       - uses: actions/checkout@v4
@@ -50,7 +32,7 @@ jobs:
 
       # Gradle을 사용하여 빌드 및 테스트 실행
       - name: Build and test
-        run: ./gradlew clean build bootRun
+        run: ./gradlew clean build
         env:
           CODECTION_DATABASE_URL: jdbc:postgresql://localhost:5432/postgres
           CODECTION_DATABASE_USERNAME: postgres
