@@ -21,12 +21,11 @@ jobs:
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      # CI 테스트를 실행하기 전에 저장소의 코드 다운로드
+      - uses: actions/checkout@v4
 
       - name: setup compose
         uses: SWM-Codection/Codection-Compose@main
-
-      # CI 테스트를 실행하기 전에 저장소의 코드 다운로드
-      - uses: actions/checkout@v4
 
       # gradlew 권한 설정
       - name: Grant execute permission for gradlew
