@@ -28,9 +28,6 @@ jobs:
       # CI 테스트를 실행하기 전에 저장소의 코드 다운로드
       - uses: actions/checkout@v4
 
-      - name: curl Eureka test
-        run: sleep 5 && curl -v http://localhost:8761/eureka
-
       # gradlew 권한 설정
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
