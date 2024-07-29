@@ -27,6 +27,14 @@ jobs:
       - name: setup compose
         uses: SWM-Codection/Codection-Compose@main
 
+      # 유레카 연결 테스트
+      - name: eureka curl test
+        run: curl --fail http://localhost:8761/eureka/
+
+      # 데이터베이스 연결 테스트
+      - name: db ping test
+        run: PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c '\l'
+
       # CI 테스트를 실행하기 전에 저장소의 코드 다운로드
       - uses: actions/checkout@v4
 
