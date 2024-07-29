@@ -61,7 +61,7 @@ jobs:
 
       # Gradle을 사용하여 빌드 및 테스트 실행
       - name: Build and test
-        run: ./gradlew clean build
+        run: ./gradlew clean bootJar
         env:
           CODECTION_DATABASE_URL: jdbc:postgresql://localhost:5432/postgres
           CODECTION_DATABASE_USERNAME: postgres
