@@ -27,32 +27,8 @@ jobs:
       - name: setup compose
         uses: SWM-Codection/Codection-Compose@main
 
-  test:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-    steps:
       # CI 테스트를 실행하기 전에 저장소의 코드 다운로드
       - uses: actions/checkout@v4
-
-      # JDK 17 설치
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'corretto'
 
       # gradlew 권한 설정
       - name: Grant execute permission for gradlew
@@ -69,6 +45,4 @@ jobs:
           REVIEW_SERVICE_PORT: 8080
           EUREKA_SERVER_URL: http://localhost:8761/eureka/
           GIT_BASEURL: /Users/testUser/Gitea/testDir
-
-    needs: build
 
