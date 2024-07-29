@@ -6,7 +6,7 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: "feature/**"
+    branches: [ "main", "dev" ]
   pull_request:
     branches: [ "main", "dev" ]
 
@@ -15,21 +15,41 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
 
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
       # CI 테스트를 실행하기 전에 저장소의 코드 다운로드
       - uses: actions/checkout@v4
 
+      # JDK 17 설치
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'corretto'
+
+      # PostgreSQL 데이터베이스 설정
+      - name: Set up PostgreSQL database
+        run: |
+          sudo apt-get install postgresql-client
+          psql -h localhost -U postgres -c "CREATE DATABASE test_db;"
+        env:
+          PGPASSWORD: postgres
 
       # gradlew 권한 설정
       - name: Grant execute permission for gradlew
@@ -40,9 +60,11 @@ jobs:
       - name: Build and test
         run: ./gradlew clean build
         env:
-          CODECTION_DATABASE_URL: jdbc:postgresql://localhost:5432/postgres
+          CODECTION_DATABASE_URL: jdbc:postgresql://localhost:5432/test_db
           CODECTION_DATABASE_USERNAME: postgres
           CODECTION_DATABASE_PASSWORD: postgres
           REVIEW_SERVICE_PORT: 8080
-          EUREKA_SERVER_URL: http://localhost:8761/eureka
+          EUREKA_SERVER_URL: http://localhost:8761/eureka/
           GIT_BASEURL: /Users/testUser/Gitea/testDir
+
+    needs: build
