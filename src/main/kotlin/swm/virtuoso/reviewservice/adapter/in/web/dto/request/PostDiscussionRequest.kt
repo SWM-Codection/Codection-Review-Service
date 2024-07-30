@@ -15,6 +15,9 @@ data class PostDiscussionRequest(
 
     val content: String,
 
+    @field:NotNull(message = "Branch Name cannot be null")
+    val branchName: String,
+
     @field:NotEmpty(message = "Discussion files cannot be empty")
     val codes: List<DiscussionCode>
 )

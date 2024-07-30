@@ -22,8 +22,8 @@ class GitService(
 ) : GitUseCase {
 
     // TODO 개인 레포는 Owner/레포이름에 저장되고 조직 레포는 조직 밑에 저장되는 현재는 개인 레포에 대해서만 경로가 설정됨 수정 해야 함
-    private fun getAbsoluteGitDirPath(userName: String, repoName: String): String {
-        return "$baseUrl/$userName/$repoName.git"
+    private fun getAbsoluteGitDirPath(ownerName: String, repoName: String): String {
+        return "$baseUrl/$ownerName/$repoName.git"
     }
 
     private fun checkValidGitRepository(gitDir: File) {
@@ -35,15 +35,15 @@ class GitService(
     }
 
     @Throws(IOException::class)
-    override fun listFiles(userName: String, repoName: String): List<String> {
-        val gitDir = File(getAbsoluteGitDirPath(userName, repoName))
+    override fun listFiles(ownerName: String, repoName: String, branchName: String): List<String> {
+        val gitDir = File(getAbsoluteGitDirPath(ownerName, repoName))
         checkValidGitRepository(gitDir)
 
         val fileList = mutableListOf<String>()
         FileRepositoryBuilder().setGitDir(gitDir).build().use { repository ->
-            Git(repository).use { git ->
+            Git(repository).use {
                 val treeWalk = TreeWalk(repository)
-                treeWalk.addTree(repository.resolve("HEAD^{tree}"))
+                treeWalk.addTree(repository.resolve("$branchName^{tree}"))
                 treeWalk.isRecursive = true
                 while (treeWalk.next()) {
                     fileList.add(treeWalk.pathString)
@@ -57,7 +57,7 @@ class GitService(
     private fun getFileContentByCommitRef(gitDir: File, commitRef: String, filePath: String): String {
         FileRepositoryBuilder().setGitDir(gitDir).build().use { repository ->
             val commitId = repository.resolve(commitRef)
-            repository.newObjectReader().use { objectReader ->
+            repository.newObjectReader().use {
                 val revWalk = RevWalk(repository)
                 val commit = revWalk.parseCommit(commitId)
                 val tree = commit.tree
@@ -83,11 +83,11 @@ class GitService(
     }
 
     @Throws(IOException::class)
-    override fun getFileContent(ownerName: String, repoName: String, filePath: String): String {
+    override fun getFileContent(ownerName: String, repoName: String, branchName: String, filePath: String): String {
         val gitDir = File(getAbsoluteGitDirPath(ownerName, repoName))
         checkValidGitRepository(gitDir)
 
-        return getFileContentByCommitRef(gitDir, "HEAD", filePath)
+        return getFileContentByCommitRef(gitDir, getLastCommitHash(ownerName, repoName, branchName), filePath)
     }
 
     @Throws(IOException::class)
@@ -98,16 +98,18 @@ class GitService(
         return getFileContentByCommitRef(gitDir, hashCode, filePath)
     }
 
-    override fun getLastCommitHash(userName: String, repoName: String): String {
-        val gitDir = File(getAbsoluteGitDirPath(userName, repoName))
+    override fun getLastCommitHash(ownerName: String, repoName: String, branchName: String): String {
+        val gitDir = File(getAbsoluteGitDirPath(ownerName, repoName))
         checkValidGitRepository(gitDir)
         return FileRepositoryBuilder()
             .setGitDir(gitDir)
             .readEnvironment()
             .findGitDir()
             .build().use { repository ->
-                Git(repository).use { git ->
-                    val head = repository.resolve("HEAD")
+                Git(repository).use {
+                    val ref = repository.findRef(branchName)
+                        ?: throw IllegalArgumentException("브랜치 정보가 존재하지 않습니다.")
+                    val head = ref.objectId
                     head?.name ?: throw CommitNotExistException()
                 }
             }

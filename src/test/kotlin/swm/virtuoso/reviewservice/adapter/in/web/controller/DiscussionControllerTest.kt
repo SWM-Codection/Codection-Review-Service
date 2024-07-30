@@ -6,12 +6,10 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -34,10 +32,8 @@ import swm.virtuoso.reviewservice.domian.Discussion
 import swm.virtuoso.reviewservice.domian.DiscussionCode
 import swm.virtuoso.reviewservice.domian.DiscussionComment
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(DiscussionController::class)
 @ActiveProfiles("test")
-@TestPropertySource(locations = ["classpath:application-test.yml"])
 class DiscussionControllerTest {
 
     @Autowired
@@ -70,6 +66,7 @@ class DiscussionControllerTest {
             posterId = 1L,
             name = "test discussion",
             content = "test content",
+            branchName = "test branch",
             codes = listOf(
                 DiscussionCode(
                     id = null,
@@ -99,7 +96,7 @@ class DiscussionControllerTest {
         )
 
         whenever(giteaUseCase.getRepositories(request.repoId)).thenReturn(repository)
-        whenever(gitUseCase.getLastCommitHash(repository.ownerName!!, repository.lowerName)).thenReturn("commitHash1")
+        whenever(gitUseCase.getLastCommitHash(repository.ownerName!!, repository.lowerName, request.branchName)).thenReturn("commitHash1")
         whenever(discussionUseCase.createDiscussion(any(), any())).thenReturn(savedDiscussion)
 
         // When & Then
