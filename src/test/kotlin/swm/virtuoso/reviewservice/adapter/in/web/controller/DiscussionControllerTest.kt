@@ -70,6 +70,7 @@ class DiscussionControllerTest {
             posterId = 1L,
             name = "test discussion",
             content = "test content",
+            branchName = "test branch",
             codes = listOf(
                 DiscussionCode(
                     id = null,
@@ -99,7 +100,7 @@ class DiscussionControllerTest {
         )
 
         whenever(giteaUseCase.getRepositories(request.repoId)).thenReturn(repository)
-        whenever(gitUseCase.getLastCommitHash(repository.ownerName!!, repository.lowerName)).thenReturn("commitHash1")
+        whenever(gitUseCase.getLastCommitHash(repository.ownerName!!, repository.lowerName, request.branchName)).thenReturn("commitHash1")
         whenever(discussionUseCase.createDiscussion(any(), any())).thenReturn(savedDiscussion)
 
         // When & Then
