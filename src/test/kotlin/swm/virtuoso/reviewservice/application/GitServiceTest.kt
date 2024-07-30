@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
 class GitServiceTest {
     private lateinit var gitService: GitService
     private var baseUrl = System.getenv("HOME")
-    private val ownerName = "codection"
+    private val ownerName = ".codection"
     private val repoName = "test/"
     private val branchName = "main"
     private val filePath = "splug_assignment.cpp"

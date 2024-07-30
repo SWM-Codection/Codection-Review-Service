@@ -35,7 +35,7 @@ class GitControllerTest {
     @DisplayName("파일 목록을 리스트 형태로 반환")
     fun `should list Git files as list`() {
         // Given
-        val ownerName = "codection"
+        val ownerName = ".codection"
         val repoName = "test"
         val branchName = "main"
         val expectedFiles = listOf("README.md", "splug_assignment.cpp")
@@ -54,7 +54,7 @@ class GitControllerTest {
     @DisplayName("파일 내용 반환")
     fun `should get file content`() {
         // Given
-        val ownerName = "codection"
+        val ownerName = ".codection"
         val repoName = "test"
         val branchName = "main"
         val filePath = "path/file.txt"
