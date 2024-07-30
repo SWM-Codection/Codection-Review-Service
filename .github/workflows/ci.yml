@@ -22,7 +22,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Clone repository for test
-        run: ./clone_repo.sh
+        run: ./script/clone_repo.sh
 
       # CI 테스트를 실행하기 전에 저장소의 코드 다운로드
       - uses: actions/checkout@v4
