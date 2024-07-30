@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Clone repository for test
-        run: ./scripts/clone_repo.sh
+        run: ./scripts/clone_test_repo.sh
 
       - name: setup compose
         uses: SWM-Codection/Codection-Compose@main
