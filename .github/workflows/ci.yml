@@ -24,9 +24,6 @@ jobs:
       # CI 테스트를 실행하기 전에 저장소의 코드 다운로드
       - uses: actions/checkout@v4
 
-      - name: Clone repository for test
-        run: ./scripts/clone_test_repo.sh
-
       - name: setup compose
         uses: SWM-Codection/Codection-Compose@main
 

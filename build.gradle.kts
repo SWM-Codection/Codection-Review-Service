@@ -64,3 +64,11 @@ kotlin {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+tasks.register("cloneTestRepo", Exec::class) {
+    commandLine("sh", "./scripts/clone_test_repo.sh")
+}
+
+tasks.named("test") {
+    dependsOn(tasks.named("cloneTestRepo"))
+}
