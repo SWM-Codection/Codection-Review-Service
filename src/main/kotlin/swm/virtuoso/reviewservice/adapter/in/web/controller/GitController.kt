@@ -25,7 +25,7 @@ class GitController(
     private val discussionCodeUseCase: DiscussionCodeUseCase
 ) {
 
-    @GetMapping("/{username}/{reponame}/discussions")
+    @GetMapping("/{ownername}/{reponame}/{branchName}/discussions")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "List Git files", description = "리포지토리의 파일 목록 반환")
     @ApiResponses(
@@ -42,10 +42,11 @@ class GitController(
         ]
     )
     fun listGitFiles(
-        @PathVariable("username") userName: String,
-        @PathVariable("reponame") repoName: String
+        @PathVariable("ownername") ownerName: String,
+        @PathVariable("reponame") repoName: String,
+        @PathVariable("branchName") branchName: String
     ): PartResponse {
-        val files: List<String> = gitUseCase.listFiles(userName, repoName).takeIf { it.isNotEmpty() }
+        val files: List<String> = gitUseCase.listFiles(ownerName, repoName, branchName).takeIf { it.isNotEmpty() }
             ?: throw NoSuchElementException("지정 된 깃 저장소에 파일이 존재하지 않습니다.")
 
         val pathTrie = PathTrie()
@@ -54,7 +55,7 @@ class GitController(
         return pathTrie.toTree(repoName, "")
     }
 
-    @GetMapping("/{username}/{reponame}/discussions/list")
+    @GetMapping("/{ownername}/{reponame}/{branchname}/discussions/list")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "List Git files by list", description = "리포지토리의 파일 목록 리스트 형태로 반환")
     @ApiResponses(
@@ -71,14 +72,15 @@ class GitController(
         ]
     )
     fun listGitFiles2(
-        @PathVariable("username") userName: String,
-        @PathVariable("reponame") repoName: String
+        @PathVariable("ownername") ownerName: String,
+        @PathVariable("reponame") repoName: String,
+        @PathVariable("branchname") branchName: String
     ): List<String> {
-        return gitUseCase.listFiles(userName, repoName).takeIf { it.isNotEmpty() }
+        return gitUseCase.listFiles(ownerName, repoName, branchName).takeIf { it.isNotEmpty() }
             ?: throw NoSuchElementException("지정 된 깃 저장소에 파일이 존재하지 않습니다.")
     }
 
-    @GetMapping("/{username}/{reponame}/discussions/contents")
+    @GetMapping("/{ownername}/{reponame}/{branchname}/discussions/contents")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get file content", description = "파일 내용 반환")
     @ApiResponses(
@@ -91,11 +93,12 @@ class GitController(
         ]
     )
     fun getFileContent(
-        @PathVariable("username") userName: String,
+        @PathVariable("ownername") ownerName: String,
         @PathVariable("reponame") repoName: String,
+        @PathVariable("branchname") branchName: String,
         @RequestParam("filepath") filePath: String
     ): List<ExtractedLine> {
-        val code = gitUseCase.getFileContent(userName, repoName, filePath)
+        val code = gitUseCase.getFileContent(ownerName, repoName, branchName, filePath)
         return discussionCodeUseCase.extractLinesWithNumbers(code, 1, code.lines().size)
     }
 }

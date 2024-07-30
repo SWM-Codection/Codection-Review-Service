@@ -81,8 +81,9 @@ class DiscussionController(
 
         val discussion = Discussion.fromPostRequest(request)
         discussion.commitHash = gitUseCase.getLastCommitHash(
-            userName = repository.ownerName!!,
-            repoName = repository.lowerName
+            ownerName = repository.ownerName!!,
+            repoName = repository.lowerName,
+            request.branchName
         )
 
         return discussionUseCase.createDiscussion(discussion, request.codes).id!!
