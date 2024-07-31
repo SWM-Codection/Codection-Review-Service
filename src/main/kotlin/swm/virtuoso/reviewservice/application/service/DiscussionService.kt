@@ -1,6 +1,8 @@
 package swm.virtuoso.reviewservice.application.service
 
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
@@ -42,9 +44,9 @@ class DiscussionService(
         return discussionPort.countDiscussion(repoId, isClosed)
     }
 
-    override fun getDiscussionList(repoId: Long, isClosed: Boolean): List<Discussion> {
+    override fun getDiscussionList(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion> {
         giteaPort.findRepositoryById(repoId)
-        return discussionPort.findDiscussionList(repoId, isClosed)
+        return discussionPort.findDiscussionList(repoId, isClosed, pageable)
     }
 
     // TODO modify 하는 유저와 discussion 작성 유저가 동일인인지 체크

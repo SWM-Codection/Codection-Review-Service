@@ -1,5 +1,7 @@
 package swm.virtuoso.reviewservice.adapter.out.persistence
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCodeEntity
@@ -54,8 +56,8 @@ class DiscussionPersistenceAdapter(
         return discussionRepository.countByRepoIdAndIsClosed(repoId, isClosed)
     }
 
-    override fun findDiscussionList(repoId: Long, isClosed: Boolean): List<Discussion> {
-        return discussionRepository.findAllByRepoIdAndIsClosed(repoId, isClosed)
+    override fun findDiscussionList(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion> {
+        return discussionRepository.findAllByRepoIdAndIsClosed(repoId, isClosed, pageable)
             .map { Discussion.fromEntity(it) }
     }
 
