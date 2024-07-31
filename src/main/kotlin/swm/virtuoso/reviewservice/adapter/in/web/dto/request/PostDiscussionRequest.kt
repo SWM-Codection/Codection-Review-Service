@@ -11,13 +11,17 @@ data class PostDiscussionRequest(
     @field:NotNull(message = "Poster ID cannot be null")
     val posterId: Long,
 
-    val name: String,
+    val name: String? = null,
 
-    val content: String,
+    val content: String? = null,
 
     @field:NotNull(message = "Branch Name cannot be null")
     val branchName: String,
 
     @field:NotEmpty(message = "Discussion files cannot be empty")
-    val codes: List<DiscussionCode>
+    val codes: List<DiscussionCode>,
+
+    val assignees: List<Long>? = null,
+
+    val deadline: String? = null
 )

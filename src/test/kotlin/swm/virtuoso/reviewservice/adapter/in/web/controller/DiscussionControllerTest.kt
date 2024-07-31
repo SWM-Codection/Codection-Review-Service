@@ -77,7 +77,9 @@ class DiscussionControllerTest {
                     startLine = 1,
                     endLine = 10
                 )
-            )
+            ),
+            assignees = emptyList(),
+            deadline = null
         )
 
         val repository = RepositoryEntity(
@@ -99,7 +101,7 @@ class DiscussionControllerTest {
 
         whenever(giteaUseCase.getRepositories(request.repoId)).thenReturn(repository)
         whenever(gitUseCase.getLastCommitHash(repository.ownerName!!, repository.lowerName, request.branchName)).thenReturn("commitHash1")
-        whenever(discussionUseCase.createDiscussion(any(), any())).thenReturn(savedDiscussion)
+        whenever(discussionUseCase.createDiscussion(any(), any(), any())).thenReturn(savedDiscussion)
 
         // When & Then
         mockMvc.perform(

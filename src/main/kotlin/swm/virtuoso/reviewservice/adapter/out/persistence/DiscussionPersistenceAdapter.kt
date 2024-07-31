@@ -4,22 +4,26 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionAssigneesEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCodeEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionUserEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.IssueIndexEntity
+import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionAssigneesRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCodeRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCommentRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionIndexRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionUserRepository
+import swm.virtuoso.reviewservice.application.port.out.DiscussionAssigneesPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
 import swm.virtuoso.reviewservice.domain.Discussion
 import swm.virtuoso.reviewservice.domain.DiscussionAllContent
+import swm.virtuoso.reviewservice.domain.DiscussionAssignee
 import swm.virtuoso.reviewservice.domain.DiscussionCode
 import swm.virtuoso.reviewservice.domain.DiscussionComment
 import swm.virtuoso.reviewservice.domain.DiscussionUser
@@ -30,8 +34,9 @@ class DiscussionPersistenceAdapter(
     private val discussionCodeRepository: DiscussionCodeRepository,
     private val discussionIndexRepository: DiscussionIndexRepository,
     private val discussionUserRepository: DiscussionUserRepository,
-    private val discussionCommentRepository: DiscussionCommentRepository
-) : DiscussionPort, DiscussionCodePort, DiscussionUserPort, DiscussionCommentPort {
+    private val discussionCommentRepository: DiscussionCommentRepository,
+    private val discussionAssigneesRepository: DiscussionAssigneesRepository
+) : DiscussionPort, DiscussionCodePort, DiscussionUserPort, DiscussionCommentPort, DiscussionAssigneesPort {
 
     private fun getIndex(repoId: Long): Long {
         return discussionIndexRepository.findById(repoId)
@@ -191,5 +196,12 @@ class DiscussionPersistenceAdapter(
     override fun findCommentsByDiscussionId(discussionId: Long): List<DiscussionComment> {
         return discussionCommentRepository.findAllByDiscussionId(discussionId)
             .map { DiscussionComment.fromEntity(it) }
+    }
+
+    override fun insertDiscussionAssignees(discussionAssignees: List<DiscussionAssignee>) {
+        val entities = discussionAssignees.map { assignee ->
+            DiscussionAssigneesEntity.fromDiscussionAssignee(assignee)
+        }
+        discussionAssigneesRepository.saveAll(entities)
     }
 }

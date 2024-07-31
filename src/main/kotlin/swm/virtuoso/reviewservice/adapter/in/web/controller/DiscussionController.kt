@@ -88,7 +88,11 @@ class DiscussionController(
             request.branchName
         )
 
-        return discussionUseCase.createDiscussion(discussion, request.codes).id!!
+        return discussionUseCase.createDiscussion(
+            discussion = discussion,
+            codes = request.codes,
+            assignees = request.assignees
+        ).id!!
     }
 
     @GetMapping("/{repoId}/count")

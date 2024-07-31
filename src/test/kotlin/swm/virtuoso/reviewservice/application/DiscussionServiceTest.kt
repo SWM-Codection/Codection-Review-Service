@@ -13,6 +13,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import swm.virtuoso.reviewservice.application.port.out.DiscussionAssigneesPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
@@ -34,6 +35,9 @@ class DiscussionServiceTest {
 
     @Mock
     private lateinit var discussionCodePort: DiscussionCodePort
+
+    @Mock
+    private lateinit var discussionAssigneePort: DiscussionAssigneesPort
 
     @Mock
     private lateinit var giteaPort: GiteaPort
@@ -82,12 +86,14 @@ class DiscussionServiceTest {
             isMentioned = false
         )
 
+        val savedAssigneeUser = listOf(2L)
+
         doReturn(savedDiscussion).`when`(discussionPort).insertDiscussion(discussion)
         doNothing().`when`(discussionCodePort).insertDiscussionCodes(codes, savedDiscussion.id!!)
         doReturn(savedDiscussionUser).`when`(discussionUserPort).insertDiscussionUser(savedDiscussion.posterId, savedDiscussion.id!!)
 
         // when
-        val result = discussionService.createDiscussion(discussion, codes)
+        val result = discussionService.createDiscussion(discussion, codes, savedAssigneeUser)
 
         // then
         assertNotNull(result.id)

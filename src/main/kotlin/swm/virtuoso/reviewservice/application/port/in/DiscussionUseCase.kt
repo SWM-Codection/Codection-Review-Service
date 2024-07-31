@@ -8,7 +8,7 @@ import swm.virtuoso.reviewservice.domain.Discussion
 import swm.virtuoso.reviewservice.domain.DiscussionCode
 
 public interface DiscussionUseCase {
-    fun createDiscussion(discussion: Discussion, codes: List<DiscussionCode>): Discussion
+    fun createDiscussion(discussion: Discussion, codes: List<DiscussionCode>, assignees: List<Long>?): Discussion
     fun countDiscussion(repoId: Long, isClosed: Boolean): Int
     fun getDiscussionList(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion>
     fun modifyDiscussion(modifyDiscussionRequest: ModifyDiscussionRequest): DiscussionEntity
