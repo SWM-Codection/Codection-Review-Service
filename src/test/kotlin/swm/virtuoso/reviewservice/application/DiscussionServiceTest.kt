@@ -11,6 +11,8 @@ import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
@@ -123,7 +125,8 @@ class DiscussionServiceTest {
         // given
         val repoId = 1L
         val isClosed = false
-        val expectedDiscussions = listOf(
+        val pageable = PageRequest.of(0, 20)
+        val discussions = listOf(
             Discussion(
                 id = 1L,
                 name = "discussion 1",
@@ -142,13 +145,14 @@ class DiscussionServiceTest {
             )
         )
 
-        doReturn(expectedDiscussions).`when`(discussionPort).findDiscussionList(repoId, isClosed)
+        val expectedDiscussions = PageImpl(discussions, pageable, discussions.size.toLong())
+        doReturn(expectedDiscussions).`when`(discussionPort).findDiscussionList(repoId, isClosed, pageable)
 
         // when
-        val result = discussionService.getDiscussionList(repoId, isClosed)
+        val result = discussionService.getDiscussionList(repoId, isClosed, pageable)
 
         // then
-        assertEquals(expectedDiscussions.size, result.size)
-        assertEquals(expectedDiscussions, result)
+        assertEquals(expectedDiscussions.totalElements, result.totalElements)
+        assertEquals(discussions, result.content)
     }
 }

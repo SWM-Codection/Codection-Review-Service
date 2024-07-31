@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
@@ -237,12 +238,15 @@ class DiscussionPersistenceAdapterTest {
 
         val repoId = 1L
         val isClosed = false
+        val pageable = PageRequest.of(0, 20)
 
         // when
-        val discussions = discussionPersistenceAdapter.findDiscussionList(repoId, isClosed)
+        val discussions = discussionPersistenceAdapter.findDiscussionList(repoId, isClosed, pageable)
 
         // then
-        assertEquals(2, discussions.size)
+        assertEquals(2, discussions.totalElements)
+        assertEquals(discussion1.name, discussions.content[0].name)
+        assertEquals(discussion2.name, discussions.content[1].name)
     }
 
     @Test

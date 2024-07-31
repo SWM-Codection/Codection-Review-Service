@@ -8,6 +8,8 @@ import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
@@ -134,7 +136,9 @@ class DiscussionControllerTest {
         // Given
         val repoId = 1L
         val isClosed = true
-        val expectedDiscussions: List<Discussion> = listOf(
+        val page = 0
+        val pageable = PageRequest.of(page, 20)
+        val discussions = listOf(
             Discussion(
                 id = 1L,
                 name = "discussion 1",
@@ -152,20 +156,22 @@ class DiscussionControllerTest {
                 commitHash = "commitHash2"
             )
         )
+        val expectedDiscussionList = PageImpl(discussions, pageable, discussions.size.toLong())
 
-        whenever(discussionUseCase.getDiscussionList(repoId, isClosed)).thenReturn(expectedDiscussions)
+        whenever(discussionUseCase.getDiscussionList(repoId, isClosed, pageable)).thenReturn(expectedDiscussionList)
 
         // When & Then
         mockMvc.perform(
             get("/discussion/$repoId/list")
                 .param("isClosed", isClosed.toString())
+                .param("page", page.toString())
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.length()").value(expectedDiscussions.size))
-            .andExpect(jsonPath("$[0].id").value(expectedDiscussions[0].id))
-            .andExpect(jsonPath("$[0].name").value(expectedDiscussions[0].name))
-            .andExpect(jsonPath("$[1].id").value(expectedDiscussions[1].id))
-            .andExpect(jsonPath("$[1].name").value(expectedDiscussions[1].name))
+            .andExpect(jsonPath("$.totalCount").value(expectedDiscussionList.totalElements))
+            .andExpect(jsonPath("$.discussions[0].id").value(discussions[0].id))
+            .andExpect(jsonPath("$.discussions[0].name").value(discussions[0].name))
+            .andExpect(jsonPath("$.discussions[1].id").value(discussions[1].id))
+            .andExpect(jsonPath("$.discussions[1].name").value(discussions[1].name))
     }
 
     @Test
