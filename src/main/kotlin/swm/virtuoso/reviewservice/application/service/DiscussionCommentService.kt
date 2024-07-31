@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCommentUseCase
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
-import swm.virtuoso.reviewservice.domian.DiscussionComment
+import swm.virtuoso.reviewservice.domain.DiscussionComment
 
 @Service
 class DiscussionCommentService(

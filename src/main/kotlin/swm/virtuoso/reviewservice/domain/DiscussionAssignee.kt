@@ -1,4 +1,4 @@
-package swm.virtuoso.reviewservice.domian
+package swm.virtuoso.reviewservice.domain
 
 data class DiscussionAssignee(
     val id: Long? = null,

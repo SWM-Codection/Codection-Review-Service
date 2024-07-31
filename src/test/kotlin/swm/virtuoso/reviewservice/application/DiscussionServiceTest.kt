@@ -18,9 +18,9 @@ import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
 import swm.virtuoso.reviewservice.application.port.out.GiteaPort
 import swm.virtuoso.reviewservice.application.service.DiscussionService
-import swm.virtuoso.reviewservice.domian.Discussion
-import swm.virtuoso.reviewservice.domian.DiscussionCode
-import swm.virtuoso.reviewservice.domian.DiscussionUser
+import swm.virtuoso.reviewservice.domain.Discussion
+import swm.virtuoso.reviewservice.domain.DiscussionCode
+import swm.virtuoso.reviewservice.domain.DiscussionUser
 import kotlin.test.Test
 
 @ExtendWith(MockitoExtension::class)

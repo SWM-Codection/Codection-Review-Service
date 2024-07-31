@@ -1,6 +1,6 @@
 package swm.virtuoso.reviewservice.application.port.out
 
-import swm.virtuoso.reviewservice.domian.DiscussionCode
+import swm.virtuoso.reviewservice.domain.DiscussionCode
 
 public interface DiscussionCodePort {
     fun findDiscussionCode(codeId: Long): DiscussionCode

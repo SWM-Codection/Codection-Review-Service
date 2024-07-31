@@ -18,11 +18,11 @@ import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
-import swm.virtuoso.reviewservice.domian.Discussion
-import swm.virtuoso.reviewservice.domian.DiscussionAllContent
-import swm.virtuoso.reviewservice.domian.DiscussionCode
-import swm.virtuoso.reviewservice.domian.DiscussionComment
-import swm.virtuoso.reviewservice.domian.DiscussionUser
+import swm.virtuoso.reviewservice.domain.Discussion
+import swm.virtuoso.reviewservice.domain.DiscussionAllContent
+import swm.virtuoso.reviewservice.domain.DiscussionCode
+import swm.virtuoso.reviewservice.domain.DiscussionComment
+import swm.virtuoso.reviewservice.domain.DiscussionUser
 
 @Repository
 class DiscussionPersistenceAdapter(

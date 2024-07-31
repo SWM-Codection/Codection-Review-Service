@@ -4,8 +4,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
-import swm.virtuoso.reviewservice.domian.Discussion
-import swm.virtuoso.reviewservice.domian.DiscussionCode
+import swm.virtuoso.reviewservice.domain.Discussion
+import swm.virtuoso.reviewservice.domain.DiscussionCode
 
 public interface DiscussionUseCase {
     fun createDiscussion(discussion: Discussion, codes: List<DiscussionCode>): Discussion

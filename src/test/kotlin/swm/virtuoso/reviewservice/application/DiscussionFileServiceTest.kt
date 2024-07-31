@@ -19,10 +19,10 @@ import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.GiteaPort
 import swm.virtuoso.reviewservice.application.service.DiscussionFileService
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
-import swm.virtuoso.reviewservice.domian.Discussion
-import swm.virtuoso.reviewservice.domian.DiscussionCode
-import swm.virtuoso.reviewservice.domian.DiscussionComment
-import swm.virtuoso.reviewservice.domian.ExtractedLine
+import swm.virtuoso.reviewservice.domain.Discussion
+import swm.virtuoso.reviewservice.domain.DiscussionCode
+import swm.virtuoso.reviewservice.domain.DiscussionComment
+import swm.virtuoso.reviewservice.domain.ExtractedLine
 import kotlin.test.Test
 
 @ExtendWith(MockitoExtension::class)

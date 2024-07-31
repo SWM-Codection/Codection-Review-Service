@@ -8,7 +8,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.annotations.ColumnDefault
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.BaseTimeEntity
-import swm.virtuoso.reviewservice.domian.Discussion
+import swm.virtuoso.reviewservice.domain.Discussion
 
 @Entity
 @Table(name = "discussion")

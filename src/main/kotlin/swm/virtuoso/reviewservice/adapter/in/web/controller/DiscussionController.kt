@@ -31,10 +31,10 @@ import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GiteaUseCase
 import swm.virtuoso.reviewservice.common.exception.ErrorResponse
-import swm.virtuoso.reviewservice.domian.Discussion
-import swm.virtuoso.reviewservice.domian.DiscussionAvailability
-import swm.virtuoso.reviewservice.domian.DiscussionComment
-import swm.virtuoso.reviewservice.domian.ExtractedLine
+import swm.virtuoso.reviewservice.domain.Discussion
+import swm.virtuoso.reviewservice.domain.DiscussionAvailability
+import swm.virtuoso.reviewservice.domain.DiscussionComment
+import swm.virtuoso.reviewservice.domain.ExtractedLine
 
 @RestController
 @RequestMapping("/discussion")

@@ -1,6 +1,5 @@
-package swm.virtuoso.reviewservice.domian
+package swm.virtuoso.reviewservice.domain
 
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionUserEntity
 
 data class DiscussionUser(

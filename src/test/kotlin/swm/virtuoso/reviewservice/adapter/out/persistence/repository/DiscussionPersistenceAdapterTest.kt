@@ -23,9 +23,9 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionUserRepository
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
-import swm.virtuoso.reviewservice.domian.Discussion
-import swm.virtuoso.reviewservice.domian.DiscussionCode
-import swm.virtuoso.reviewservice.domian.DiscussionComment
+import swm.virtuoso.reviewservice.domain.Discussion
+import swm.virtuoso.reviewservice.domain.DiscussionCode
+import swm.virtuoso.reviewservice.domain.DiscussionComment
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)

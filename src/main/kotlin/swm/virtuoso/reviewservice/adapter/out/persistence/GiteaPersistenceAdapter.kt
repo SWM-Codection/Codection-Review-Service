@@ -10,7 +10,7 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.repository.UserReposit
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionAvailableRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
 import swm.virtuoso.reviewservice.application.port.out.GiteaPort
-import swm.virtuoso.reviewservice.domian.DiscussionAvailability
+import swm.virtuoso.reviewservice.domain.DiscussionAvailability
 
 @Repository
 class GiteaPersistenceAdapter(

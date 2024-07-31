@@ -2,7 +2,7 @@ package swm.virtuoso.reviewservice.adapter.`in`.web.dto.response
 
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
-import swm.virtuoso.reviewservice.domian.DiscussionCode
+import swm.virtuoso.reviewservice.domain.DiscussionCode
 
 data class ModifyDiscussionRequest(
     @field:NotNull(message = "Repository ID cannot be null")

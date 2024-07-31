@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCodeUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
-import swm.virtuoso.reviewservice.domian.ExtractedLine
+import swm.virtuoso.reviewservice.domain.ExtractedLine
 import kotlin.test.Test
 
 @WebMvcTest(GitController::class)

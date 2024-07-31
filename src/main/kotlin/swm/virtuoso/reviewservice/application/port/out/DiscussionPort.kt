@@ -3,8 +3,8 @@ package swm.virtuoso.reviewservice.application.port.out
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
-import swm.virtuoso.reviewservice.domian.Discussion
-import swm.virtuoso.reviewservice.domian.DiscussionAllContent
+import swm.virtuoso.reviewservice.domain.Discussion
+import swm.virtuoso.reviewservice.domain.DiscussionAllContent
 
 public interface DiscussionPort {
     fun insertDiscussion(discussion: Discussion): Discussion
