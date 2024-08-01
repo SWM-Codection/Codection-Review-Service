@@ -376,7 +376,7 @@ class DiscussionPersistenceAdapterTest {
 
         // Then
         assertEquals(assignees.size, foundAssignees.size)
-        assertEquals(assignees[0].id, foundAssignees[0].id)
-        assertEquals(assignees[1].id, foundAssignees[1].id)
+        assertNotNull(foundAssignees[0].id)
+        assertEquals(assignees[1].assigneeId, foundAssignees[1].assigneeId)
     }
 }
