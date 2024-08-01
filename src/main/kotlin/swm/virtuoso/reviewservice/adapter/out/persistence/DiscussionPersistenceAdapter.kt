@@ -38,14 +38,14 @@ class DiscussionPersistenceAdapter(
     private val discussionAssigneesRepository: DiscussionAssigneesRepository
 ) : DiscussionPort, DiscussionCodePort, DiscussionUserPort, DiscussionCommentPort, DiscussionAssigneesPort {
 
-    private fun getIndex(repoId: Long): Long {
+    private fun getNextIndex(repoId: Long): Long {
         return discussionIndexRepository.findById(repoId)
             .map { it.maxIndex + 1 }
             .orElse(1)
     }
 
     override fun insertDiscussion(discussion: Discussion): Discussion {
-        discussion.index = getIndex(discussion.repoId)
+        discussion.index = getNextIndex(discussion.repoId)
         val newDiscussion = discussionRepository.save(DiscussionEntity.fromDiscussion(discussion))
 
         discussionIndexRepository.save(
@@ -76,7 +76,7 @@ class DiscussionPersistenceAdapter(
     override fun saveDiscussionAllContent(
         discussionAllContent: DiscussionAllContent
     ): DiscussionEntity {
-        discussionAllContent.index = getIndex(discussionAllContent.repoId)
+        discussionAllContent.index = getNextIndex(discussionAllContent.repoId)
         val discussionEntity = discussionRepository.save(
             DiscussionEntity.fromDiscussion(
                 discussion = Discussion(
