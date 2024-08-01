@@ -29,7 +29,7 @@ class GiteaService(
     }
 
     override fun setDiscussionAvailable(discussionAvailability: DiscussionAvailability) {
-        val newAvailability = giteaPort.switchDiscussionAvailable(discussionAvailability)
-        logger.info("Set discussion available with ID: {}", discussionAvailability.id)
+        giteaPort.switchDiscussionAvailable(discussionAvailability)
+        logger.info("Set discussion available with repoId: {}", discussionAvailability.repoId)
     }
 }
