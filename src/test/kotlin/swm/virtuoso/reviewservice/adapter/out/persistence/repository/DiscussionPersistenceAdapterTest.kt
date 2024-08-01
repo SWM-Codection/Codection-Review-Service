@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import swm.virtuoso.reviewservice.adapter.out.persistence.DiscussionPersistenceAdapter
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionAssigneesEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCodeEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionAssigneesRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCodeRepository
@@ -342,6 +343,7 @@ class DiscussionPersistenceAdapterTest {
     }
 
     @Test
+    @DisplayName("디스커션 담당자 등록")
     fun `insertDiscussionAssignees should save assignees to the database`() {
         // Given
         val discussionId = 1L
@@ -356,5 +358,25 @@ class DiscussionPersistenceAdapterTest {
         // Then
         val savedAssignees = discussionAssigneesRepository.findAll()
         assertEquals(assignees.size, savedAssignees.size)
+    }
+
+    @Test
+    @DisplayName("디스커션 담당자 목록 조회")
+    fun `findDiscussionAssignees should return correct assignees for the given discussionId`() {
+        // Given
+        val discussionId = 2L
+        val assignees = listOf(
+            DiscussionAssignee(id = null, assigneeId = 3L, discussionId = discussionId),
+            DiscussionAssignee(id = null, assigneeId = 5L, discussionId = discussionId)
+        )
+        discussionAssigneesRepository.saveAll(assignees.map { DiscussionAssigneesEntity.fromDiscussionAssignee(it) })
+
+        // When
+        val foundAssignees = discussionPersistenceAdapter.findDiscussionAssignees(discussionId)
+
+        // Then
+        assertEquals(assignees.size, foundAssignees.size)
+        assertEquals(assignees[0].id, foundAssignees[0].id)
+        assertEquals(assignees[1].id, foundAssignees[1].id)
     }
 }

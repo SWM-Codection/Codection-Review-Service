@@ -24,6 +24,7 @@ import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentReques
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionContentResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionListResponse
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCodeUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCommentUseCase
@@ -93,6 +94,32 @@ class DiscussionController(
             codes = request.codes,
             assignees = request.assignees
         ).id!!
+    }
+
+    @GetMapping("/{discussionId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get discussion detail", description = "디스커션의 상세 정보 반환")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "디스커션 반환 성공",
+                content = [Content(schema = Schema(implementation = DiscussionResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "디스커션 정보를 찾을 수 없음",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
+    fun getDiscussion(
+        @PathVariable("discussionId") discussionId: Long
+    ): DiscussionResponse {
+        return DiscussionResponse.fromDiscussion(
+            discussion = discussionUseCase.getDiscussion(discussionId),
+            assignees = discussionUseCase.getDiscussionAssignees(discussionId)
+        )
     }
 
     @GetMapping("/{repoId}/count")

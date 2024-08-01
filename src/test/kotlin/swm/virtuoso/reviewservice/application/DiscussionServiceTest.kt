@@ -20,6 +20,7 @@ import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
 import swm.virtuoso.reviewservice.application.port.out.GiteaPort
 import swm.virtuoso.reviewservice.application.service.DiscussionService
 import swm.virtuoso.reviewservice.domain.Discussion
+import swm.virtuoso.reviewservice.domain.DiscussionAssignee
 import swm.virtuoso.reviewservice.domain.DiscussionCode
 import swm.virtuoso.reviewservice.domain.DiscussionUser
 import kotlin.test.Test
@@ -106,6 +107,49 @@ class DiscussionServiceTest {
         verify(discussionPort, times(1)).insertDiscussion(discussion)
         verify(discussionCodePort, times(1)).insertDiscussionCodes(codes, savedDiscussion.id!!)
         verify(discussionUserPort, times(1)).insertDiscussionUser(savedDiscussion.posterId, savedDiscussion.id!!)
+    }
+
+    @Test
+    @DisplayName("특정 디스커션의 Assignees 반환")
+    fun `getDiscussionAssignees should return correct assignees`() {
+        // given
+        val discussionId = 1L
+        val assignees = listOf(
+            DiscussionAssignee(assigneeId = 10L, discussionId = discussionId),
+            DiscussionAssignee(assigneeId = 11L, discussionId = discussionId)
+        )
+
+        doReturn(assignees).`when`(discussionAssigneePort).findDiscussionAssignees(discussionId)
+
+        // when
+        val result = discussionService.getDiscussionAssignees(discussionId)
+
+        // then
+        assertEquals(assignees.size, result.size)
+        assertEquals(assignees, result)
+    }
+
+    @Test
+    @DisplayName("ID로 디스커션 조회")
+    fun `getDiscussion should return correct discussion`() {
+        // given
+        val discussionId = 1L
+        val expectedDiscussion = Discussion(
+            id = discussionId,
+            name = "test discussion",
+            content = "test content",
+            repoId = 1L,
+            posterId = 1L,
+            commitHash = "commitHash1"
+        )
+
+        doReturn(expectedDiscussion).`when`(discussionPort).findDiscussion(discussionId)
+
+        // when
+        val result = discussionService.getDiscussion(discussionId)
+
+        // then
+        assertEquals(expectedDiscussion, result)
     }
 
     @Test

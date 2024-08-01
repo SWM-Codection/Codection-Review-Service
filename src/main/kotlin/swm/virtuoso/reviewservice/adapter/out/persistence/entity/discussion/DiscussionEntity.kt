@@ -68,7 +68,7 @@ data class DiscussionEntity(
                 isClosed = false,
                 numComments = 0,
                 pinOrder = 0,
-                deadlineUnix = null,
+                deadlineUnix = discussion.deadlineUnix,
                 isLocked = false
             )
         }

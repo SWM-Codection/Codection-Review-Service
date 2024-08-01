@@ -49,6 +49,14 @@ class DiscussionService(
         return savedDiscussion
     }
 
+    override fun getDiscussionAssignees(discussionId: Long): List<DiscussionAssignee> {
+        return discussionAssigneesPort.findDiscussionAssignees(discussionId)
+    }
+
+    override fun getDiscussion(discussionId: Long): Discussion {
+        return discussionPort.findDiscussion(discussionId)
+    }
+
     override fun countDiscussion(repoId: Long, isClosed: Boolean): Int {
         return discussionPort.countDiscussion(repoId, isClosed)
     }

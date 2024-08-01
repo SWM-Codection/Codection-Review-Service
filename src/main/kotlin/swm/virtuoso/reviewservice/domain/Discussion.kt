@@ -3,7 +3,7 @@ package swm.virtuoso.reviewservice.domain
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
 import java.time.LocalDate
-import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 data class Discussion(
@@ -45,14 +45,15 @@ data class Discussion(
                 repoId = entity.repoId,
                 posterId = entity.posterId,
                 commitHash = entity.commitHash,
-                index = entity.index
+                index = entity.index,
+                deadlineUnix = entity.deadlineUnix
             )
         }
 
         private fun convertToEpoch(dateString: String): Long {
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
             val localDate = LocalDate.parse(dateString, formatter)
-            return localDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond()
+            return localDate.atStartOfDay(ZoneOffset.UTC).toEpochSecond()
         }
     }
 }

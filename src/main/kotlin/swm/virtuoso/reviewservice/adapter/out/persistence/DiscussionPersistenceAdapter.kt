@@ -204,4 +204,9 @@ class DiscussionPersistenceAdapter(
         }
         discussionAssigneesRepository.saveAll(entities)
     }
+
+    override fun findDiscussionAssignees(discussionId: Long): List<DiscussionAssignee> {
+        return discussionAssigneesRepository.findAllByDiscussionId(discussionId)
+            .map { DiscussionAssignee.fromEntity(it) }
+    }
 }

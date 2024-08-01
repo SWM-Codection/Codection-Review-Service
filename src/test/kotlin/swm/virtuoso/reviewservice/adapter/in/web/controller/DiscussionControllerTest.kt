@@ -31,6 +31,7 @@ import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GiteaUseCase
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
 import swm.virtuoso.reviewservice.domain.Discussion
+import swm.virtuoso.reviewservice.domain.DiscussionAssignee
 import swm.virtuoso.reviewservice.domain.DiscussionCode
 import swm.virtuoso.reviewservice.domain.DiscussionComment
 
@@ -111,6 +112,38 @@ class DiscussionControllerTest {
         )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$").value(savedDiscussion.id))
+    }
+
+    @Test
+    @DisplayName("디스커션 상세 반환")
+    fun `should get discussion detail`() {
+        // Given
+        val discussionId = 1L
+
+        val expectedDiscussion = Discussion(
+            id = discussionId,
+            name = "test discussion",
+            content = "test content",
+            repoId = 1L,
+            posterId = 1L,
+            commitHash = "commitHash1"
+        )
+
+        val assignees = listOf(
+            DiscussionAssignee(id = 1L, assigneeId = 10L, discussionId = discussionId),
+            DiscussionAssignee(id = 2L, assigneeId = 11L, discussionId = discussionId)
+        )
+
+        whenever(discussionUseCase.getDiscussion(discussionId)).thenReturn(expectedDiscussion)
+        whenever(discussionUseCase.getDiscussionAssignees(discussionId)).thenReturn(assignees)
+
+        mockMvc.perform(
+            get("/discussion/$discussionId")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id").value(discussionId))
+            .andExpect(jsonPath("$.name").value(expectedDiscussion.name))
     }
 
     @Test
