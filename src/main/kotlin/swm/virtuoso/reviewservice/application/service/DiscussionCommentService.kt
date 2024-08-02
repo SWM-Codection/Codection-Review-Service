@@ -20,4 +20,13 @@ class DiscussionCommentService(
         logger.info("Saved discussionComment with ID: {}", newDiscussionComment.id)
         return newDiscussionComment
     }
+
+    override fun deleteComment(commentId: Long) {
+        discussionCommentPort.deleteCommentById(commentId)
+    }
+
+    override fun modifyComment(modifiedComment: DiscussionComment) {
+        // TODO 코드 블록이 있는지 검증한 뒤에 삭제하기
+        discussionCommentPort.saveComment(modifiedComment)
+    }
 }

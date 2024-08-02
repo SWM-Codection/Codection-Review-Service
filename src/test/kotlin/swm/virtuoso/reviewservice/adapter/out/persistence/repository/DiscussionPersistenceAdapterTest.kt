@@ -379,4 +379,157 @@ class DiscussionPersistenceAdapterTest {
         assertNotNull(foundAssignees[0].id)
         assertEquals(assignees[1].assigneeId, foundAssignees[1].assigneeId)
     }
+
+    @Test
+    @DisplayName("코멘트 등록")
+    fun `insertComment should save comment and return saved comment`() {
+        // given
+        val discussion = Discussion(
+            id = null,
+            name = "test discussion",
+            content = "content",
+            repoId = 1,
+            posterId = 1,
+            commitHash = "commitHash"
+        )
+        val savedDiscussion = discussionPersistenceAdapter.insertDiscussion(discussion)
+
+        val discussionComment = DiscussionComment(
+            id = null,
+            discussionId = savedDiscussion.id!!,
+            codeId = null,
+            posterId = 1L,
+            scope = CommentScopeEnum.GLOBAL,
+            startLine = null,
+            endLine = null,
+            content = "Test comment"
+        )
+
+        // when
+        val savedComment = discussionPersistenceAdapter.insertComment(discussionComment)
+
+        // then
+        assertNotNull(savedComment.id)
+        assertEquals(discussionComment.content, savedComment.content)
+        assertEquals(discussionComment.posterId, savedComment.posterId)
+        assertEquals(discussionComment.discussionId, savedComment.discussionId)
+    }
+
+    @Test
+    @DisplayName("코멘트 조회")
+    fun `findCommentById should return correct comment`() {
+        // given
+        val discussion = Discussion(
+            id = null,
+            name = "test discussion",
+            content = "content",
+            repoId = 1,
+            posterId = 1,
+            commitHash = "commitHash"
+        )
+        val savedDiscussion = discussionPersistenceAdapter.insertDiscussion(discussion)
+
+        val discussionComment = DiscussionComment(
+            id = null,
+            discussionId = savedDiscussion.id!!,
+            codeId = null,
+            posterId = 1L,
+            scope = CommentScopeEnum.GLOBAL,
+            startLine = null,
+            endLine = null,
+            content = "Test comment"
+        )
+        val savedComment = discussionPersistenceAdapter.insertComment(discussionComment)
+
+        // when
+        val foundComment = discussionPersistenceAdapter.findCommentById(savedComment.id!!)
+
+        // then
+        assertNotNull(foundComment)
+        assertEquals(savedComment.id, foundComment.id)
+        assertEquals(savedComment.content, foundComment.content)
+    }
+
+    @Test
+    @DisplayName("없는 코멘트 조회")
+    fun `findCommentById should throw exception if comment is not found`() {
+        // given
+        val commentId = 999L
+
+        // when & then
+        assertThrows<NoSuchElementException> {
+            discussionPersistenceAdapter.findCommentById(commentId)
+        }
+    }
+
+    @Test
+    @DisplayName("코멘트 삭제")
+    fun `deleteCommentById should delete the comment`() {
+        // given
+        val discussion = Discussion(
+            id = null,
+            name = "test discussion",
+            content = "content",
+            repoId = 1,
+            posterId = 1,
+            commitHash = "commitHash"
+        )
+        val savedDiscussion = discussionPersistenceAdapter.insertDiscussion(discussion)
+
+        val discussionComment = DiscussionComment(
+            id = null,
+            discussionId = savedDiscussion.id!!,
+            codeId = null,
+            posterId = 1L,
+            scope = CommentScopeEnum.GLOBAL,
+            startLine = null,
+            endLine = null,
+            content = "Test comment"
+        )
+        val savedComment = discussionPersistenceAdapter.insertComment(discussionComment)
+
+        // when
+        discussionPersistenceAdapter.deleteCommentById(savedComment.id!!)
+
+        // then
+        assertThrows<NoSuchElementException> {
+            discussionPersistenceAdapter.findCommentById(savedComment.id!!)
+        }
+    }
+
+    @Test
+    @DisplayName("코멘트 수정")
+    fun `saveComment should update the comment`() {
+        // given
+        val discussion = Discussion(
+            id = null,
+            name = "test discussion",
+            content = "content",
+            repoId = 1,
+            posterId = 1,
+            commitHash = "commitHash"
+        )
+        val savedDiscussion = discussionPersistenceAdapter.insertDiscussion(discussion)
+
+        val discussionComment = DiscussionComment(
+            id = null,
+            discussionId = savedDiscussion.id!!,
+            codeId = null,
+            posterId = 1L,
+            scope = CommentScopeEnum.GLOBAL,
+            startLine = null,
+            endLine = null,
+            content = "Test comment"
+        )
+        val savedComment = discussionPersistenceAdapter.insertComment(discussionComment)
+
+        val modifiedComment = savedComment.copy(content = "Updated comment")
+
+        // when
+        discussionPersistenceAdapter.saveComment(modifiedComment)
+
+        // then
+        val updatedComment = discussionPersistenceAdapter.findCommentById(savedComment.id!!)
+        assertEquals(modifiedComment.content, updatedComment.content)
+    }
 }

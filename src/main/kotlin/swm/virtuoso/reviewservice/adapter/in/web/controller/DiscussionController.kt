@@ -20,21 +20,18 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionAvailableRequest
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionContentResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionListResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCodeUseCase
-import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCommentUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GiteaUseCase
 import swm.virtuoso.reviewservice.common.exception.ErrorResponse
 import swm.virtuoso.reviewservice.domain.Discussion
 import swm.virtuoso.reviewservice.domain.DiscussionAvailability
-import swm.virtuoso.reviewservice.domain.DiscussionComment
 import swm.virtuoso.reviewservice.domain.ExtractedLine
 
 @RestController
@@ -42,7 +39,6 @@ import swm.virtuoso.reviewservice.domain.ExtractedLine
 @Tag(name = "Discussion", description = "Discussion API")
 class DiscussionController(
     private val discussionUseCase: DiscussionUseCase,
-    private val discussionCommentUseCase: DiscussionCommentUseCase,
     private val giteaUseCase: GiteaUseCase,
     private val gitUseCase: GitUseCase,
     private val discussionCodeUseCase: DiscussionCodeUseCase
@@ -216,37 +212,6 @@ class DiscussionController(
         @PathVariable discussionId: Long
     ): DiscussionContentResponse {
         return discussionCodeUseCase.getDiscussionContents(discussionId)
-    }
-
-    @PostMapping("/comment")
-    @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Post comment", description = "새로운 코멘트 작성")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "201",
-                description = "코멘트 작성 성공",
-                content = [Content(schema = Schema(implementation = Long::class))]
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "레포지토리 혹은 Git Path 정보를 찾을 수 없음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "레포지토리 정보와 디스커션 정보가 일치하지 않음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            )
-        ]
-    )
-    fun postComment(
-        @Valid @RequestBody
-        request: PostCommentRequest
-    ): Long {
-        return discussionCommentUseCase.createComment(
-            DiscussionComment.fromPostRequest(request)
-        ).id!!
     }
 
     @PutMapping("")
