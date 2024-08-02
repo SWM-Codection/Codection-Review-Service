@@ -12,7 +12,7 @@ import kotlin.test.assertTrue
 @ExtendWith(MockitoExtension::class)
 class GitServiceTest {
     private lateinit var gitService: GitService
-    private var baseUrl : String
+    private var baseUrl: String
     private val ownerName = ".codection"
     private val repoName = "test/"
     private val branchName = "main"
@@ -27,11 +27,9 @@ class GitServiceTest {
     init {
         if (isWindows()) {
             baseUrl = System.getenv("USERPROFILE").toString()
-        }
-        else {
+        } else {
             baseUrl = System.getenv("HOME").toString()
         }
-
     }
 
     @BeforeEach

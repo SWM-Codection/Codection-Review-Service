@@ -204,13 +204,12 @@ class DiscussionPersistenceAdapter(
 
     override fun findCommentById(commentId: Long): DiscussionComment {
         val commentEntity = discussionCommentRepository.findById(commentId).orElseThrow {
-            throw NoSuchElementException("디스커션 코멘트를 찾을 수 없습니다. id : ${commentId}")
+            throw NoSuchElementException("디스커션 코멘트를 찾을 수 없습니다. id : $commentId")
         }
         return DiscussionComment.fromEntity(commentEntity)
     }
 
     override fun saveComment(modifiedComment: DiscussionComment) {
-
         val exisingComment = findCommentById(modifiedComment.discussionId)
 
         modifiedComment.let { comment ->
@@ -226,9 +225,7 @@ class DiscussionPersistenceAdapter(
 
         val modifiedDiscussionComment = DiscussionCommentEntity.fromDiscussionComment(modifiedComment)
         discussionCommentRepository.save(modifiedDiscussionComment)
-
     }
-
 
     override fun insertDiscussionAssignees(discussionAssignees: List<DiscussionAssignee>) {
         val entities = discussionAssignees.map { assignee ->

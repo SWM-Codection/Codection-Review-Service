@@ -71,11 +71,8 @@ tasks.register("cloneTestRepo", Exec::class) {
 
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         commandLine("cmd", "/c", "./scripts/clone_test_repo.bat")
-    }
-
-    else {
+    } else {
         commandLine("sh", "./scripts/clone_test_repo.sh")
-
     }
 }
 

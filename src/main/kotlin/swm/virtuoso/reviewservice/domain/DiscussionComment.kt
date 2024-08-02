@@ -1,6 +1,5 @@
 package swm.virtuoso.reviewservice.domain
 
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DeleteCommentRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyCommentRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
@@ -55,8 +54,5 @@ data class DiscussionComment(
                 content = request.content
             )
         }
-
     }
-
-
 }

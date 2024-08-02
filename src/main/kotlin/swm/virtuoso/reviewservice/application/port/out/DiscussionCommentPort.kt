@@ -1,6 +1,5 @@
 package swm.virtuoso.reviewservice.application.port.out
 
-import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
 import swm.virtuoso.reviewservice.domain.DiscussionComment
 
 public interface DiscussionCommentPort {

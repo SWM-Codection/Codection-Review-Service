@@ -7,6 +7,5 @@ data class DeleteCommentRequest(
     @field:NotNull(message = "Comment ID cannot be null")
     val discussionCommentId: Long,
     @field:NotNull(message = "Poster ID cannot be null")
-    val posterId: Long,
-) {
-}
+    val posterId: Long
+)

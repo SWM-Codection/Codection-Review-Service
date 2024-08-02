@@ -533,4 +533,3 @@ class DiscussionPersistenceAdapterTest {
         assertEquals(modifiedComment.content, updatedComment.content)
     }
 }
-

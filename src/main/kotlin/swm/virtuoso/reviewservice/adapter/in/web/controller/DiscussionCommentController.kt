@@ -8,12 +8,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DeleteCommentRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyCommentRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCommentUseCase
-import swm.virtuoso.reviewservice.application.service.DiscussionCommentService
 import swm.virtuoso.reviewservice.common.exception.ErrorResponse
 import swm.virtuoso.reviewservice.domain.DiscussionComment
 
@@ -62,7 +67,7 @@ class DiscussionCommentController(val discussionCommentUseCase: DiscussionCommen
         value = [
             ApiResponse(
                 responseCode = "201",
-                description = "코멘트 수정 성공",
+                description = "코멘트 수정 성공"
             ),
             ApiResponse(
                 responseCode = "404",
@@ -85,7 +90,6 @@ class DiscussionCommentController(val discussionCommentUseCase: DiscussionCommen
         )
     }
 
-
     @DeleteMapping("/comment")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "modify comment", description = "코멘트 삭제")
@@ -93,7 +97,7 @@ class DiscussionCommentController(val discussionCommentUseCase: DiscussionCommen
         value = [
             ApiResponse(
                 responseCode = "201",
-                description = "코멘트 삭제 성공",
+                description = "코멘트 삭제 성공"
             ),
             ApiResponse(
                 responseCode = "404",
