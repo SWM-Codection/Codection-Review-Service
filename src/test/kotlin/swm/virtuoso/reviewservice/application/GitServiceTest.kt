@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
-import org.junit.jupiter.api.condition.OS;
 import swm.virtuoso.reviewservice.application.service.GitService
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DeleteCommentRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyCommentRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCommentUseCase
@@ -85,7 +86,6 @@ class DiscussionCommentController(val discussionCommentUseCase: DiscussionCommen
     }
 
 
-
     @DeleteMapping("/comment")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "modify comment", description = "코멘트 삭제")
@@ -104,7 +104,7 @@ class DiscussionCommentController(val discussionCommentUseCase: DiscussionCommen
     )
     fun deleteComment(
         @Valid @RequestBody
-        request: ModifyCommentRequest
+        request: DeleteCommentRequest
     ) {
         discussionCommentUseCase.deleteComment(
             request.discussionCommentId
