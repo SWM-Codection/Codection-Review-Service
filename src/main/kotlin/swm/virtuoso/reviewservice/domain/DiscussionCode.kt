@@ -1,4 +1,4 @@
-package swm.virtuoso.reviewservice.domian
+package swm.virtuoso.reviewservice.domain
 
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCodeEntity
 

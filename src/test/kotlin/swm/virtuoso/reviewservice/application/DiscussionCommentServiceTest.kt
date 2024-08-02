@@ -10,7 +10,7 @@ import org.mockito.kotlin.doReturn
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
 import swm.virtuoso.reviewservice.application.service.DiscussionCommentService
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
-import swm.virtuoso.reviewservice.domian.DiscussionComment
+import swm.virtuoso.reviewservice.domain.DiscussionComment
 import kotlin.test.Test
 
 @ExtendWith(MockitoExtension::class)

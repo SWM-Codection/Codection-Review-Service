@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import swm.virtuoso.reviewservice.domain.DiscussionAssignee
 
 @Entity
 @Table(name = "discussion_assignees")
@@ -20,4 +21,14 @@ data class DiscussionAssigneesEntity(
 
     @field:Column(name = "issue_id")
     val discussionId: Long
-)
+) {
+    companion object {
+        fun fromDiscussionAssignee(discussionAssignee: DiscussionAssignee): DiscussionAssigneesEntity {
+            return DiscussionAssigneesEntity(
+                id = discussionAssignee.id,
+                assigneeId = discussionAssignee.assigneeId,
+                discussionId = discussionAssignee.discussionId
+            )
+        }
+    }
+}

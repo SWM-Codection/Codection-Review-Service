@@ -12,9 +12,9 @@ import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.GiteaPort
-import swm.virtuoso.reviewservice.domian.DiscussionCode
-import swm.virtuoso.reviewservice.domian.DiscussionComment
-import swm.virtuoso.reviewservice.domian.ExtractedLine
+import swm.virtuoso.reviewservice.domain.DiscussionCode
+import swm.virtuoso.reviewservice.domain.DiscussionComment
+import swm.virtuoso.reviewservice.domain.ExtractedLine
 
 @Service
 class DiscussionFileService(

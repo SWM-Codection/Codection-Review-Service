@@ -5,31 +5,31 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.TestPropertySource
 import swm.virtuoso.reviewservice.adapter.out.persistence.DiscussionPersistenceAdapter
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionAssigneesEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCodeEntity
+import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionAssigneesRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCodeRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCommentRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionIndexRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionUserRepository
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
-import swm.virtuoso.reviewservice.domian.Discussion
-import swm.virtuoso.reviewservice.domian.DiscussionCode
-import swm.virtuoso.reviewservice.domian.DiscussionComment
+import swm.virtuoso.reviewservice.domain.Discussion
+import swm.virtuoso.reviewservice.domain.DiscussionAssignee
+import swm.virtuoso.reviewservice.domain.DiscussionCode
+import swm.virtuoso.reviewservice.domain.DiscussionComment
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-@TestPropertySource(locations = ["classpath:application-test.yml"])
 @Import(DiscussionPersistenceAdapter::class)
 class DiscussionPersistenceAdapterTest {
 
@@ -52,9 +52,10 @@ class DiscussionPersistenceAdapterTest {
     private lateinit var discussionCommentRepository: DiscussionCommentRepository
 
     @Autowired
-    private lateinit var jdbcTemplate: JdbcTemplate
+    private lateinit var discussionAssigneesRepository: DiscussionAssigneesRepository
 
-    private val logger: Logger = LoggerFactory.getLogger(DiscussionPersistenceAdapterTest::class.java)
+    @Autowired
+    private lateinit var jdbcTemplate: JdbcTemplate
 
     @Test
     @DisplayName("디스커션 수 반환")
@@ -107,7 +108,6 @@ class DiscussionPersistenceAdapterTest {
 
         // when
         val savedDiscussionEntity = discussionPersistenceAdapter.insertDiscussion(discussion)
-        logger.info("Saved Discussion ID: ${savedDiscussionEntity.id}")
 
         // then
         assertNotNull(savedDiscussionEntity.id)
@@ -237,12 +237,15 @@ class DiscussionPersistenceAdapterTest {
 
         val repoId = 1L
         val isClosed = false
+        val pageable = PageRequest.of(0, 20)
 
         // when
-        val discussions = discussionPersistenceAdapter.findDiscussionList(repoId, isClosed)
+        val discussions = discussionPersistenceAdapter.findDiscussionList(repoId, isClosed, pageable)
 
         // then
-        assertEquals(2, discussions.size)
+        assertEquals(2, discussions.totalElements)
+        assertEquals(discussion1.name, discussions.content[0].name)
+        assertEquals(discussion2.name, discussions.content[1].name)
     }
 
     @Test
@@ -337,5 +340,43 @@ class DiscussionPersistenceAdapterTest {
 
         // then
         assertEquals(2, comments.size)
+    }
+
+    @Test
+    @DisplayName("디스커션 담당자 등록")
+    fun `insertDiscussionAssignees should save assignees to the database`() {
+        // Given
+        val discussionId = 1L
+        val assignees = listOf(
+            DiscussionAssignee(id = null, assigneeId = 10L, discussionId = discussionId),
+            DiscussionAssignee(id = null, assigneeId = 11L, discussionId = discussionId)
+        )
+
+        // When
+        discussionPersistenceAdapter.insertDiscussionAssignees(assignees)
+
+        // Then
+        val savedAssignees = discussionAssigneesRepository.findAll()
+        assertEquals(assignees.size, savedAssignees.size)
+    }
+
+    @Test
+    @DisplayName("디스커션 담당자 목록 조회")
+    fun `findDiscussionAssignees should return correct assignees for the given discussionId`() {
+        // Given
+        val discussionId = 2L
+        val assignees = listOf(
+            DiscussionAssignee(id = null, assigneeId = 3L, discussionId = discussionId),
+            DiscussionAssignee(id = null, assigneeId = 5L, discussionId = discussionId)
+        )
+        discussionAssigneesRepository.saveAll(assignees.map { DiscussionAssigneesEntity.fromDiscussionAssignee(it) })
+
+        // When
+        val foundAssignees = discussionPersistenceAdapter.findDiscussionAssignees(discussionId)
+
+        // Then
+        assertEquals(assignees.size, foundAssignees.size)
+        assertNotNull(foundAssignees[0].id)
+        assertEquals(assignees[1].assigneeId, foundAssignees[1].assigneeId)
     }
 }

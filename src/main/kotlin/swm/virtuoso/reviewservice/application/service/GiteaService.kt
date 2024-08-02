@@ -7,7 +7,7 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.entity.RepositoryEntit
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.UserEntity
 import swm.virtuoso.reviewservice.application.port.`in`.GiteaUseCase
 import swm.virtuoso.reviewservice.application.port.out.GiteaPort
-import swm.virtuoso.reviewservice.domian.DiscussionAvailability
+import swm.virtuoso.reviewservice.domain.DiscussionAvailability
 
 @Service
 class GiteaService(
@@ -29,7 +29,7 @@ class GiteaService(
     }
 
     override fun setDiscussionAvailable(discussionAvailability: DiscussionAvailability) {
-        val newAvailability = giteaPort.switchDiscussionAvailable(discussionAvailability)
-        logger.info("Set discussion available with ID: {}", discussionAvailability.id)
+        giteaPort.switchDiscussionAvailable(discussionAvailability)
+        logger.info("Set discussion available with repoId: {}", discussionAvailability.repoId)
     }
 }

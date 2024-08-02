@@ -1,26 +1,32 @@
 package swm.virtuoso.reviewservice.adapter.out.persistence
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionAssigneesEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCodeEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionUserEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.IssueIndexEntity
+import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionAssigneesRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCodeRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCommentRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionIndexRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionUserRepository
+import swm.virtuoso.reviewservice.application.port.out.DiscussionAssigneesPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
-import swm.virtuoso.reviewservice.domian.Discussion
-import swm.virtuoso.reviewservice.domian.DiscussionAllContent
-import swm.virtuoso.reviewservice.domian.DiscussionCode
-import swm.virtuoso.reviewservice.domian.DiscussionComment
-import swm.virtuoso.reviewservice.domian.DiscussionUser
+import swm.virtuoso.reviewservice.domain.Discussion
+import swm.virtuoso.reviewservice.domain.DiscussionAllContent
+import swm.virtuoso.reviewservice.domain.DiscussionAssignee
+import swm.virtuoso.reviewservice.domain.DiscussionCode
+import swm.virtuoso.reviewservice.domain.DiscussionComment
+import swm.virtuoso.reviewservice.domain.DiscussionUser
 
 @Repository
 class DiscussionPersistenceAdapter(
@@ -28,17 +34,18 @@ class DiscussionPersistenceAdapter(
     private val discussionCodeRepository: DiscussionCodeRepository,
     private val discussionIndexRepository: DiscussionIndexRepository,
     private val discussionUserRepository: DiscussionUserRepository,
-    private val discussionCommentRepository: DiscussionCommentRepository
-) : DiscussionPort, DiscussionCodePort, DiscussionUserPort, DiscussionCommentPort {
+    private val discussionCommentRepository: DiscussionCommentRepository,
+    private val discussionAssigneesRepository: DiscussionAssigneesRepository
+) : DiscussionPort, DiscussionCodePort, DiscussionUserPort, DiscussionCommentPort, DiscussionAssigneesPort {
 
-    private fun getIndex(repoId: Long): Long {
+    private fun getNextIndex(repoId: Long): Long {
         return discussionIndexRepository.findById(repoId)
             .map { it.maxIndex + 1 }
             .orElse(1)
     }
 
     override fun insertDiscussion(discussion: Discussion): Discussion {
-        discussion.index = getIndex(discussion.repoId)
+        discussion.index = getNextIndex(discussion.repoId)
         val newDiscussion = discussionRepository.save(DiscussionEntity.fromDiscussion(discussion))
 
         discussionIndexRepository.save(
@@ -54,8 +61,8 @@ class DiscussionPersistenceAdapter(
         return discussionRepository.countByRepoIdAndIsClosed(repoId, isClosed)
     }
 
-    override fun findDiscussionList(repoId: Long, isClosed: Boolean): List<Discussion> {
-        return discussionRepository.findAllByRepoIdAndIsClosed(repoId, isClosed)
+    override fun findDiscussionList(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion> {
+        return discussionRepository.findAllByRepoIdAndIsClosed(repoId, isClosed, pageable)
             .map { Discussion.fromEntity(it) }
     }
 
@@ -69,7 +76,7 @@ class DiscussionPersistenceAdapter(
     override fun saveDiscussionAllContent(
         discussionAllContent: DiscussionAllContent
     ): DiscussionEntity {
-        discussionAllContent.index = getIndex(discussionAllContent.repoId)
+        discussionAllContent.index = getNextIndex(discussionAllContent.repoId)
         val discussionEntity = discussionRepository.save(
             DiscussionEntity.fromDiscussion(
                 discussion = Discussion(
@@ -189,5 +196,17 @@ class DiscussionPersistenceAdapter(
     override fun findCommentsByDiscussionId(discussionId: Long): List<DiscussionComment> {
         return discussionCommentRepository.findAllByDiscussionId(discussionId)
             .map { DiscussionComment.fromEntity(it) }
+    }
+
+    override fun insertDiscussionAssignees(discussionAssignees: List<DiscussionAssignee>) {
+        val entities = discussionAssignees.map { assignee ->
+            DiscussionAssigneesEntity.fromDiscussionAssignee(assignee)
+        }
+        discussionAssigneesRepository.saveAll(entities)
+    }
+
+    override fun findDiscussionAssignees(discussionId: Long): List<DiscussionAssignee> {
+        return discussionAssigneesRepository.findAllByDiscussionId(discussionId)
+            .map { DiscussionAssignee.fromEntity(it) }
     }
 }

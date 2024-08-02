@@ -1,6 +1,6 @@
 package swm.virtuoso.reviewservice.adapter.`in`.web.dto.response
 
-import swm.virtuoso.reviewservice.domian.DiscussionComment
+import swm.virtuoso.reviewservice.domain.DiscussionComment
 
 data class DiscussionCommentResponse(
     val id: Long,

@@ -8,7 +8,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.BaseTimeEntity
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
-import swm.virtuoso.reviewservice.domian.DiscussionComment
+import swm.virtuoso.reviewservice.domain.DiscussionComment
 
 @Entity
 @Table(name = "discussion_comment")

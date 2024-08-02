@@ -11,14 +11,18 @@ import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import swm.virtuoso.reviewservice.application.port.out.DiscussionAssigneesPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
 import swm.virtuoso.reviewservice.application.port.out.GiteaPort
 import swm.virtuoso.reviewservice.application.service.DiscussionService
-import swm.virtuoso.reviewservice.domian.Discussion
-import swm.virtuoso.reviewservice.domian.DiscussionCode
-import swm.virtuoso.reviewservice.domian.DiscussionUser
+import swm.virtuoso.reviewservice.domain.Discussion
+import swm.virtuoso.reviewservice.domain.DiscussionAssignee
+import swm.virtuoso.reviewservice.domain.DiscussionCode
+import swm.virtuoso.reviewservice.domain.DiscussionUser
 import kotlin.test.Test
 
 @ExtendWith(MockitoExtension::class)
@@ -32,6 +36,9 @@ class DiscussionServiceTest {
 
     @Mock
     private lateinit var discussionCodePort: DiscussionCodePort
+
+    @Mock
+    private lateinit var discussionAssigneePort: DiscussionAssigneesPort
 
     @Mock
     private lateinit var giteaPort: GiteaPort
@@ -80,12 +87,14 @@ class DiscussionServiceTest {
             isMentioned = false
         )
 
+        val savedAssigneeUser = listOf(2L)
+
         doReturn(savedDiscussion).`when`(discussionPort).insertDiscussion(discussion)
         doNothing().`when`(discussionCodePort).insertDiscussionCodes(codes, savedDiscussion.id!!)
         doReturn(savedDiscussionUser).`when`(discussionUserPort).insertDiscussionUser(savedDiscussion.posterId, savedDiscussion.id!!)
 
         // when
-        val result = discussionService.createDiscussion(discussion, codes)
+        val result = discussionService.createDiscussion(discussion, codes, savedAssigneeUser)
 
         // then
         assertNotNull(result.id)
@@ -98,6 +107,49 @@ class DiscussionServiceTest {
         verify(discussionPort, times(1)).insertDiscussion(discussion)
         verify(discussionCodePort, times(1)).insertDiscussionCodes(codes, savedDiscussion.id!!)
         verify(discussionUserPort, times(1)).insertDiscussionUser(savedDiscussion.posterId, savedDiscussion.id!!)
+    }
+
+    @Test
+    @DisplayName("특정 디스커션의 Assignees 반환")
+    fun `getDiscussionAssignees should return correct assignees`() {
+        // given
+        val discussionId = 1L
+        val assignees = listOf(
+            DiscussionAssignee(assigneeId = 10L, discussionId = discussionId),
+            DiscussionAssignee(assigneeId = 11L, discussionId = discussionId)
+        )
+
+        doReturn(assignees).`when`(discussionAssigneePort).findDiscussionAssignees(discussionId)
+
+        // when
+        val result = discussionService.getDiscussionAssignees(discussionId)
+
+        // then
+        assertEquals(assignees.size, result.size)
+        assertEquals(assignees, result)
+    }
+
+    @Test
+    @DisplayName("ID로 디스커션 조회")
+    fun `getDiscussion should return correct discussion`() {
+        // given
+        val discussionId = 1L
+        val expectedDiscussion = Discussion(
+            id = discussionId,
+            name = "test discussion",
+            content = "test content",
+            repoId = 1L,
+            posterId = 1L,
+            commitHash = "commitHash1"
+        )
+
+        doReturn(expectedDiscussion).`when`(discussionPort).findDiscussion(discussionId)
+
+        // when
+        val result = discussionService.getDiscussion(discussionId)
+
+        // then
+        assertEquals(expectedDiscussion, result)
     }
 
     @Test
@@ -123,7 +175,8 @@ class DiscussionServiceTest {
         // given
         val repoId = 1L
         val isClosed = false
-        val expectedDiscussions = listOf(
+        val pageable = PageRequest.of(0, 20)
+        val discussions = listOf(
             Discussion(
                 id = 1L,
                 name = "discussion 1",
@@ -142,13 +195,14 @@ class DiscussionServiceTest {
             )
         )
 
-        doReturn(expectedDiscussions).`when`(discussionPort).findDiscussionList(repoId, isClosed)
+        val expectedDiscussions = PageImpl(discussions, pageable, discussions.size.toLong())
+        doReturn(expectedDiscussions).`when`(discussionPort).findDiscussionList(repoId, isClosed, pageable)
 
         // when
-        val result = discussionService.getDiscussionList(repoId, isClosed)
+        val result = discussionService.getDiscussionList(repoId, isClosed, pageable)
 
         // then
-        assertEquals(expectedDiscussions.size, result.size)
-        assertEquals(expectedDiscussions, result)
+        assertEquals(expectedDiscussions.totalElements, result.totalElements)
+        assertEquals(discussions, result.content)
     }
 }

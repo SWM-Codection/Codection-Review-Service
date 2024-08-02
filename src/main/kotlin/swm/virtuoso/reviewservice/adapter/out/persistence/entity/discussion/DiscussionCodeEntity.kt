@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.BaseTimeEntity
-import swm.virtuoso.reviewservice.domian.DiscussionCode
+import swm.virtuoso.reviewservice.domain.DiscussionCode
 
 @Entity
 @Table(name = "discussion_code")

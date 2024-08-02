@@ -8,6 +8,8 @@ import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
@@ -28,9 +30,10 @@ import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GiteaUseCase
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
-import swm.virtuoso.reviewservice.domian.Discussion
-import swm.virtuoso.reviewservice.domian.DiscussionCode
-import swm.virtuoso.reviewservice.domian.DiscussionComment
+import swm.virtuoso.reviewservice.domain.Discussion
+import swm.virtuoso.reviewservice.domain.DiscussionAssignee
+import swm.virtuoso.reviewservice.domain.DiscussionCode
+import swm.virtuoso.reviewservice.domain.DiscussionComment
 
 @WebMvcTest(DiscussionController::class)
 @ActiveProfiles("test")
@@ -75,7 +78,9 @@ class DiscussionControllerTest {
                     startLine = 1,
                     endLine = 10
                 )
-            )
+            ),
+            assignees = emptyList(),
+            deadline = null
         )
 
         val repository = RepositoryEntity(
@@ -97,7 +102,7 @@ class DiscussionControllerTest {
 
         whenever(giteaUseCase.getRepositories(request.repoId)).thenReturn(repository)
         whenever(gitUseCase.getLastCommitHash(repository.ownerName!!, repository.lowerName, request.branchName)).thenReturn("commitHash1")
-        whenever(discussionUseCase.createDiscussion(any(), any())).thenReturn(savedDiscussion)
+        whenever(discussionUseCase.createDiscussion(any(), any(), any())).thenReturn(savedDiscussion)
 
         // When & Then
         mockMvc.perform(
@@ -107,6 +112,38 @@ class DiscussionControllerTest {
         )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$").value(savedDiscussion.id))
+    }
+
+    @Test
+    @DisplayName("디스커션 상세 반환")
+    fun `should get discussion detail`() {
+        // Given
+        val discussionId = 1L
+
+        val expectedDiscussion = Discussion(
+            id = discussionId,
+            name = "test discussion",
+            content = "test content",
+            repoId = 1L,
+            posterId = 1L,
+            commitHash = "commitHash1"
+        )
+
+        val assignees = listOf(
+            DiscussionAssignee(id = 1L, assigneeId = 10L, discussionId = discussionId),
+            DiscussionAssignee(id = 2L, assigneeId = 11L, discussionId = discussionId)
+        )
+
+        whenever(discussionUseCase.getDiscussion(discussionId)).thenReturn(expectedDiscussion)
+        whenever(discussionUseCase.getDiscussionAssignees(discussionId)).thenReturn(assignees)
+
+        mockMvc.perform(
+            get("/discussion/$discussionId")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id").value(discussionId))
+            .andExpect(jsonPath("$.name").value(expectedDiscussion.name))
     }
 
     @Test
@@ -134,7 +171,9 @@ class DiscussionControllerTest {
         // Given
         val repoId = 1L
         val isClosed = true
-        val expectedDiscussions: List<Discussion> = listOf(
+        val page = 0
+        val pageable = PageRequest.of(page, 20)
+        val discussions = listOf(
             Discussion(
                 id = 1L,
                 name = "discussion 1",
@@ -152,20 +191,22 @@ class DiscussionControllerTest {
                 commitHash = "commitHash2"
             )
         )
+        val expectedDiscussionList = PageImpl(discussions, pageable, discussions.size.toLong())
 
-        whenever(discussionUseCase.getDiscussionList(repoId, isClosed)).thenReturn(expectedDiscussions)
+        whenever(discussionUseCase.getDiscussionList(repoId, isClosed, pageable)).thenReturn(expectedDiscussionList)
 
         // When & Then
         mockMvc.perform(
             get("/discussion/$repoId/list")
                 .param("isClosed", isClosed.toString())
+                .param("page", page.toString())
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.length()").value(expectedDiscussions.size))
-            .andExpect(jsonPath("$[0].id").value(expectedDiscussions[0].id))
-            .andExpect(jsonPath("$[0].name").value(expectedDiscussions[0].name))
-            .andExpect(jsonPath("$[1].id").value(expectedDiscussions[1].id))
-            .andExpect(jsonPath("$[1].name").value(expectedDiscussions[1].name))
+            .andExpect(jsonPath("$.totalCount").value(expectedDiscussionList.totalElements))
+            .andExpect(jsonPath("$.discussions[0].id").value(discussions[0].id))
+            .andExpect(jsonPath("$.discussions[0].name").value(discussions[0].name))
+            .andExpect(jsonPath("$.discussions[1].id").value(discussions[1].id))
+            .andExpect(jsonPath("$.discussions[1].name").value(discussions[1].name))
     }
 
     @Test

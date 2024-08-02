@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.PartResponse
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCodeUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
-import swm.virtuoso.reviewservice.domian.ExtractedLine
-import swm.virtuoso.reviewservice.domian.PathTrie
+import swm.virtuoso.reviewservice.domain.ExtractedLine
+import swm.virtuoso.reviewservice.domain.PathTrie
 
 @RestController
 @RequestMapping("/")

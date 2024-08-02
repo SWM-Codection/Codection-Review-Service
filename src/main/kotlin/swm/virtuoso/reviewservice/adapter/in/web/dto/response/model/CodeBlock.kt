@@ -1,7 +1,7 @@
 package swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.model
 
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionCommentResponse
-import swm.virtuoso.reviewservice.domian.ExtractedLine
+import swm.virtuoso.reviewservice.domain.ExtractedLine
 
 data class CodeBlock(
     val codeId: Long,
