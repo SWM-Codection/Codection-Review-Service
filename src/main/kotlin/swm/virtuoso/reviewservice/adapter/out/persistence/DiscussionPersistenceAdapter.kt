@@ -198,6 +198,38 @@ class DiscussionPersistenceAdapter(
             .map { DiscussionComment.fromEntity(it) }
     }
 
+    override fun deleteCommentById(commentId: Long) {
+        discussionCommentRepository.deleteById(commentId)
+    }
+
+    override fun findCommentById(commentId: Long): DiscussionComment {
+        val commentEntity = discussionCommentRepository.findById(commentId).orElseThrow {
+            throw NoSuchElementException("디스커션 코멘트를 찾을 수 없습니다. id : ${commentId}")
+        }
+        return DiscussionComment.fromEntity(commentEntity)
+    }
+
+    override fun saveComment(modifiedComment: DiscussionComment) {
+
+        val exisingComment = findCommentById(modifiedComment.discussionId)
+
+        modifiedComment.let { comment ->
+            require(exisingComment.codeId == modifiedComment.codeId) {
+                "수정된 코멘트와 기존 코멘트의 코드블록 정보가 일치하지 않습니다."
+            }
+            require(exisingComment.discussionId == modifiedComment.discussionId) {
+                "수정된 코멘트와 기존 코멘트의 디스커션 정보가 일치하지 않습니다."
+            }
+        }
+
+        // TODO discussion이 존재하지 않을 경우 예외처리
+
+        val modifiedDiscussionComment = DiscussionCommentEntity.fromDiscussionComment(modifiedComment)
+        discussionCommentRepository.save(modifiedDiscussionComment)
+
+    }
+
+
     override fun insertDiscussionAssignees(discussionAssignees: List<DiscussionAssignee>) {
         val entities = discussionAssignees.map { assignee ->
             DiscussionAssigneesEntity.fromDiscussionAssignee(assignee)

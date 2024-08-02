@@ -243,40 +243,4 @@ class DiscussionControllerTest {
             .andExpect(jsonPath("$.discussionId").value(discussionId))
     }
 
-    @Test
-    @DisplayName("코멘트 등록")
-    fun `should post comment`() {
-        // Given
-        val request = PostCommentRequest(
-            discussionId = 1L,
-            codeId = null,
-            posterId = 1L,
-            scope = CommentScopeEnum.GLOBAL,
-            startLine = null,
-            endLine = null,
-            content = "Test comment"
-        )
-
-        val savedComment = DiscussionComment(
-            id = 1L,
-            discussionId = 1L,
-            codeId = null,
-            posterId = 1L,
-            scope = CommentScopeEnum.GLOBAL,
-            startLine = null,
-            endLine = null,
-            content = "Test comment"
-        )
-
-        whenever(discussionCommentUseCase.createComment(any())).thenReturn(savedComment)
-
-        // When & Then
-        mockMvc.perform(
-            post("/discussion/comment")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
-        )
-            .andExpect(status().isCreated)
-            .andExpect(jsonPath("$").value(savedComment.id))
-    }
 }

@@ -1,3 +1,5 @@
+import io.spring.gradle.dependencymanagement.org.codehaus.plexus.interpolation.os.Os
+
 plugins {
     id("org.springframework.boot") version "3.3.1"
     id("io.spring.dependency-management") version "1.1.5"
@@ -66,7 +68,15 @@ tasks.withType<Test> {
 }
 
 tasks.register("cloneTestRepo", Exec::class) {
-    commandLine("sh", "./scripts/clone_test_repo.sh")
+
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        commandLine("cmd", "/c", "./scripts/clone_test_repo.bat")
+    }
+
+    else {
+        commandLine("sh", "./scripts/clone_test_repo.sh")
+
+    }
 }
 
 tasks.named("test") {

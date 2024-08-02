@@ -1,5 +1,7 @@
 package swm.virtuoso.reviewservice.domain
 
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DeleteCommentRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyCommentRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
@@ -40,5 +42,21 @@ data class DiscussionComment(
                 content = entity.content
             )
         }
+
+        fun fromModifyRequest(request: ModifyCommentRequest): DiscussionComment {
+            return DiscussionComment(
+                id = request.discussionCommentId,
+                discussionId = request.discussionId,
+                codeId = request.codeId,
+                posterId = request.posterId,
+                scope = request.scope,
+                startLine = request.startLine,
+                endLine = request.endLine,
+                content = request.content
+            )
+        }
+
     }
+
+
 }

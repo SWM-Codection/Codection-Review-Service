@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
+import org.junit.jupiter.api.condition.OS;
 import swm.virtuoso.reviewservice.application.service.GitService
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -12,12 +13,27 @@ import kotlin.test.assertTrue
 @ExtendWith(MockitoExtension::class)
 class GitServiceTest {
     private lateinit var gitService: GitService
-    private var baseUrl = System.getenv("HOME")
+    private var baseUrl : String
     private val ownerName = ".codection"
     private val repoName = "test/"
     private val branchName = "main"
     private val filePath = "splug_assignment.cpp"
     private val commitHash = "d5bb24a99fc62f737ecdd07b102dcc3bfa352e9b"
+
+    private fun isWindows(): Boolean {
+        val property = System.getProperty("os.name")
+        return property.lowercase().contains("win")
+    }
+
+    init {
+        if (isWindows()) {
+            baseUrl = System.getenv("USERPROFILE").toString()
+        }
+        else {
+            baseUrl = System.getenv("HOME").toString()
+        }
+
+    }
 
     @BeforeEach
     fun setUp() {
