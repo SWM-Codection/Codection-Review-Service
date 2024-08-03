@@ -4,5 +4,6 @@ import swm.virtuoso.reviewservice.domian.DiscussionComment
 
 public interface DiscussionCommentPort {
     fun insertComment(discussionComment: DiscussionComment): DiscussionComment
-    fun findCommentsByDiscussionId(discussionId: Long): List<DiscussionComment>
+    fun findComment(commentId: Long): DiscussionComment
+    fun findCommentListByDiscussionId(discussionId: Long): List<DiscussionComment>
 }

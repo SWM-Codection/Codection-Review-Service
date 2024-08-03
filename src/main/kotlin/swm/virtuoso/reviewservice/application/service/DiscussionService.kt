@@ -29,7 +29,7 @@ class DiscussionService(
         codes: List<DiscussionCode>
     ): Discussion {
         val newDiscussion = discussionPort.insertDiscussion(discussion = discussion)
-        discussionCodePort.insertDiscussionCodes(codes, newDiscussion.id!!)
+        discussionCodePort.insertDiscussionCodeList(codes, newDiscussion.id!!)
         logger.info("Saved discussion with ID: {}", newDiscussion.id)
 
         val newDiscussionUser = discussionUserPort.insertDiscussionUser(newDiscussion.posterId, newDiscussion.id)
@@ -42,7 +42,7 @@ class DiscussionService(
         return discussionPort.countDiscussion(repoId, isClosed)
     }
 
-    override fun getDiscussionList(repoId: Long, isClosed: Boolean): List<Discussion> {
+    override fun getDiscussions(repoId: Long, isClosed: Boolean): List<Discussion> {
         giteaPort.findRepositoryById(repoId)
         return discussionPort.findDiscussionList(repoId, isClosed)
     }

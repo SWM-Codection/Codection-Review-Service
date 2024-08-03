@@ -4,7 +4,7 @@ import swm.virtuoso.reviewservice.domian.DiscussionCode
 
 public interface DiscussionCodePort {
     fun findDiscussionCode(codeId: Long): DiscussionCode
-    fun findDiscussionCodes(discussionId: Long): List<DiscussionCode>
+    fun findDiscussionCodeList(discussionId: Long): List<DiscussionCode>
     fun deleteDiscussionCodeAllById(id: List<Long>)
-    fun insertDiscussionCodes(discussionCodes: List<DiscussionCode>, discussionId: Long)
+    fun insertDiscussionCodeList(discussionCodes: List<DiscussionCode>, discussionId: Long)
 }
