@@ -4,4 +4,6 @@ import swm.virtuoso.reviewservice.domain.DiscussionUser
 
 public interface DiscussionUserPort {
     fun insertDiscussionUser(userId: Long, discussionId: Long): DiscussionUser
+    fun updateDiscussionUser(discussionUser: DiscussionUser): DiscussionUser
+    fun findDiscussionUserByUid(userId: Long): DiscussionUser?
 }
