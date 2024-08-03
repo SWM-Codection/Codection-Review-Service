@@ -12,7 +12,6 @@ import swm.virtuoso.reviewservice.common.enums.ReactionTypeEnum
 import swm.virtuoso.reviewservice.common.enums.ReactionTypeEnumConverter
 import swm.virtuoso.reviewservice.domain.DiscussionReaction
 
-
 @Entity
 @Table(name = "discussion_reaction")
 data class DiscussionReactionEntity(

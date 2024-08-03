@@ -41,8 +41,12 @@ class DiscussionPersistenceAdapter(
     private val discussionCommentRepository: DiscussionCommentRepository,
     private val discussionAssigneesRepository: DiscussionAssigneesRepository,
     private val discussionReactionRepository: DiscussionReactionRepository
-) : DiscussionPort, DiscussionCodePort, DiscussionUserPort,
-    DiscussionCommentPort, DiscussionAssigneesPort, DiscussionReactionPort {
+) : DiscussionPort,
+    DiscussionCodePort,
+    DiscussionUserPort,
+    DiscussionCommentPort,
+    DiscussionAssigneesPort,
+    DiscussionReactionPort {
 
     private fun getNextIndex(repoId: Long): Long {
         return discussionIndexRepository.findById(repoId)

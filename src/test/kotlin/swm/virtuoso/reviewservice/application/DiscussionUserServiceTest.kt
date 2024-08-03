@@ -1,6 +1,5 @@
 package swm.virtuoso.reviewservice.application
 
-
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
