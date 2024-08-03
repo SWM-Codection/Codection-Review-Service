@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCodeUseCase
+import swm.virtuoso.reviewservice.application.port.`in`.DiscussionFileUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
 import swm.virtuoso.reviewservice.domian.ExtractedLine
 import kotlin.test.Test
@@ -26,7 +26,7 @@ class GitControllerTest {
     private lateinit var gitUseCase: GitUseCase
 
     @MockBean
-    private lateinit var discussionCodeUseCase: DiscussionCodeUseCase
+    private lateinit var discussionFileUseCase: DiscussionFileUseCase
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -62,7 +62,7 @@ class GitControllerTest {
         val expectedExtractedLines = listOf(ExtractedLine(1, "Sample file content"))
 
         whenever(gitUseCase.getFileContent(ownerName, repoName, branchName, filePath)).thenReturn(fileContent)
-        whenever(discussionCodeUseCase.extractLinesWithNumbers(fileContent, 1, fileContent.lines().size))
+        whenever(discussionFileUseCase.extractLinesWithNumbers(fileContent, 1, fileContent.lines().size))
             .thenReturn(expectedExtractedLines)
 
         // When & Then

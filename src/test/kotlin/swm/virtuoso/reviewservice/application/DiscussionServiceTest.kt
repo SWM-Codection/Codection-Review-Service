@@ -81,7 +81,7 @@ class DiscussionServiceTest {
         )
 
         doReturn(savedDiscussion).`when`(discussionPort).insertDiscussion(discussion)
-        doNothing().`when`(discussionCodePort).insertDiscussionCodes(codes, savedDiscussion.id!!)
+        doNothing().`when`(discussionCodePort).insertDiscussionCodeList(codes, savedDiscussion.id!!)
         doReturn(savedDiscussionUser).`when`(discussionUserPort).insertDiscussionUser(savedDiscussion.posterId, savedDiscussion.id!!)
 
         // when
@@ -96,7 +96,7 @@ class DiscussionServiceTest {
         assertEquals(savedDiscussion.posterId, result.posterId)
 
         verify(discussionPort, times(1)).insertDiscussion(discussion)
-        verify(discussionCodePort, times(1)).insertDiscussionCodes(codes, savedDiscussion.id!!)
+        verify(discussionCodePort, times(1)).insertDiscussionCodeList(codes, savedDiscussion.id!!)
         verify(discussionUserPort, times(1)).insertDiscussionUser(savedDiscussion.posterId, savedDiscussion.id!!)
     }
 
@@ -145,7 +145,7 @@ class DiscussionServiceTest {
         doReturn(expectedDiscussions).`when`(discussionPort).findDiscussionList(repoId, isClosed)
 
         // when
-        val result = discussionService.getDiscussionList(repoId, isClosed)
+        val result = discussionService.getDiscussions(repoId, isClosed)
 
         // then
         assertEquals(expectedDiscussions.size, result.size)

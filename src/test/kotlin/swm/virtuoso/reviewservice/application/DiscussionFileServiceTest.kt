@@ -16,6 +16,7 @@ import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
+import swm.virtuoso.reviewservice.application.port.out.DiscussionReactionPort
 import swm.virtuoso.reviewservice.application.port.out.GiteaPort
 import swm.virtuoso.reviewservice.application.service.DiscussionFileService
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
@@ -42,6 +43,9 @@ class DiscussionFileServiceTest {
 
     @Mock
     lateinit var discussionCodePort: DiscussionCodePort
+
+    @Mock
+    lateinit var discussionReactionPort: DiscussionReactionPort
 
     @InjectMocks
     lateinit var discussionFileService: DiscussionFileService
@@ -182,15 +186,15 @@ class DiscussionFileServiceTest {
                 ExtractedLine(5, "line5")
             ),
             comments = listOf(
-                DiscussionCommentResponse.fromDiscussionComment(comments[0])
+                DiscussionCommentResponse.fromDiscussionComment(comments[0], emptyList())
             )
         )
 
         // when
         `when`(giteaPort.findRepositoryByDiscussionId(discussionId)).thenReturn(repository)
         `when`(discussionPort.findDiscussion(discussionId)).thenReturn(discussion)
-        `when`(discussionCodePort.findDiscussionCodes(discussionId)).thenReturn(codes)
-        `when`(discussionCommentPort.findCommentsByDiscussionId(discussionId)).thenReturn(comments)
+        `when`(discussionCodePort.findDiscussionCodeList(discussionId)).thenReturn(codes)
+        `when`(discussionCommentPort.findCommentListByDiscussionId(discussionId)).thenReturn(comments)
         `when`(gitUseCase.getFileContentByHashCode(ownerName, repoName, commitHash, filePath)).thenReturn(fileContent)
 
         val result = discussionFileService.getDiscussionContents(discussionId)

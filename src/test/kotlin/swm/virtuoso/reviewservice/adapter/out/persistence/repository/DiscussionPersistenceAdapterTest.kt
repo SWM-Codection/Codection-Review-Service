@@ -16,15 +16,19 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import swm.virtuoso.reviewservice.adapter.out.persistence.DiscussionPersistenceAdapter
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCodeEntity
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionReactionEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCodeRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCommentRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionIndexRepository
+import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionReactionRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionUserRepository
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
+import swm.virtuoso.reviewservice.common.enums.ReactionTypeEnum
 import swm.virtuoso.reviewservice.domian.Discussion
 import swm.virtuoso.reviewservice.domian.DiscussionCode
 import swm.virtuoso.reviewservice.domian.DiscussionComment
+import kotlin.test.assertTrue
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -50,6 +54,9 @@ class DiscussionPersistenceAdapterTest {
 
     @Autowired
     private lateinit var discussionCommentRepository: DiscussionCommentRepository
+
+    @Autowired
+    private lateinit var discussionReactionRepository: DiscussionReactionRepository
 
     @Autowired
     private lateinit var jdbcTemplate: JdbcTemplate
@@ -289,7 +296,7 @@ class DiscussionPersistenceAdapterTest {
         discussionCodeRepository.save(DiscussionCodeEntity.fromDiscussionCode(discussionCode2, discussionId))
 
         // when
-        val codes = discussionPersistenceAdapter.findDiscussionCodes(discussionId)
+        val codes = discussionPersistenceAdapter.findDiscussionCodeList(discussionId)
 
         // then
         assertEquals(2, codes.size)
@@ -333,9 +340,59 @@ class DiscussionPersistenceAdapterTest {
         discussionPersistenceAdapter.insertComment(discussionComment2)
 
         // when
-        val comments = discussionPersistenceAdapter.findCommentsByDiscussionId(savedDiscussion.id!!)
+        val comments = discussionPersistenceAdapter.findCommentListByDiscussionId(savedDiscussion.id!!)
 
         // then
         assertEquals(2, comments.size)
+    }
+
+    @Test
+    @DisplayName("반응을 삽입하고 올바르게 저장되는지 확인")
+    fun `insertReaction should save the reaction correctly`() {
+        // given
+        val discussionReaction = DiscussionReactionEntity(
+            type = ReactionTypeEnum.LAUGH,
+            discussionId = 1,
+            commentId = 2,
+            userId = 1
+        )
+
+        // when
+        val savedReaction = discussionReactionRepository.save(discussionReaction)
+
+        // then
+        assertNotNull(savedReaction)
+        assertNotNull(savedReaction.id)
+        assertEquals(discussionReaction.type, savedReaction.type)
+        assertEquals(discussionReaction.discussionId, savedReaction.discussionId)
+    }
+
+    @Test
+    @DisplayName("디스커션 ID로 모든 리액션을 반환해야 한다")
+    fun `findReactionListByDiscussionId should return all reactions for the given discussionId`() {
+        // given
+        val discussionId = 1L
+        val reaction1 = DiscussionReactionEntity(
+            type = ReactionTypeEnum.LAUGH,
+            discussionId = discussionId,
+            commentId = 2,
+            userId = 1
+        )
+        val reaction2 = DiscussionReactionEntity(
+            type = ReactionTypeEnum.HEART,
+            discussionId = discussionId,
+            commentId = 3,
+            userId = 2
+        )
+        discussionReactionRepository.saveAll(listOf(reaction1, reaction2))
+
+        // when
+        val reactions = discussionReactionRepository.findAllByDiscussionId(discussionId)
+
+        // then
+        assertNotNull(reactions)
+        assertEquals(2, reactions.size)
+        assertTrue(reactions.any { it.type == ReactionTypeEnum.LAUGH })
+        assertTrue(reactions.any { it.type == ReactionTypeEnum.HEART })
     }
 }

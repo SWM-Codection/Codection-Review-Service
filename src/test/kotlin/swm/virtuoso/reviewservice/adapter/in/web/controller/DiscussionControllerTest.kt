@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -19,18 +20,23 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionAvailableRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostReactionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionContentResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.model.FileContent
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.RepositoryEntity
-import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCodeUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCommentUseCase
+import swm.virtuoso.reviewservice.application.port.`in`.DiscussionFileUseCase
+import swm.virtuoso.reviewservice.application.port.`in`.DiscussionReactionUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
+import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUserUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GiteaUseCase
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
+import swm.virtuoso.reviewservice.common.enums.ReactionTypeEnum
 import swm.virtuoso.reviewservice.domian.Discussion
 import swm.virtuoso.reviewservice.domian.DiscussionCode
 import swm.virtuoso.reviewservice.domian.DiscussionComment
+import swm.virtuoso.reviewservice.domian.DiscussionReaction
 
 @WebMvcTest(DiscussionController::class)
 @ActiveProfiles("test")
@@ -52,7 +58,13 @@ class DiscussionControllerTest {
     private lateinit var gitUseCase: GitUseCase
 
     @MockBean
-    private lateinit var discussionCodeUseCase: DiscussionCodeUseCase
+    private lateinit var discussionFileUseCase: DiscussionFileUseCase
+
+    @MockBean
+    private lateinit var discussionReactionUseCase: DiscussionReactionUseCase
+
+    @MockBean
+    private lateinit var discussionUserUseCase: DiscussionUserUseCase
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -153,7 +165,7 @@ class DiscussionControllerTest {
             )
         )
 
-        whenever(discussionUseCase.getDiscussionList(repoId, isClosed)).thenReturn(expectedDiscussions)
+        whenever(discussionUseCase.getDiscussions(repoId, isClosed)).thenReturn(expectedDiscussions)
 
         // When & Then
         mockMvc.perform(
@@ -191,10 +203,11 @@ class DiscussionControllerTest {
         val response = DiscussionContentResponse(
             discussionId = discussionId,
             contents = listOf(FileContent(filePath = "path/to/file", codeBlocks = listOf())),
-            globalComments = listOf()
+            globalComments = emptyList(),
+            globalReactions = emptyList()
         )
 
-        whenever(discussionCodeUseCase.getDiscussionContents(discussionId)).thenReturn(response)
+        whenever(discussionFileUseCase.getDiscussionContents(discussionId)).thenReturn(response)
 
         // When & Then
         mockMvc.perform(get("/discussion/$discussionId/contents"))
@@ -237,5 +250,63 @@ class DiscussionControllerTest {
         )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$").value(savedComment.id))
+    }
+
+    @Test
+    @DisplayName("게시글 혹은 코멘트에 반응 추가")
+    fun `should give reaction`() {
+        // Given
+        val reactionId = 1L
+        val request = PostReactionRequest(
+            type = ReactionTypeEnum.LAUGH,
+            discussionId = 1L,
+            commentId = null,
+            userId = 1L
+        )
+
+        val discussionReaction = DiscussionReaction(
+            id = reactionId,
+            type = ReactionTypeEnum.LAUGH,
+            discussionId = 1L,
+            commentId = null,
+            userId = 1L
+        )
+
+        whenever(discussionReactionUseCase.addDiscussionReaction(any())).thenReturn(discussionReaction)
+
+        // When & Then
+        mockMvc.perform(post("/discussion/reaction")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isCreated)
+            .andExpect(content().string(reactionId.toString()))
+    }
+
+    @Test
+    @DisplayName("유저를 멘션 상태로 변경")
+    fun `should mark user as mentioned`() {
+        // Given
+        val discussionId = 1L
+        val uid = 1L
+
+        doNothing().`when`(discussionUserUseCase).markDiscussionAsMention(discussionId, uid)
+
+        // When & Then
+        mockMvc.perform(post("/discussion/$discussionId/$uid/mention"))
+            .andExpect(status().isNoContent)
+    }
+
+    @Test
+    @DisplayName("유저를 읽음 상태로 변경")
+    fun `should mark user as read`() {
+        // Given
+        val discussionId = 1L
+        val uid = 1L
+
+        doNothing().`when`(discussionUserUseCase).markDiscussionAsRead(discussionId, uid)
+
+        // When & Then
+        mockMvc.perform(post("/discussion/$discussionId/$uid/read"))
+            .andExpect(status().isNoContent)
     }
 }
