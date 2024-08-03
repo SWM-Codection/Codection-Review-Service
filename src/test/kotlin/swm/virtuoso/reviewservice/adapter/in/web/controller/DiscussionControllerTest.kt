@@ -275,9 +275,11 @@ class DiscussionControllerTest {
         whenever(discussionReactionUseCase.addDiscussionReaction(any())).thenReturn(discussionReaction)
 
         // When & Then
-        mockMvc.perform(post("/discussion/reaction")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(
+            post("/discussion/reaction")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        )
             .andExpect(status().isCreated)
             .andExpect(content().string(reactionId.toString()))
     }
