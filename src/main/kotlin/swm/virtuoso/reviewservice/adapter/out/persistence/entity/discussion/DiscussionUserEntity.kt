@@ -16,7 +16,7 @@ data class DiscussionUserEntity(
     val id: Long? = null,
 
     @field:Column(nullable = false, name = "uid")
-    val uid: Long,
+    val userId: Long,
 
     @field:Column(nullable = false, name = "discussion_id")
     val discussionId: Long,

@@ -4,7 +4,7 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.Disc
 
 data class DiscussionUser(
     val id: Long? = null,
-    val uid: Long,
+    val userId: Long,
     val discussionId: Long,
     val isRead: Boolean,
     val isMentioned: Boolean
@@ -13,7 +13,7 @@ data class DiscussionUser(
         fun fromEntity(discussionUserEntity: DiscussionUserEntity): DiscussionUser {
             return DiscussionUser(
                 id = discussionUserEntity.id,
-                uid = discussionUserEntity.uid,
+                userId = discussionUserEntity.userId,
                 discussionId = discussionUserEntity.discussionId,
                 isRead = discussionUserEntity.isRead,
                 isMentioned = discussionUserEntity.isMentioned

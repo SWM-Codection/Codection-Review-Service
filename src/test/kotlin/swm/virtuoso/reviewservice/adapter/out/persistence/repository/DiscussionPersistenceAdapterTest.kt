@@ -180,7 +180,7 @@ class DiscussionPersistenceAdapterTest {
 
         // then
         assertNotNull(savedDiscussionUser.id)
-        assertEquals(userId, savedDiscussionUser.uid)
+        assertEquals(userId, savedDiscussionUser.userId)
         assertEquals(discussionId, savedDiscussionUser.discussionId)
     }
 
@@ -247,7 +247,7 @@ class DiscussionPersistenceAdapterTest {
         val pageable = PageRequest.of(0, 20)
 
         // when
-        val discussions = discussionPersistenceAdapter.findDiscussionList(repoId, isClosed, pageable)
+        val discussions = discussionPersistenceAdapter.findDiscussions(repoId, isClosed, pageable)
 
         // then
         assertEquals(2, discussions.totalElements)

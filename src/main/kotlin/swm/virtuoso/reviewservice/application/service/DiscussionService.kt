@@ -63,7 +63,7 @@ class DiscussionService(
 
     override fun getDiscussions(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion> {
         giteaPort.findRepositoryById(repoId)
-        return discussionPort.findDiscussionList(repoId, isClosed, pageable)
+        return discussionPort.findDiscussions(repoId, isClosed, pageable)
     }
 
     // TODO modify 하는 유저와 discussion 작성 유저가 동일인인지 체크

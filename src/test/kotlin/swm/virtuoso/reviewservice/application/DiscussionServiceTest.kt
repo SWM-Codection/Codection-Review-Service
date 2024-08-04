@@ -81,7 +81,7 @@ class DiscussionServiceTest {
 
         val savedDiscussionUser = DiscussionUser(
             id = 1L,
-            uid = 1L,
+            userId = 1L,
             discussionId = 1L,
             isRead = true,
             isMentioned = false
@@ -196,7 +196,7 @@ class DiscussionServiceTest {
         )
 
         val expectedDiscussions = PageImpl(discussions, pageable, discussions.size.toLong())
-        doReturn(expectedDiscussions).`when`(discussionPort).findDiscussionList(repoId, isClosed, pageable)
+        doReturn(expectedDiscussions).`when`(discussionPort).findDiscussions(repoId, isClosed, pageable)
 
         // when
         val result = discussionService.getDiscussions(repoId, isClosed, pageable)

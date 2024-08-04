@@ -71,7 +71,7 @@ class DiscussionPersistenceAdapter(
         return discussionRepository.countByRepoIdAndIsClosed(repoId, isClosed)
     }
 
-    override fun findDiscussionList(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion> {
+    override fun findDiscussions(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion> {
         return discussionRepository.findAllByRepoIdAndIsClosed(repoId, isClosed, pageable)
             .map { Discussion.fromEntity(it) }
     }
@@ -151,7 +151,7 @@ class DiscussionPersistenceAdapter(
             discussionUserRepository.save(
                 DiscussionUserEntity(
                     id = null,
-                    uid = userId,
+                    userId = userId,
                     discussionId = discussionId,
                     isRead = true,
                     isMentioned = false
@@ -165,7 +165,7 @@ class DiscussionPersistenceAdapter(
             discussionUserRepository.save(
                 DiscussionUserEntity(
                     id = discussionUser.id,
-                    uid = discussionUser.uid,
+                    userId = discussionUser.userId,
                     discussionId = discussionUser.discussionId,
                     isRead = discussionUser.isRead,
                     isMentioned = discussionUser.isMentioned
@@ -174,8 +174,8 @@ class DiscussionPersistenceAdapter(
         )
     }
 
-    override fun findDiscussionUserByUid(userId: Long): DiscussionUser? {
-        return discussionUserRepository.findByUid(userId)?.let { DiscussionUser.fromEntity(it) }
+    override fun findDiscussionUserByUserId(userId: Long): DiscussionUser? {
+        return discussionUserRepository.findByUserId(userId)?.let { DiscussionUser.fromEntity(it) }
     }
 
     override fun findDiscussionCodeById(codeId: Long): DiscussionCode {

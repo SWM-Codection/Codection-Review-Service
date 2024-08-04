@@ -41,7 +41,7 @@ class DiscussionUserServiceTest {
         val userId = 2L
         val findDiscussionUser = DiscussionUser(
             id = 3L,
-            uid = userId,
+            userId = userId,
             discussionId = discussionId,
             isRead = false,
             isMentioned = false
@@ -50,7 +50,7 @@ class DiscussionUserServiceTest {
 
         doReturn(mock(Discussion::class.java)).`when`(discussionPort).findDiscussionById(discussionId)
         doReturn(mock(UserEntity::class.java)).`when`(giteaPort).findUserById(userId)
-        doReturn(findDiscussionUser).`when`(discussionUserPort).findDiscussionUserByUid(userId)
+        doReturn(findDiscussionUser).`when`(discussionUserPort).findDiscussionUserByUserId(userId)
         doReturn(updatedDiscussionUser).`when`(discussionUserPort).updateDiscussionUser(any())
 
         // when
@@ -59,7 +59,7 @@ class DiscussionUserServiceTest {
         // then
         verify(discussionPort).findDiscussionById(discussionId)
         verify(giteaPort).findUserById(userId)
-        verify(discussionUserPort).findDiscussionUserByUid(userId)
+        verify(discussionUserPort).findDiscussionUserByUserId(userId)
         verify(discussionUserPort).updateDiscussionUser(any())
     }
 
@@ -71,7 +71,7 @@ class DiscussionUserServiceTest {
         val userId = 2L
         val findDiscussionUser = DiscussionUser(
             id = 3L,
-            uid = userId,
+            userId = userId,
             discussionId = discussionId,
             isRead = false,
             isMentioned = false
@@ -80,7 +80,7 @@ class DiscussionUserServiceTest {
 
         doReturn(mock(Discussion::class.java)).`when`(discussionPort).findDiscussionById(discussionId)
         doReturn(mock(UserEntity::class.java)).`when`(giteaPort).findUserById(userId)
-        doReturn(findDiscussionUser).`when`(discussionUserPort).findDiscussionUserByUid(userId)
+        doReturn(findDiscussionUser).`when`(discussionUserPort).findDiscussionUserByUserId(userId)
         doReturn(updatedDiscussionUser).`when`(discussionUserPort).updateDiscussionUser(any())
 
         // when
@@ -89,7 +89,7 @@ class DiscussionUserServiceTest {
         // then
         verify(discussionPort).findDiscussionById(discussionId)
         verify(giteaPort).findUserById(userId)
-        verify(discussionUserPort).findDiscussionUserByUid(userId)
+        verify(discussionUserPort).findDiscussionUserByUserId(userId)
         verify(discussionUserPort).updateDiscussionUser(any())
     }
 }
