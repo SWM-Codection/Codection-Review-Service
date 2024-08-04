@@ -143,7 +143,7 @@ class DiscussionServiceTest {
             commitHash = "commitHash1"
         )
 
-        doReturn(expectedDiscussion).`when`(discussionPort).findDiscussion(discussionId)
+        doReturn(expectedDiscussion).`when`(discussionPort).findDiscussionById(discussionId)
 
         // when
         val result = discussionService.getDiscussion(discussionId)
@@ -199,7 +199,7 @@ class DiscussionServiceTest {
         doReturn(expectedDiscussions).`when`(discussionPort).findDiscussionList(repoId, isClosed, pageable)
 
         // when
-        val result = discussionService.getDiscussionList(repoId, isClosed, pageable)
+        val result = discussionService.getDiscussions(repoId, isClosed, pageable)
 
         // then
         assertEquals(expectedDiscussions.totalElements, result.totalElements)

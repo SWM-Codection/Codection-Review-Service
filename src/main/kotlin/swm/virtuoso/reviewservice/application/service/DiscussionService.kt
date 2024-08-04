@@ -54,14 +54,14 @@ class DiscussionService(
     }
 
     override fun getDiscussion(discussionId: Long): Discussion {
-        return discussionPort.findDiscussion(discussionId)
+        return discussionPort.findDiscussionById(discussionId)
     }
 
     override fun countDiscussion(repoId: Long, isClosed: Boolean): Int {
         return discussionPort.countDiscussion(repoId, isClosed)
     }
 
-    override fun getDiscussionList(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion> {
+    override fun getDiscussions(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion> {
         giteaPort.findRepositoryById(repoId)
         return discussionPort.findDiscussionList(repoId, isClosed, pageable)
     }

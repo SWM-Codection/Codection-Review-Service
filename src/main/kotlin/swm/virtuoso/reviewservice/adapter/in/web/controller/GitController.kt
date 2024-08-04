@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.PartResponse
-import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCodeUseCase
+import swm.virtuoso.reviewservice.application.port.`in`.DiscussionFileUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
 import swm.virtuoso.reviewservice.domain.ExtractedLine
 import swm.virtuoso.reviewservice.domain.PathTrie
@@ -22,7 +22,7 @@ import swm.virtuoso.reviewservice.domain.PathTrie
 @RequestMapping("/")
 class GitController(
     private val gitUseCase: GitUseCase,
-    private val discussionCodeUseCase: DiscussionCodeUseCase
+    private val discussionFileUseCase: DiscussionFileUseCase
 ) {
 
     @GetMapping("/{ownername}/{reponame}/{branchName}/discussions")
@@ -99,6 +99,6 @@ class GitController(
         @RequestParam("filepath") filePath: String
     ): List<ExtractedLine> {
         val code = gitUseCase.getFileContent(ownerName, repoName, branchName, filePath)
-        return discussionCodeUseCase.extractLinesWithNumbers(code, 1, code.lines().size)
+        return discussionFileUseCase.extractLinesWithNumbers(code, 1, code.lines().size)
     }
 }

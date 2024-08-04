@@ -8,24 +8,28 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.Disc
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCodeEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionReactionEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionUserEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.IssueIndexEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionAssigneesRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCodeRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCommentRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionIndexRepository
+import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionReactionRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionUserRepository
 import swm.virtuoso.reviewservice.application.port.out.DiscussionAssigneesPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
+import swm.virtuoso.reviewservice.application.port.out.DiscussionReactionPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
 import swm.virtuoso.reviewservice.domain.Discussion
 import swm.virtuoso.reviewservice.domain.DiscussionAllContent
 import swm.virtuoso.reviewservice.domain.DiscussionAssignee
 import swm.virtuoso.reviewservice.domain.DiscussionCode
 import swm.virtuoso.reviewservice.domain.DiscussionComment
+import swm.virtuoso.reviewservice.domain.DiscussionReaction
 import swm.virtuoso.reviewservice.domain.DiscussionUser
 
 @Repository
@@ -35,8 +39,14 @@ class DiscussionPersistenceAdapter(
     private val discussionIndexRepository: DiscussionIndexRepository,
     private val discussionUserRepository: DiscussionUserRepository,
     private val discussionCommentRepository: DiscussionCommentRepository,
-    private val discussionAssigneesRepository: DiscussionAssigneesRepository
-) : DiscussionPort, DiscussionCodePort, DiscussionUserPort, DiscussionCommentPort, DiscussionAssigneesPort {
+    private val discussionAssigneesRepository: DiscussionAssigneesRepository,
+    private val discussionReactionRepository: DiscussionReactionRepository
+) : DiscussionPort,
+    DiscussionCodePort,
+    DiscussionUserPort,
+    DiscussionCommentPort,
+    DiscussionAssigneesPort,
+    DiscussionReactionPort {
 
     private fun getNextIndex(repoId: Long): Long {
         return discussionIndexRepository.findById(repoId)
@@ -66,7 +76,7 @@ class DiscussionPersistenceAdapter(
             .map { Discussion.fromEntity(it) }
     }
 
-    override fun findDiscussion(discussionId: Long): Discussion {
+    override fun findDiscussionById(discussionId: Long): Discussion {
         val discussionEntity = discussionRepository.findByIdOrNull(discussionId)
             ?: throw NoSuchElementException("디스커션 정보를 찾을 수 없습니다.")
 
@@ -150,13 +160,31 @@ class DiscussionPersistenceAdapter(
         )
     }
 
-    override fun findDiscussionCode(codeId: Long): DiscussionCode {
+    override fun updateDiscussionUser(discussionUser: DiscussionUser): DiscussionUser {
+        return DiscussionUser.fromEntity(
+            discussionUserRepository.save(
+                DiscussionUserEntity(
+                    id = discussionUser.id,
+                    uid = discussionUser.uid,
+                    discussionId = discussionUser.discussionId,
+                    isRead = discussionUser.isRead,
+                    isMentioned = discussionUser.isMentioned
+                )
+            )
+        )
+    }
+
+    override fun findDiscussionUserByUid(userId: Long): DiscussionUser? {
+        return discussionUserRepository.findByUid(userId)?.let { DiscussionUser.fromEntity(it) }
+    }
+
+    override fun findDiscussionCodeById(codeId: Long): DiscussionCode {
         val codeEntity = discussionCodeRepository.findByIdOrNull(codeId)
             ?: throw NoSuchElementException("코드 정보를 찾을 수 없습니다.")
         return DiscussionCode.fromEntity(codeEntity)
     }
 
-    override fun findDiscussionCodes(discussionId: Long): List<DiscussionCode> {
+    override fun findDiscussionCodesByDiscussionId(discussionId: Long): List<DiscussionCode> {
         return discussionCodeRepository.findAllByDiscussionId(discussionId)
             .map { DiscussionCode.fromEntity(it) }
     }
@@ -174,10 +202,10 @@ class DiscussionPersistenceAdapter(
     }
 
     override fun insertComment(discussionComment: DiscussionComment): DiscussionComment {
-        val discussion = findDiscussion(discussionComment.discussionId)
+        val discussion = findDiscussionById(discussionComment.discussionId)
         discussionComment.codeId?.let { codeId ->
             // 조건이 안맞으면 IllegalArgumentException 발생
-            require(discussion.id == findDiscussionCode(codeId).discussionId) {
+            require(discussion.id == findDiscussionCodeById(codeId).discussionId) {
                 "코드의 정보와 디스커션 정보가 일치하지 않습니다."
             }
         }
@@ -237,5 +265,15 @@ class DiscussionPersistenceAdapter(
     override fun findDiscussionAssignees(discussionId: Long): List<DiscussionAssignee> {
         return discussionAssigneesRepository.findAllByDiscussionId(discussionId)
             .map { DiscussionAssignee.fromEntity(it) }
+    }
+
+    override fun insertReaction(discussionReaction: DiscussionReaction): DiscussionReaction {
+        val reactionEntity = DiscussionReactionEntity.fromDiscussionReaction(discussionReaction)
+        return DiscussionReaction.fromEntity(discussionReactionRepository.save(reactionEntity))
+    }
+
+    override fun findReactionsByDiscussionId(discussionId: Long): List<DiscussionReaction> {
+        return discussionReactionRepository.findAllByDiscussionId(discussionId)
+            .map { DiscussionReaction.fromEntity(it) }
     }
 }
