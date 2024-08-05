@@ -21,6 +21,8 @@ data class Discussion(
 
     var index: Long? = null,
 
+    var isClosed: Boolean = false,
+
     val deadlineUnix: Long? = null
 ) {
     companion object {
@@ -32,6 +34,7 @@ data class Discussion(
                 repoId = request.repoId,
                 posterId = request.posterId,
                 commitHash = null,
+                isClosed = false,
                 index = null,
                 deadlineUnix = request.deadline?.let { convertToEpoch(it) }
             )
@@ -46,6 +49,7 @@ data class Discussion(
                 posterId = entity.posterId,
                 commitHash = entity.commitHash,
                 index = entity.index,
+                isClosed = entity.isClosed,
                 deadlineUnix = entity.deadlineUnix
             )
         }
