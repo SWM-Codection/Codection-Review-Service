@@ -10,26 +10,12 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import swm.virtuoso.reviewservice.adapter.out.persistence.DiscussionPersistenceAdapter
-import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionAssigneesEntity
-import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCodeEntity
-import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionReactionEntity
-import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionAssigneesRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCodeRepository
-import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCommentRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionIndexRepository
-import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionReactionRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
-import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionUserRepository
-import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
-import swm.virtuoso.reviewservice.common.enums.ReactionTypeEnum
 import swm.virtuoso.reviewservice.domain.Discussion
-import swm.virtuoso.reviewservice.domain.DiscussionAssignee
-import swm.virtuoso.reviewservice.domain.DiscussionCode
-import swm.virtuoso.reviewservice.domain.DiscussionComment
-import kotlin.test.assertTrue
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)

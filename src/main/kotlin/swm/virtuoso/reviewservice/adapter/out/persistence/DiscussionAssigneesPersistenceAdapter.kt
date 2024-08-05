@@ -9,7 +9,7 @@ import swm.virtuoso.reviewservice.domain.DiscussionAssignee
 @Repository
 class DiscussionAssigneesPersistenceAdapter(
     private val discussionAssigneesRepository: DiscussionAssigneesRepository
-): DiscussionAssigneesPort {
+) : DiscussionAssigneesPort {
 
     override fun insertDiscussionAssignees(discussionAssignees: List<DiscussionAssignee>) {
         val entities = discussionAssignees.map { assignee ->

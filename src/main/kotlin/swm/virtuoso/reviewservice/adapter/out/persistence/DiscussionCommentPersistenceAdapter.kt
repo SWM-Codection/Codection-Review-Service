@@ -3,15 +3,13 @@ package swm.virtuoso.reviewservice.adapter.out.persistence
 import org.springframework.stereotype.Repository
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCommentRepository
-import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
-import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.domain.DiscussionComment
 
 @Repository
 class DiscussionCommentPersistenceAdapter(
-    private val discussionCommentRepository: DiscussionCommentRepository,
-): DiscussionCommentPort {
+    private val discussionCommentRepository: DiscussionCommentRepository
+) : DiscussionCommentPort {
 
     override fun insertComment(discussionComment: DiscussionComment): DiscussionComment {
         val savedEntity = discussionCommentRepository.save(

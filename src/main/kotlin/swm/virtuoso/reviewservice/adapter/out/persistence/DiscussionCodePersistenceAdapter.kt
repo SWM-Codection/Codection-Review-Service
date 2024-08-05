@@ -10,7 +10,7 @@ import swm.virtuoso.reviewservice.domain.DiscussionCode
 @Repository
 class DiscussionCodePersistenceAdapter(
     private val discussionCodeRepository: DiscussionCodeRepository
-): DiscussionCodePort {
+) : DiscussionCodePort {
 
     override fun findDiscussionCodeById(codeId: Long): DiscussionCode {
         val codeEntity = discussionCodeRepository.findByIdOrNull(codeId)

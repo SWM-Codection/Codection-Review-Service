@@ -12,7 +12,6 @@ import org.springframework.test.context.ActiveProfiles
 import swm.virtuoso.reviewservice.adapter.out.persistence.DiscussionReactionPersistenceAdapter
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionReactionEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionReactionRepository
-import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
 import swm.virtuoso.reviewservice.common.enums.ReactionTypeEnum
 import swm.virtuoso.reviewservice.domain.DiscussionReaction
 import kotlin.test.assertTrue

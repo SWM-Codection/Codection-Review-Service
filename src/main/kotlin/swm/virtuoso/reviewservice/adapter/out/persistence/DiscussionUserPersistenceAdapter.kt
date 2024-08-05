@@ -9,7 +9,7 @@ import swm.virtuoso.reviewservice.domain.DiscussionUser
 @Repository
 class DiscussionUserPersistenceAdapter(
     private val discussionUserRepository: DiscussionUserRepository
-): DiscussionUserPort {
+) : DiscussionUserPort {
     override fun insertDiscussionUser(userId: Long, discussionId: Long): DiscussionUser {
         return DiscussionUser.fromEntity(
             discussionUserRepository.save(

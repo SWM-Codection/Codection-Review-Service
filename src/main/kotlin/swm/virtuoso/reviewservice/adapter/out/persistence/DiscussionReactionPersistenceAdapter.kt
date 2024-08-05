@@ -9,7 +9,7 @@ import swm.virtuoso.reviewservice.domain.DiscussionReaction
 @Repository
 class DiscussionReactionPersistenceAdapter(
     private val discussionReactionRepository: DiscussionReactionRepository
-): DiscussionReactionPort {
+) : DiscussionReactionPort {
     override fun insertReaction(discussionReaction: DiscussionReaction): DiscussionReaction {
         val reactionEntity = DiscussionReactionEntity.fromDiscussionReaction(discussionReaction)
         return DiscussionReaction.fromEntity(discussionReactionRepository.save(reactionEntity))
