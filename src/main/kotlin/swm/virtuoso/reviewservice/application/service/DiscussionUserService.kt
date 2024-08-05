@@ -21,13 +21,13 @@ class DiscussionUserService(
         discussionPort.findDiscussionById(discussionId)
         giteaPort.findUserById(userId)
 
-        val findDiscussionUserId = discussionUserPort.findDiscussionUserByUid(userId)
+        val findDiscussionUser = discussionUserPort.findDiscussionUserByUserId(userId)
         val savedUser = discussionUserPort.updateDiscussionUser(
             DiscussionUser(
-                id = findDiscussionUserId?.id,
-                uid = userId,
+                id = findDiscussionUser?.id,
+                userId = userId,
                 discussionId = discussionId,
-                isRead = findDiscussionUserId?.run { isRead } ?: false,
+                isRead = findDiscussionUser?.run { isRead } ?: false,
                 isMentioned = true
             )
         )
@@ -38,13 +38,13 @@ class DiscussionUserService(
         discussionPort.findDiscussionById(discussionId)
         giteaPort.findUserById(userId)
 
-        val findDiscussionUserId = discussionUserPort.findDiscussionUserByUid(userId)
+        val findDiscussionUser = discussionUserPort.findDiscussionUserByUserId(userId)
         val savedUser = discussionUserPort.updateDiscussionUser(
             DiscussionUser(
-                id = findDiscussionUserId?.id,
-                uid = userId,
+                id = findDiscussionUser?.id,
+                userId = userId,
                 discussionId = discussionId,
-                isRead = findDiscussionUserId?.run { isRead } ?: false,
+                isRead = findDiscussionUser?.run { isRead } ?: false,
                 isMentioned = true
             )
         )

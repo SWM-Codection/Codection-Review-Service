@@ -27,7 +27,9 @@ import swm.virtuoso.reviewservice.domain.DiscussionComment
 @RestController
 @RequestMapping("/discussion")
 @Tag(name = "Discussion Comment", description = "Discussion Comment API")
-class DiscussionCommentController(val discussionCommentUseCase: DiscussionCommentUseCase) {
+class DiscussionCommentController(
+    val discussionCommentUseCase: DiscussionCommentUseCase
+) {
 
     @PostMapping("/comment")
     @ResponseStatus(HttpStatus.CREATED)

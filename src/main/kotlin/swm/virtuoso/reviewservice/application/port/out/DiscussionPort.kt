@@ -10,7 +10,7 @@ public interface DiscussionPort {
     fun insertDiscussion(discussion: Discussion): Discussion
     fun saveDiscussionAllContent(discussionAllContent: DiscussionAllContent): DiscussionEntity
     fun countDiscussion(repoId: Long, isClosed: Boolean): Int
-    fun findDiscussionList(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion>
+    fun findDiscussions(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion>
     fun findDiscussionById(discussionId: Long): Discussion
     fun findDiscussionAllContent(discussionId: Long): DiscussionAllContent
 }

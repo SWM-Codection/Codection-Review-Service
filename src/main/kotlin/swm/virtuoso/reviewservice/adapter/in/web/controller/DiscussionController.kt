@@ -21,22 +21,15 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionAvailableRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostReactionRequest
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionContentResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionListResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
-import swm.virtuoso.reviewservice.application.port.`in`.DiscussionFileUseCase
-import swm.virtuoso.reviewservice.application.port.`in`.DiscussionReactionUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
-import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUserUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GiteaUseCase
 import swm.virtuoso.reviewservice.common.exception.ErrorResponse
 import swm.virtuoso.reviewservice.domain.Discussion
 import swm.virtuoso.reviewservice.domain.DiscussionAvailability
-import swm.virtuoso.reviewservice.domain.DiscussionReaction
-import swm.virtuoso.reviewservice.domain.ExtractedLine
 
 @RestController
 @RequestMapping("/discussion")
@@ -44,10 +37,7 @@ import swm.virtuoso.reviewservice.domain.ExtractedLine
 class DiscussionController(
     private val discussionUseCase: DiscussionUseCase,
     private val giteaUseCase: GiteaUseCase,
-    private val gitUseCase: GitUseCase,
-    private val discussionFileUseCase: DiscussionFileUseCase,
-    private val discussionReactionUseCase: DiscussionReactionUseCase,
-    private val discussionUserUseCase: DiscussionUserUseCase
+    private val gitUseCase: GitUseCase
 ) {
 
     @GetMapping("/health-check")
@@ -192,34 +182,6 @@ class DiscussionController(
         )
     }
 
-    @GetMapping("/{discussionId}/contents")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get discussion contents", description = "디스커션 내용 반환")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "디스커션 내용 반환 성공",
-                content = [Content(schema = Schema(implementation = DiscussionContentResponse::class))]
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "레포지토리 혹은 디스커션 정보를 찾을 수 없음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "지정되었던 파일의 범위를 넘어선 범위임",
-                content = [Content(schema = Schema(implementation = ExtractedLine::class, type = "array"))]
-            )
-        ]
-    )
-    fun getDiscussionContents(
-        @PathVariable discussionId: Long
-    ): DiscussionContentResponse {
-        return discussionFileUseCase.getDiscussionContents(discussionId)
-    }
-
     @PutMapping("")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Modify discussion", description = "디스커션 수정 (수정 필요)")
@@ -237,77 +199,5 @@ class DiscussionController(
     ) {
         // TODO 프론트에서 modify를 호출한 뒤 완료되면 페이지를 리로드 하면서 각 페이지를 가져오는 방식으로 변경
         discussionUseCase.modifyDiscussion(request)
-    }
-
-    @PostMapping("/reaction")
-    @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "give reaction", description = "게시글 혹은 코멘트에 반응 추가")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "204",
-                description = "반응 추가 성공",
-                content = [Content(schema = Schema(implementation = Long::class))]
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "디스커션 혹은 코멘트 정보를 찾을 수 없음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            )
-        ]
-    )
-    fun giveReaction(
-        @Valid @RequestBody
-        request: PostReactionRequest
-    ): Long {
-        return discussionReactionUseCase.addDiscussionReaction(DiscussionReaction.fromPostRequest(request)).id!!
-    }
-
-    @PostMapping("/{discussionId}/{uid}/mention")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "mark user status as mention", description = "유저를 멘션 상태로 변경")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "204",
-                description = "멘션 상태 변경 성공",
-                content = [Content(schema = Schema(implementation = Long::class))]
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "디스커션 혹은 유저 정보를 찾을 수 없음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            )
-        ]
-    )
-    fun mentionUser(
-        @PathVariable discussionId: Long,
-        @PathVariable uid: Long
-    ) {
-        discussionUserUseCase.markDiscussionAsMention(discussionId, uid)
-    }
-
-    @PostMapping("/{discussionId}/{uid}/read")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "mark user status as read", description = "유저를 읽음 상태로 변경")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "204",
-                description = "읽음 상태 변경 성공",
-                content = [Content(schema = Schema(implementation = Long::class))]
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "디스커션 혹은 유저 정보를 찾을 수 없음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            )
-        ]
-    )
-    fun markUserReadStatus(
-        @PathVariable discussionId: Long,
-        @PathVariable uid: Long
-    ) {
-        discussionUserUseCase.markDiscussionAsRead(discussionId, uid)
     }
 }
