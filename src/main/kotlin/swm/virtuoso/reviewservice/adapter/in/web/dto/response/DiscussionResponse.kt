@@ -13,6 +13,7 @@ data class DiscussionResponse(
     val repoId: Long,
     val posterId: Long,
     val commitHash: String,
+    val isClosed: Boolean,
     val deadline: String?,
     val assignees: List<Long>
 ) {
@@ -27,6 +28,7 @@ data class DiscussionResponse(
                 repoId = discussion.repoId,
                 posterId = discussion.posterId,
                 commitHash = discussion.commitHash!!,
+                isClosed = discussion.isClosed,
                 deadline = discussion.deadlineUnix?.let { convertFromEpoch(it) },
                 assignees = assigneeIds
             )
