@@ -50,7 +50,7 @@ class DiscussionService(
     }
 
     override fun getDiscussionAssignees(discussionId: Long): List<DiscussionAssignee> {
-        return discussionAssigneesPort.findDiscussionAssignees(discussionId)
+        return discussionAssigneesPort.findDiscussionAssigneesByDiscussionId(discussionId)
     }
 
     override fun getDiscussion(discussionId: Long): Discussion {

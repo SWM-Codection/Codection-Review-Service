@@ -35,18 +35,9 @@ import swm.virtuoso.reviewservice.domain.DiscussionUser
 @Repository
 class DiscussionPersistenceAdapter(
     private val discussionRepository: DiscussionRepository,
-    private val discussionCodeRepository: DiscussionCodeRepository,
     private val discussionIndexRepository: DiscussionIndexRepository,
-    private val discussionUserRepository: DiscussionUserRepository,
-    private val discussionCommentRepository: DiscussionCommentRepository,
-    private val discussionAssigneesRepository: DiscussionAssigneesRepository,
-    private val discussionReactionRepository: DiscussionReactionRepository
-) : DiscussionPort,
-    DiscussionCodePort,
-    DiscussionUserPort,
-    DiscussionCommentPort,
-    DiscussionAssigneesPort,
-    DiscussionReactionPort {
+    private val discussionCodeRepository: DiscussionCodeRepository
+) : DiscussionPort {
 
     private fun getNextIndex(repoId: Long): Long {
         return discussionIndexRepository.findById(repoId)
@@ -144,136 +135,5 @@ class DiscussionPersistenceAdapter(
             commitHash = discussionEntity.commitHash,
             index = discussionEntity.index
         )
-    }
-
-    override fun insertDiscussionUser(userId: Long, discussionId: Long): DiscussionUser {
-        return DiscussionUser.fromEntity(
-            discussionUserRepository.save(
-                DiscussionUserEntity(
-                    id = null,
-                    userId = userId,
-                    discussionId = discussionId,
-                    isRead = true,
-                    isMentioned = false
-                )
-            )
-        )
-    }
-
-    override fun updateDiscussionUser(discussionUser: DiscussionUser): DiscussionUser {
-        return DiscussionUser.fromEntity(
-            discussionUserRepository.save(
-                DiscussionUserEntity(
-                    id = discussionUser.id,
-                    userId = discussionUser.userId,
-                    discussionId = discussionUser.discussionId,
-                    isRead = discussionUser.isRead,
-                    isMentioned = discussionUser.isMentioned
-                )
-            )
-        )
-    }
-
-    override fun findDiscussionUserByUserId(userId: Long): DiscussionUser? {
-        return discussionUserRepository.findByUserId(userId)?.let { DiscussionUser.fromEntity(it) }
-    }
-
-    override fun findDiscussionCodeById(codeId: Long): DiscussionCode {
-        val codeEntity = discussionCodeRepository.findByIdOrNull(codeId)
-            ?: throw NoSuchElementException("코드 정보를 찾을 수 없습니다.")
-        return DiscussionCode.fromEntity(codeEntity)
-    }
-
-    override fun findDiscussionCodesByDiscussionId(discussionId: Long): List<DiscussionCode> {
-        return discussionCodeRepository.findAllByDiscussionId(discussionId)
-            .map { DiscussionCode.fromEntity(it) }
-    }
-
-    override fun deleteDiscussionCodeAllById(id: List<Long>) {
-        // TODO soft delete로 바꿀지 생각해보기
-        return discussionCodeRepository.deleteAllById(id)
-    }
-
-    override fun insertDiscussionCodes(discussionCodes: List<DiscussionCode>, discussionId: Long) {
-        val entities = discussionCodes.map { discussionCode ->
-            DiscussionCodeEntity.fromDiscussionCode(discussionCode, discussionId)
-        }
-        discussionCodeRepository.saveAll(entities)
-    }
-
-    override fun insertComment(discussionComment: DiscussionComment): DiscussionComment {
-        val discussion = findDiscussionById(discussionComment.discussionId)
-        discussionComment.codeId?.let { codeId ->
-            // 조건이 안맞으면 IllegalArgumentException 발생
-            require(discussion.id == findDiscussionCodeById(codeId).discussionId) {
-                "코드의 정보와 디스커션 정보가 일치하지 않습니다."
-            }
-        }
-        insertDiscussionUser(
-            userId = discussionComment.posterId,
-            discussionId = discussionComment.discussionId
-        )
-
-        val savedEntity = discussionCommentRepository.save(
-            DiscussionCommentEntity.fromDiscussionComment(discussionComment)
-        )
-
-        return DiscussionComment.fromEntity(savedEntity)
-    }
-
-    override fun findCommentsByDiscussionId(discussionId: Long): List<DiscussionComment> {
-        return discussionCommentRepository.findAllByDiscussionId(discussionId)
-            .map { DiscussionComment.fromEntity(it) }
-    }
-
-    override fun deleteCommentById(commentId: Long) {
-        discussionCommentRepository.deleteById(commentId)
-    }
-
-    override fun findCommentById(commentId: Long): DiscussionComment {
-        val commentEntity = discussionCommentRepository.findById(commentId).orElseThrow {
-            throw NoSuchElementException("디스커션 코멘트를 찾을 수 없습니다. id : $commentId")
-        }
-        return DiscussionComment.fromEntity(commentEntity)
-    }
-
-    override fun saveComment(modifiedComment: DiscussionComment) {
-        val exisingComment = findCommentById(modifiedComment.discussionId)
-
-        modifiedComment.let { comment ->
-            require(exisingComment.codeId == modifiedComment.codeId) {
-                "수정된 코멘트와 기존 코멘트의 코드블록 정보가 일치하지 않습니다."
-            }
-            require(exisingComment.discussionId == modifiedComment.discussionId) {
-                "수정된 코멘트와 기존 코멘트의 디스커션 정보가 일치하지 않습니다."
-            }
-        }
-
-        // TODO discussion이 존재하지 않을 경우 예외처리
-
-        val modifiedDiscussionComment = DiscussionCommentEntity.fromDiscussionComment(modifiedComment)
-        discussionCommentRepository.save(modifiedDiscussionComment)
-    }
-
-    override fun insertDiscussionAssignees(discussionAssignees: List<DiscussionAssignee>) {
-        val entities = discussionAssignees.map { assignee ->
-            DiscussionAssigneesEntity.fromDiscussionAssignee(assignee)
-        }
-        discussionAssigneesRepository.saveAll(entities)
-    }
-
-    override fun findDiscussionAssignees(discussionId: Long): List<DiscussionAssignee> {
-        return discussionAssigneesRepository.findAllByDiscussionId(discussionId)
-            .map { DiscussionAssignee.fromEntity(it) }
-    }
-
-    override fun insertReaction(discussionReaction: DiscussionReaction): DiscussionReaction {
-        val reactionEntity = DiscussionReactionEntity.fromDiscussionReaction(discussionReaction)
-        return DiscussionReaction.fromEntity(discussionReactionRepository.save(reactionEntity))
-    }
-
-    override fun findReactionsByDiscussionId(discussionId: Long): List<DiscussionReaction> {
-        return discussionReactionRepository.findAllByDiscussionId(discussionId)
-            .map { DiscussionReaction.fromEntity(it) }
     }
 }

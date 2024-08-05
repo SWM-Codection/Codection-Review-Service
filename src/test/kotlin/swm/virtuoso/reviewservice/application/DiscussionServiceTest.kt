@@ -119,7 +119,7 @@ class DiscussionServiceTest {
             DiscussionAssignee(assigneeId = 11L, discussionId = discussionId)
         )
 
-        doReturn(assignees).`when`(discussionAssigneePort).findDiscussionAssignees(discussionId)
+        doReturn(assignees).`when`(discussionAssigneePort).findDiscussionAssigneesByDiscussionId(discussionId)
 
         // when
         val result = discussionService.getDiscussionAssignees(discussionId)

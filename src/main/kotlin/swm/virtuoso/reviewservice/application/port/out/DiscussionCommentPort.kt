@@ -7,5 +7,5 @@ public interface DiscussionCommentPort {
     fun findCommentById(commentId: Long): DiscussionComment
     fun findCommentsByDiscussionId(discussionId: Long): List<DiscussionComment>
     fun deleteCommentById(commentId: Long)
-    fun saveComment(discussionComment: DiscussionComment)
+    fun updateComment(discussionComment: DiscussionComment)
 }
