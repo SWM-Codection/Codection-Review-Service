@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUserUseCase
 
-@WebMvcTest(DiscussionUserControllerTest::class)
+@WebMvcTest(DiscussionUserController::class)
 @ActiveProfiles("test")
 class DiscussionUserControllerTest {
 

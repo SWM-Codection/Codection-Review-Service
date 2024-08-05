@@ -9,7 +9,6 @@ import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
 import swm.virtuoso.reviewservice.domain.DiscussionComment
-import swm.virtuoso.reviewservice.domain.DiscussionUser
 
 @Service
 class DiscussionCommentService(
