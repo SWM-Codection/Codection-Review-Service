@@ -19,6 +19,7 @@ import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DeleteCommentRequ
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyCommentRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCommentUseCase
+import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUserUseCase
 import swm.virtuoso.reviewservice.common.exception.ErrorResponse
 import swm.virtuoso.reviewservice.domain.DiscussionComment
 
@@ -27,7 +28,10 @@ import swm.virtuoso.reviewservice.domain.DiscussionComment
 @RestController
 @RequestMapping("/discussion")
 @Tag(name = "Discussion Comment", description = "Discussion Comment API")
-class DiscussionCommentController(val discussionCommentUseCase: DiscussionCommentUseCase) {
+class DiscussionCommentController(
+    val discussionCommentUseCase: DiscussionCommentUseCase,
+    val discussionUserUseCase: DiscussionUserUseCase
+) {
 
     @PostMapping("/comment")
     @ResponseStatus(HttpStatus.CREATED)
@@ -55,9 +59,11 @@ class DiscussionCommentController(val discussionCommentUseCase: DiscussionCommen
         @Valid @RequestBody
         request: PostCommentRequest
     ): Long {
-        return discussionCommentUseCase.createComment(
+        val comment = discussionCommentUseCase.createComment(
             DiscussionComment.fromPostRequest(request)
-        ).id!!
+        )
+        discussionUserUseCase.markDiscussionAsRead(comment.discussionId, comment.posterId)
+        return comment.id!!
     }
 
     @PutMapping("/comment")

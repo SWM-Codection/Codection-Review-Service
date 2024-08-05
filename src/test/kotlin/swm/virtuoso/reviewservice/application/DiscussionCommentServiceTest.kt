@@ -7,7 +7,10 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.doReturn
+import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
+import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
+import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
 import swm.virtuoso.reviewservice.application.service.DiscussionCommentService
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
 import swm.virtuoso.reviewservice.domain.DiscussionComment
@@ -18,6 +21,15 @@ class DiscussionCommentServiceTest {
 
     @Mock
     lateinit var discussionCommentPort: DiscussionCommentPort
+
+    @Mock
+    lateinit var discussionPort: DiscussionPort
+
+    @Mock
+    lateinit var discussionCodePort: DiscussionCodePort
+
+    @Mock
+    lateinit var discussionUserPort: DiscussionUserPort
 
     @InjectMocks
     lateinit var discussionCommentService: DiscussionCommentService

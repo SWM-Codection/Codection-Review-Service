@@ -9,6 +9,7 @@ import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
 import swm.virtuoso.reviewservice.domain.DiscussionComment
+import swm.virtuoso.reviewservice.domain.DiscussionUser
 
 @Service
 class DiscussionCommentService(
@@ -30,16 +31,10 @@ class DiscussionCommentService(
             }
         }
 
-        val newDiscussionComment = discussionCommentPort.insertComment(discussionComment)
-        logger.info("Saved discussionComment with ID: {}", newDiscussionComment.id)
+        val savedDiscussionComment = discussionCommentPort.insertComment(discussionComment)
+        logger.info("Saved discussionComment with ID: {}", savedDiscussionComment.id)
 
-        val savedDiscussionUser = discussionUserPort.insertDiscussionUser(
-            userId = discussionComment.posterId,
-            discussionId = discussionComment.discussionId
-        )
-        logger.info("Saved discussionUser with ID: {}", savedDiscussionUser.id)
-
-        return newDiscussionComment
+        return savedDiscussionComment
     }
 
     override fun deleteComment(commentId: Long) {
