@@ -15,7 +15,9 @@ data class DiscussionResponse(
     val commitHash: String,
     val isClosed: Boolean,
     val deadline: String?,
-    val assignees: List<Long>
+    val assignees: List<Long>,
+    val createdUnix: Long? = null,
+    val updatedUnix: Long? = null
 ) {
     companion object {
         fun fromDiscussion(discussion: Discussion, assignees: List<DiscussionAssignee>): DiscussionResponse {
@@ -30,7 +32,9 @@ data class DiscussionResponse(
                 commitHash = discussion.commitHash!!,
                 isClosed = discussion.isClosed,
                 deadline = discussion.deadlineUnix?.let { convertFromEpoch(it) },
-                assignees = assigneeIds
+                assignees = assigneeIds,
+                createdUnix = discussion.createdUnix,
+                updatedUnix = discussion.updatedUnix
             )
         }
 

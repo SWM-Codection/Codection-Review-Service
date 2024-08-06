@@ -57,8 +57,11 @@ class DiscussionService(
         return discussionPort.findDiscussionById(discussionId)
     }
 
-    override fun countDiscussion(repoId: Long, isClosed: Boolean): Int {
-        return discussionPort.countDiscussion(repoId, isClosed)
+    override fun countDiscussion(repoId: Long): Pair<Int, Int> {
+        return Pair(
+            discussionPort.countDiscussion(repoId, false),
+            discussionPort.countDiscussion(repoId, true)
+        )
     }
 
     override fun getDiscussions(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion> {

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionAvailableRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionCountResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionListResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
@@ -127,10 +128,13 @@ class DiscussionController(
         ]
     )
     fun getDiscussionCount(
-        @PathVariable repoId: Long,
-        @RequestParam isClosed: Boolean
-    ): Int {
-        return discussionUseCase.countDiscussion(repoId, isClosed)
+        @PathVariable repoId: Long
+    ): DiscussionCountResponse {
+        val totalCount = discussionUseCase.countDiscussion(repoId)
+        return DiscussionCountResponse(
+            openCount = totalCount.first,
+            closeCount = totalCount.second
+        )
     }
 
     @GetMapping("/{repoId}/list")

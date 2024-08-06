@@ -138,18 +138,18 @@ class DiscussionControllerTest {
     fun `should get discussion count`() {
         // Given
         val repoId = 1L
-        val isClosed = false
-        val expectedCount = 5
+        val expectedCount = Pair(5, 2)
 
-        whenever(discussionUseCase.countDiscussion(repoId, isClosed)).thenReturn(expectedCount)
+        // Mocking the discussionUseCase to return the expected result
+        whenever(discussionUseCase.countDiscussion(repoId)).thenReturn(expectedCount)
 
         // When & Then
         mockMvc.perform(
             get("/discussion/$repoId/count")
-                .param("isClosed", isClosed.toString())
         )
             .andExpect(status().isOk)
-            .andExpect(content().string(expectedCount.toString()))
+            .andExpect(jsonPath("$.openCount").value(expectedCount.first))
+            .andExpect(jsonPath("$.closeCount").value(expectedCount.second))
     }
 
     @Test
