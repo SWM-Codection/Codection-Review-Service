@@ -128,7 +128,7 @@ class DiscussionController(
         ]
     )
     fun getDiscussionCount(
-        @PathVariable repoId: Long,
+        @PathVariable repoId: Long
     ): DiscussionCountResponse {
         val totalCount = discussionUseCase.countDiscussion(repoId)
         return DiscussionCountResponse(

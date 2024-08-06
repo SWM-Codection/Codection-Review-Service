@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionAvailableRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionCountResponse
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.RepositoryEntity
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
@@ -139,7 +138,7 @@ class DiscussionControllerTest {
     fun `should get discussion count`() {
         // Given
         val repoId = 1L
-        val expectedCount = Pair(5,2)
+        val expectedCount = Pair(5, 2)
 
         // Mocking the discussionUseCase to return the expected result
         whenever(discussionUseCase.countDiscussion(repoId)).thenReturn(expectedCount)
@@ -152,7 +151,6 @@ class DiscussionControllerTest {
             .andExpect(jsonPath("$.openCount").value(expectedCount.first))
             .andExpect(jsonPath("$.closeCount").value(expectedCount.second))
     }
-
 
     @Test
     @DisplayName("디스커션 목록 반환")
