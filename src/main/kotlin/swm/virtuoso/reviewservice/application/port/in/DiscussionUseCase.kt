@@ -15,4 +15,5 @@ public interface DiscussionUseCase {
     fun countDiscussion(repoId: Long, isClosed: Boolean): Int
     fun getDiscussions(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion>
     fun modifyDiscussion(modifyDiscussionRequest: ModifyDiscussionRequest): DiscussionEntity
+    fun modifyDiscussionDeadline(discussionId: Long, deadline: Long)
 }

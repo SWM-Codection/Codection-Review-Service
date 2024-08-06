@@ -22,4 +22,8 @@ class DiscussionAssigneesPersistenceAdapter(
         return discussionAssigneesRepository.findAllByDiscussionId(discussionId)
             .map { DiscussionAssignee.fromEntity(it) }
     }
+
+    override fun deleteDiscussionAssigneesById(assignees: List<Long>) {
+        discussionAssigneesRepository.deleteAllById(assignees)
+    }
 }

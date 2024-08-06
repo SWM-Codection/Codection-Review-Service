@@ -84,4 +84,8 @@ class DiscussionService(
 
         return discussionPort.saveDiscussionAllContent(discussionAllContent = targetDiscussion)
     }
+
+    override fun modifyDiscussionDeadline(discussionId: Long, deadline: Long) {
+        TODO("Not yet implemented")
+    }
 }
