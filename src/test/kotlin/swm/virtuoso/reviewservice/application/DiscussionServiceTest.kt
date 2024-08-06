@@ -4,10 +4,16 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers.argThat
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.InjectMocks
 import org.mockito.Mock
+import org.mockito.Mockito.doNothing
+import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.*
+import org.mockito.kotlin.any
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
@@ -204,7 +210,6 @@ class DiscussionServiceTest {
         assertEquals(discussions, result.content)
     }
 
-
     @Test
     @DisplayName("디스커션 수정")
     fun `modifyDiscussion should update discussion and manage codes correctly`() {
@@ -231,7 +236,7 @@ class DiscussionServiceTest {
                 DiscussionCode(id = null, discussionId = discussionId, filePath = "path3", startLine = 1, endLine = 3)
             ),
             posterId = 1L,
-            repoId = 1L,
+            repoId = 1L
         )
 
         doReturn(originalDiscussion).`when`(discussionPort).findDiscussionById(discussionId)
@@ -269,4 +274,3 @@ class DiscussionServiceTest {
         )
     }
 }
-
