@@ -157,16 +157,17 @@ class DiscussionServiceTest {
     fun `countDiscussion should return correct count`() {
         // given
         val repoId = 1L
-        val isClosed = false
-        val expectedCount = 5
+        val expectedOpenCount = 5
+        val expectedCloseCount = 5
 
-        doReturn(expectedCount).`when`(discussionPort).countDiscussion(repoId, isClosed)
+        doReturn(expectedOpenCount).`when`(discussionPort).countDiscussion(repoId, false)
+        doReturn(expectedCloseCount).`when`(discussionPort).countDiscussion(repoId, true)
 
         // when
-        val result = discussionService.countDiscussion(repoId, isClosed)
+        val result = discussionService.countDiscussion(repoId)
 
         // then
-        assertEquals(expectedCount, result)
+        assertEquals(Pair(expectedOpenCount, expectedCloseCount), result)
     }
 
     @Test

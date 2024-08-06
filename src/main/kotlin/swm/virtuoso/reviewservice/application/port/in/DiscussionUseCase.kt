@@ -12,7 +12,7 @@ public interface DiscussionUseCase {
     fun createDiscussion(discussion: Discussion, codes: List<DiscussionCode>, assignees: List<Long>?): Discussion
     fun getDiscussionAssignees(discussionId: Long): List<DiscussionAssignee>
     fun getDiscussion(discussionId: Long): Discussion
-    fun countDiscussion(repoId: Long, isClosed: Boolean): Int
+    fun countDiscussion(repoId: Long): Pair<Int, Int>
     fun getDiscussions(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion>
     fun modifyDiscussion(modifyDiscussionRequest: ModifyDiscussionRequest): DiscussionEntity
 }
