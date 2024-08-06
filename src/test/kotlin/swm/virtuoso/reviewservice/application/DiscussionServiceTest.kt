@@ -4,16 +4,16 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers.argThat
-import org.mockito.ArgumentMatchers.eq
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.doNothing
-import org.mockito.Mockito.doReturn
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.doNothing
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
@@ -249,7 +249,7 @@ class DiscussionServiceTest {
             content = modifyDiscussionRequest.content
         )
 
-        doReturn(updatedDiscussion).`when`(discussionPort).updateDiscussion(any())
+        doReturn(updatedDiscussion).`when`(discussionPort).updateDiscussion(org.mockito.kotlin.any())
 
         // when
         val result = discussionService.modifyDiscussion(modifyDiscussionRequest)
