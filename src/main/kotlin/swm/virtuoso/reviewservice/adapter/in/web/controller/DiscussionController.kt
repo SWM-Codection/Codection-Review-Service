@@ -198,6 +198,8 @@ class DiscussionController(
         request: ModifyDiscussionRequest
     ) {
         // TODO 프론트에서 modify를 호출한 뒤 완료되면 페이지를 리로드 하면서 각 페이지를 가져오는 방식으로 변경
+
+
         discussionUseCase.modifyDiscussion(request)
     }
 }

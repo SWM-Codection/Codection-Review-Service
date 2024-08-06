@@ -12,14 +12,12 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
 import swm.virtuoso.reviewservice.domain.Discussion
-import swm.virtuoso.reviewservice.domain.DiscussionAllContent
 import swm.virtuoso.reviewservice.domain.DiscussionCode
 
 @Repository
 class DiscussionPersistenceAdapter(
     private val discussionRepository: DiscussionRepository,
     private val discussionIndexRepository: DiscussionIndexRepository,
-    private val discussionCodeRepository: DiscussionCodeRepository
 ) : DiscussionPort {
 
     private fun getNextIndex(repoId: Long): Long {
@@ -41,6 +39,20 @@ class DiscussionPersistenceAdapter(
         return Discussion.fromEntity(newDiscussion)
     }
 
+    override fun updateDiscussion(discussion: Discussion): Discussion {
+        discussion.index = getNextIndex(discussion.repoId)
+        val updatedDiscussion = discussionRepository.save(DiscussionEntity.fromDiscussion(discussion))
+
+        discussionIndexRepository.save(
+            IssueIndexEntity(
+                groupId = updatedDiscussion.repoId,
+                maxIndex = updatedDiscussion.index!!
+            )
+        )
+        return Discussion.fromEntity(updatedDiscussion)
+    }
+
+
     override fun countDiscussion(repoId: Long, isClosed: Boolean): Int {
         return discussionRepository.countByRepoIdAndIsClosed(repoId, isClosed)
     }
@@ -57,66 +69,4 @@ class DiscussionPersistenceAdapter(
         return Discussion.fromEntity(discussionEntity)
     }
 
-    override fun saveDiscussionAllContent(
-        discussionAllContent: DiscussionAllContent
-    ): DiscussionEntity {
-        discussionAllContent.index = getNextIndex(discussionAllContent.repoId)
-        val discussionEntity = discussionRepository.save(
-            DiscussionEntity.fromDiscussion(
-                discussion = Discussion(
-                    id = discussionAllContent.id,
-                    name = discussionAllContent.name,
-                    content = discussionAllContent.content,
-                    repoId = discussionAllContent.repoId,
-                    commitHash = discussionAllContent.commitHash,
-                    index = discussionAllContent.index,
-                    posterId = discussionAllContent.posterId
-                )
-            )
-        )
-
-        discussionAllContent.codes.map { discussionCode ->
-            discussionCodeRepository.save(
-                DiscussionCodeEntity.fromDiscussionCode(
-                    discussionCode = discussionCode,
-                    discussionId = discussionEntity.id!!
-                )
-            )
-        }
-
-        discussionIndexRepository.save(
-            IssueIndexEntity(
-                groupId = discussionAllContent.repoId,
-                maxIndex = discussionAllContent.index!!
-            )
-        )
-
-        return discussionEntity
-    }
-
-    override fun findDiscussionAllContent(discussionId: Long): DiscussionAllContent {
-        val discussionEntity = discussionRepository.findById(discussionId).orElseThrow {
-            throw NoSuchElementException("디스커션 정보를 찾을 수 없습니다.")
-        }
-        val discussionCodes = discussionCodeRepository.findAllByDiscussionId(discussionId)
-
-        return DiscussionAllContent(
-            id = discussionEntity.id,
-            name = discussionEntity.name,
-            posterId = discussionEntity.posterId,
-            codes = discussionCodes.map { discussionCode ->
-                DiscussionCode(
-                    id = discussionCode.id,
-                    discussionId = discussionCode.discussionId,
-                    startLine = discussionCode.startLine,
-                    endLine = discussionCode.endLine,
-                    filePath = discussionCode.filePath
-                )
-            },
-            content = discussionEntity.content,
-            repoId = discussionEntity.repoId,
-            commitHash = discussionEntity.commitHash,
-            index = discussionEntity.index
-        )
-    }
 }

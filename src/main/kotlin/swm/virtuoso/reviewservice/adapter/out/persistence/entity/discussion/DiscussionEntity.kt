@@ -58,7 +58,7 @@ data class DiscussionEntity(
     companion object {
         fun fromDiscussion(discussion: Discussion): DiscussionEntity {
             return DiscussionEntity(
-                id = null,
+                id = discussion.id,
                 repoId = discussion.repoId,
                 index = discussion.index,
                 posterId = discussion.posterId,
