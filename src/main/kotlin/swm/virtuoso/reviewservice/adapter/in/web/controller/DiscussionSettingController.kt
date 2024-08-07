@@ -34,5 +34,6 @@ class DiscussionSettingController(
     @PatchMapping("/assign/{discussionId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun resetDiscussionDeadline(@PathVariable discussionId: String, @RequestParam deadline: String) {
+        discussionUseCase
     }
 }

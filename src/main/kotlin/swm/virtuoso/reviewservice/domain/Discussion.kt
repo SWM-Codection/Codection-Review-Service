@@ -23,7 +23,7 @@ data class Discussion(
 
     var isClosed: Boolean = false,
 
-    val deadlineUnix: Long? = null
+    var deadlineUnix: Long? = null
 ) {
     companion object {
         fun fromPostRequest(request: PostDiscussionRequest): Discussion {

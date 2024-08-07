@@ -86,6 +86,10 @@ class DiscussionService(
     }
 
     override fun modifyDiscussionDeadline(discussionId: Long, deadline: Long) {
-        TODO("Not yet implemented")
+        val targetDiscussion = discussionPort.findDiscussionById(discussionId)
+
+        targetDiscussion.deadlineUnix = deadline
+        discussionPort.insertDiscussion(targetDiscussion) // TODO 굳이 update를 따로 만들어야 하는가?
+        logger.info("Updated discussion: {}", targetDiscussion.id)
     }
 }
