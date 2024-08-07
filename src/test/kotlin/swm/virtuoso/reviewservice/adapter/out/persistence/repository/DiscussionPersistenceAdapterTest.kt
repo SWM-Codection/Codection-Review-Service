@@ -165,4 +165,33 @@ class DiscussionPersistenceAdapterTest {
         assertEquals(discussion1.name, discussions.content[0].name)
         assertEquals(discussion2.name, discussions.content[1].name)
     }
+
+    @Test
+    @DisplayName("디스커션 업데이트")
+    fun `updateDiscussion should update existing discussion and index`() {
+        // given
+        val discussion = Discussion(
+            id = null,
+            name = "원본 디스커션",
+            content = "원본 내용",
+            repoId = 1L,
+            posterId = 1L,
+            commitHash = "abcdef123456"
+        )
+        val savedDiscussion = discussionPersistenceAdapter.insertDiscussion(discussion)
+
+        // when
+        val updatedDiscussion = savedDiscussion.copy(name = "수정된 디스커션", content = "수정된 내용")
+        val result = discussionPersistenceAdapter.updateDiscussion(updatedDiscussion)
+
+        // then
+        assertEquals(savedDiscussion.id, result.id)
+        assertEquals("수정된 디스커션", result.name)
+        assertEquals("수정된 내용", result.content)
+        assertEquals(1L, result.index)
+
+        val updatedIndex = discussionIndexRepository.findById(discussion.repoId).orElse(null)
+        assertNotNull(updatedIndex)
+        assertEquals(1L, updatedIndex.maxIndex)
+    }
 }

@@ -7,12 +7,16 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyDiscussionRequest
 import swm.virtuoso.reviewservice.application.port.out.DiscussionAssigneesPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
@@ -205,5 +209,73 @@ class DiscussionServiceTest {
         // then
         assertEquals(expectedDiscussions.totalElements, result.totalElements)
         assertEquals(discussions, result.content)
+    }
+
+    @Test
+    @DisplayName("디스커션 수정")
+    fun `modifyDiscussion should update discussion and manage codes correctly`() {
+        // given
+        val discussionId = 1L
+        val originalDiscussion = Discussion(
+            id = discussionId,
+            name = "Original Discussion",
+            content = "Original Content",
+            repoId = 1L,
+            posterId = 1L,
+            commitHash = "originalHash"
+        )
+        val originalCodes = listOf(
+            DiscussionCode(id = 1L, discussionId = discussionId, filePath = "path1", startLine = 1, endLine = 7),
+            DiscussionCode(id = 2L, discussionId = discussionId, filePath = "path2", startLine = 6, endLine = 10)
+        )
+        val modifyDiscussionRequest = ModifyDiscussionRequest(
+            discussionId = discussionId,
+            name = "Modified Discussion",
+            content = "Modified Content",
+            deletedCodesIds = listOf(2L),
+            newCodes = listOf(
+                DiscussionCode(
+                    id = null,
+                    discussionId = discussionId,
+                    filePath = "path3",
+                    startLine = 1,
+                    endLine = 3
+                )
+            ),
+            posterId = 1L,
+            repoId = 1L
+        )
+
+        doReturn(originalDiscussion).`when`(discussionPort).findDiscussionById(discussionId)
+        doNothing().`when`(discussionCodePort).deleteDiscussionCodeAllById(listOf(2L))
+        doNothing().`when`(discussionCodePort).insertDiscussionCodes(any(), eq(discussionId))
+
+        val updatedDiscussion = originalDiscussion.copy(
+            name = modifyDiscussionRequest.name,
+            content = modifyDiscussionRequest.content
+        )
+
+        doReturn(updatedDiscussion).`when`(discussionPort).updateDiscussion(org.mockito.kotlin.any())
+
+        // when
+        val result = discussionService.modifyDiscussion(modifyDiscussionRequest)
+
+        // then
+        assertEquals("Modified Discussion", result.name)
+        assertEquals("Modified Content", result.content)
+
+        verify(discussionPort, times(1)).findDiscussionById(discussionId)
+        verify(discussionCodePort, times(1)).deleteDiscussionCodeAllById(listOf(2L))
+        verify(discussionCodePort, times(1)).insertDiscussionCodes(
+            argThat { codes ->
+                codes.size == 1 && codes[0].filePath == "path3" && codes[0].startLine == 1 && codes[0].endLine == 3
+            },
+            eq(discussionId)
+        )
+        verify(discussionPort, times(1)).updateDiscussion(
+            argThat { discussion ->
+                discussion.name == "Modified Discussion" && discussion.content == "Modified Content"
+            }
+        )
     }
 }

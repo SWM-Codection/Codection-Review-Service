@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionAvailableRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionCountResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionListResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionResponse
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GiteaUseCase
@@ -202,6 +202,7 @@ class DiscussionController(
         request: ModifyDiscussionRequest
     ) {
         // TODO 프론트에서 modify를 호출한 뒤 완료되면 페이지를 리로드 하면서 각 페이지를 가져오는 방식으로 변경
+
         discussionUseCase.modifyDiscussion(request)
     }
 }
