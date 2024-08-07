@@ -278,4 +278,32 @@ class DiscussionServiceTest {
             }
         )
     }
+
+    @Test
+    @DisplayName("디스커션 데드라인 수정")
+    fun `should modify discussion deadline`() {
+        // Given
+        val discussionId = 1L
+        val newDeadline = 1620000000L // Example UNIX timestamp
+        val discussion = Discussion(
+            id = 1L,
+            name = "test discussion",
+            content = "test content",
+            repoId = 1L,
+            posterId = 1L,
+            commitHash = "commitHash1"
+        )
+
+        doReturn(discussion).`when`(discussionPort).findDiscussionById(discussionId)
+        discussion.deadlineUnix = newDeadline
+        doReturn(discussion).`when`(discussionPort).updateDiscussion(discussion)
+
+        // When
+        discussionService.modifyDiscussionDeadline(discussionId, newDeadline)
+
+        // Then
+        verify(discussionPort).findDiscussionById(discussionId)
+        verify(discussionPort).updateDiscussion(discussion)
+        assertEquals(newDeadline, discussion.deadlineUnix)
+    }
 }

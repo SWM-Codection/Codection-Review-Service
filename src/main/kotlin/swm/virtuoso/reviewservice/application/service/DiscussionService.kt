@@ -86,11 +86,11 @@ class DiscussionService(
         return discussionPort.updateDiscussion(discussion = targetDiscussion)
     }
 
-    override fun modifyDiscussionDeadline(discussionId: Long, deadline: Long) {
+    override fun modifyDiscussionDeadline(discussionId: Long, deadline: Long?) {
         val targetDiscussion = discussionPort.findDiscussionById(discussionId)
 
         targetDiscussion.deadlineUnix = deadline
-        discussionPort.insertDiscussion(targetDiscussion) // TODO 굳이 update를 따로 만들어야 하는가?
+        discussionPort.updateDiscussion(targetDiscussion)
         logger.info("Updated discussion: {}", targetDiscussion.id)
     }
 }
