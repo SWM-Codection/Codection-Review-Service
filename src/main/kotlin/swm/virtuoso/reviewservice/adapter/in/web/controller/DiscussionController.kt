@@ -123,7 +123,7 @@ class DiscussionController(
             ApiResponse(
                 responseCode = "200",
                 description = "디스커션 수 반환 성공",
-                content = [Content(schema = Schema(type = "integer"))]
+                content = [Content(schema = Schema(implementation = DiscussionCountResponse::class))]
             )
         ]
     )
