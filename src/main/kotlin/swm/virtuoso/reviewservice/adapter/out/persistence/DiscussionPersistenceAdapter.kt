@@ -39,12 +39,6 @@ class DiscussionPersistenceAdapter(
     override fun updateDiscussion(discussion: Discussion): Discussion {
         val updatedDiscussion = discussionRepository.save(DiscussionEntity.fromDiscussion(discussion))
 
-        discussionIndexRepository.save(
-            IssueIndexEntity(
-                groupId = updatedDiscussion.repoId,
-                maxIndex = updatedDiscussion.index!!
-            )
-        )
         return Discussion.fromEntity(updatedDiscussion)
     }
 
