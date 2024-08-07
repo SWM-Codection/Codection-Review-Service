@@ -68,7 +68,7 @@ class DiscussionSettingController(
             )
         ]
     )
-    fun resetDiscussionDeadline(@PathVariable discussionId: Long, @RequestParam deadline: Long? = null) {
+    fun resetDiscussionDeadline(@PathVariable discussionId: Long, @RequestParam deadline: Long = 0) {
         discussionUseCase.modifyDiscussionDeadline(discussionId, deadline)
     }
 }

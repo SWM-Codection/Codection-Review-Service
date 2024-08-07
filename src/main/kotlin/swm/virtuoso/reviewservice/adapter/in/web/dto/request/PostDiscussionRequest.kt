@@ -23,5 +23,5 @@ data class PostDiscussionRequest(
 
     val assignees: List<Long>? = null,
 
-    val deadline: Long? = null
+    val deadline: Long = 0
 )

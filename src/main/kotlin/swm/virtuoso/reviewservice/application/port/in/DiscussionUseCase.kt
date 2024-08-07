@@ -13,6 +13,6 @@ public interface DiscussionUseCase {
     fun getDiscussion(discussionId: Long): Discussion
     fun countDiscussion(repoId: Long): Pair<Int, Int>
     fun getDiscussions(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion>
-    fun modifyDiscussionDeadline(discussionId: Long, deadline: Long?)
+    fun modifyDiscussionDeadline(discussionId: Long, deadline: Long)
     fun modifyDiscussion(modifyDiscussionRequest: ModifyDiscussionRequest): Discussion
 }

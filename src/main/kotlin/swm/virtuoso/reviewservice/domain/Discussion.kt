@@ -20,7 +20,7 @@ data class Discussion(
 
     var isClosed: Boolean = false,
 
-    var deadlineUnix: Long? = null,
+    var deadlineUnix: Long = 0,
 
     var createdUnix: Long? = null,
 

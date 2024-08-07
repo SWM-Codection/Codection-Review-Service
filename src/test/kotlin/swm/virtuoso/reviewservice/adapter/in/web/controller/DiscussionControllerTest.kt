@@ -66,7 +66,7 @@ class DiscussionControllerTest {
                 )
             ),
             assignees = emptyList(),
-            deadline = null
+            deadline = 0L
         )
 
         val repository = RepositoryEntity(
