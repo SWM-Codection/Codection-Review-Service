@@ -16,7 +16,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyDiscussionRequest
 import swm.virtuoso.reviewservice.application.port.out.DiscussionAssigneesPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
@@ -231,16 +231,21 @@ class DiscussionServiceTest {
             discussionId = discussionId,
             name = "Modified Discussion",
             content = "Modified Content",
-            codes = listOf(
-                DiscussionCode(id = 1L, discussionId = discussionId, filePath = "path1", startLine = 1, endLine = 7),
-                DiscussionCode(id = null, discussionId = discussionId, filePath = "path3", startLine = 1, endLine = 3)
+            deletedCodesIds = listOf(2L),
+            newCodes = listOf(
+                DiscussionCode(
+                    id = null,
+                    discussionId = discussionId,
+                    filePath = "path3",
+                    startLine = 1,
+                    endLine = 3
+                )
             ),
             posterId = 1L,
             repoId = 1L
         )
 
         doReturn(originalDiscussion).`when`(discussionPort).findDiscussionById(discussionId)
-        doReturn(originalCodes).`when`(discussionCodePort).findDiscussionCodesByDiscussionId(discussionId)
         doNothing().`when`(discussionCodePort).deleteDiscussionCodeAllById(listOf(2L))
         doNothing().`when`(discussionCodePort).insertDiscussionCodes(any(), eq(discussionId))
 
@@ -259,7 +264,6 @@ class DiscussionServiceTest {
         assertEquals("Modified Content", result.content)
 
         verify(discussionPort, times(1)).findDiscussionById(discussionId)
-        verify(discussionCodePort, times(1)).findDiscussionCodesByDiscussionId(discussionId)
         verify(discussionCodePort, times(1)).deleteDiscussionCodeAllById(listOf(2L))
         verify(discussionCodePort, times(1)).insertDiscussionCodes(
             argThat { codes ->

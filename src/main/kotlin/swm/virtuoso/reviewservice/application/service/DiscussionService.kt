@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyDiscussionRequest
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 import swm.virtuoso.reviewservice.application.port.out.DiscussionAssigneesPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
@@ -71,15 +71,8 @@ class DiscussionService(
     override fun modifyDiscussion(modifyDiscussionRequest: ModifyDiscussionRequest): Discussion {
         val targetDiscussion = discussionPort.findDiscussionById(modifyDiscussionRequest.discussionId)
 
-        val targetCodes =
-            discussionCodePort.findDiscussionCodesByDiscussionId(modifyDiscussionRequest.discussionId)
-
-        val modifiedCodes = modifyDiscussionRequest.codes
-
-        val deletedCodeIds: List<Long> = targetCodes.filterNot { it in modifiedCodes }
-            .mapNotNull { it.id }
-
-        val newCodes: List<DiscussionCode> = modifiedCodes.filter { it.id == null }
+        val deletedCodeIds: List<Long> = modifyDiscussionRequest.deletedCodesIds
+        val newCodes: List<DiscussionCode> = modifyDiscussionRequest.newCodes
 
         discussionCodePort.deleteDiscussionCodeAllById(deletedCodeIds)
         discussionCodePort.insertDiscussionCodes(newCodes, modifyDiscussionRequest.discussionId)

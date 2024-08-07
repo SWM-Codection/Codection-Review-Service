@@ -37,7 +37,6 @@ class DiscussionPersistenceAdapter(
     }
 
     override fun updateDiscussion(discussion: Discussion): Discussion {
-        discussion.index = getNextIndex(discussion.repoId)
         val updatedDiscussion = discussionRepository.save(DiscussionEntity.fromDiscussion(discussion))
 
         discussionIndexRepository.save(

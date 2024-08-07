@@ -188,10 +188,10 @@ class DiscussionPersistenceAdapterTest {
         assertEquals(savedDiscussion.id, result.id)
         assertEquals("수정된 디스커션", result.name)
         assertEquals("수정된 내용", result.content)
-        assertEquals(2L, result.index)
+        assertEquals(1L, result.index)
 
         val updatedIndex = discussionIndexRepository.findById(discussion.repoId).orElse(null)
         assertNotNull(updatedIndex)
-        assertEquals(2L, updatedIndex.maxIndex)
+        assertEquals(1L, updatedIndex.maxIndex)
     }
 }
