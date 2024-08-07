@@ -96,7 +96,7 @@ $RECYCLE.BIN/
 .idea/
 build/
 .gradle/
-./out/
+./out/**/resources/*.yml
 !application.yml
 !application-test.yml
 

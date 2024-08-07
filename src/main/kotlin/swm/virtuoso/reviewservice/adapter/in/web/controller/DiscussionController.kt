@@ -20,10 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionAvailableRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionCountResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionListResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionResponse
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.ModifyDiscussionRequest
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GiteaUseCase
@@ -122,15 +123,18 @@ class DiscussionController(
             ApiResponse(
                 responseCode = "200",
                 description = "디스커션 수 반환 성공",
-                content = [Content(schema = Schema(type = "integer"))]
+                content = [Content(schema = Schema(implementation = DiscussionCountResponse::class))]
             )
         ]
     )
     fun getDiscussionCount(
-        @PathVariable repoId: Long,
-        @RequestParam isClosed: Boolean
-    ): Int {
-        return discussionUseCase.countDiscussion(repoId, isClosed)
+        @PathVariable repoId: Long
+    ): DiscussionCountResponse {
+        val totalCount = discussionUseCase.countDiscussion(repoId)
+        return DiscussionCountResponse(
+            openCount = totalCount.first,
+            closeCount = totalCount.second
+        )
     }
 
     @GetMapping("/{repoId}/list")
@@ -198,6 +202,7 @@ class DiscussionController(
         request: ModifyDiscussionRequest
     ) {
         // TODO 프론트에서 modify를 호출한 뒤 완료되면 페이지를 리로드 하면서 각 페이지를 가져오는 방식으로 변경
+
         discussionUseCase.modifyDiscussion(request)
     }
 }

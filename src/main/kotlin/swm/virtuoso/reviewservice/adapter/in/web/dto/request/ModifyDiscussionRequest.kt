@@ -1,6 +1,5 @@
-package swm.virtuoso.reviewservice.adapter.`in`.web.dto.response
+package swm.virtuoso.reviewservice.adapter.`in`.web.dto.request
 
-import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
 import swm.virtuoso.reviewservice.domain.DiscussionCode
 
@@ -18,6 +17,7 @@ data class ModifyDiscussionRequest(
 
     val content: String,
 
-    @field:NotEmpty(message = "Discussion files cannot be empty")
-    val codes: List<DiscussionCode>
+    val deletedCodesIds: List<Long>,
+
+    val newCodes: List<DiscussionCode>
 )
