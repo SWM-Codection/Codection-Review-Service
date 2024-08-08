@@ -5,4 +5,5 @@ import swm.virtuoso.reviewservice.domain.DiscussionAssignee
 public interface DiscussionAssigneesPort {
     fun insertDiscussionAssignees(discussionAssignees: List<DiscussionAssignee>)
     fun findDiscussionAssigneesByDiscussionId(discussionId: Long): List<DiscussionAssignee>
+    fun deleteDiscussionAssigneesByAssigneesIn(discussionId: Long, assignees: List<Long>)
 }

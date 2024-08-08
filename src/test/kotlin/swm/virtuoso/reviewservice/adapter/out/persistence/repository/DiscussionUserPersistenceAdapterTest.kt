@@ -43,7 +43,7 @@ class DiscussionUserPersistenceAdapterTest {
             isClosed = false,
             numComments = 0,
             pinOrder = 0,
-            deadlineUnix = null,
+            deadlineUnix = 0,
             isLocked = false
         )
         val discussionId = discussionRepository.save(discussion).id!!

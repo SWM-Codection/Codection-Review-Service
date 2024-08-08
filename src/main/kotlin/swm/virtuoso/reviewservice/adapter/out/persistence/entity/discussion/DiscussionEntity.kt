@@ -47,7 +47,8 @@ data class DiscussionEntity(
     val pinOrder: Int? = null,
 
     @field:Column(name = "deadline_unix")
-    val deadlineUnix: Long? = null,
+    @ColumnDefault("0")
+    val deadlineUnix: Long = 0,
 
     @field:Column(name = "closed_unix")
     val closedUnix: Long? = null,

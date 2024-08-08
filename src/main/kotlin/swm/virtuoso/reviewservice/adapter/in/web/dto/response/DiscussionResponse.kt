@@ -2,9 +2,6 @@ package swm.virtuoso.reviewservice.adapter.`in`.web.dto.response
 
 import swm.virtuoso.reviewservice.domain.Discussion
 import swm.virtuoso.reviewservice.domain.DiscussionAssignee
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
 data class DiscussionResponse(
     val id: Long,
@@ -14,14 +11,14 @@ data class DiscussionResponse(
     val posterId: Long,
     val commitHash: String,
     val isClosed: Boolean,
-    val deadline: String?,
+    val deadline: Long? = null,
     val assignees: List<Long>,
     val createdUnix: Long? = null,
     val updatedUnix: Long? = null
 ) {
     companion object {
         fun fromDiscussion(discussion: Discussion, assignees: List<DiscussionAssignee>): DiscussionResponse {
-            val assigneeIds: List<Long> = assignees.map { it.id!! }
+            val assigneeIds: List<Long> = assignees.map { it.assigneeId!! }
 
             return DiscussionResponse(
                 id = discussion.id!!,
@@ -31,17 +28,11 @@ data class DiscussionResponse(
                 posterId = discussion.posterId,
                 commitHash = discussion.commitHash!!,
                 isClosed = discussion.isClosed,
-                deadline = discussion.deadlineUnix?.let { convertFromEpoch(it) },
+                deadline = discussion.deadlineUnix,
                 assignees = assigneeIds,
                 createdUnix = discussion.createdUnix,
                 updatedUnix = discussion.updatedUnix
             )
-        }
-
-        private fun convertFromEpoch(epochTime: Long): String {
-            val dateTime = LocalDateTime.ofEpochSecond(epochTime, 0, ZoneOffset.UTC)
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-            return dateTime.format(formatter)
         }
     }
 }

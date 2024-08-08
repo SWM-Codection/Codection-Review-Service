@@ -85,4 +85,12 @@ class DiscussionService(
 
         return discussionPort.updateDiscussion(discussion = targetDiscussion)
     }
+
+    override fun modifyDiscussionDeadline(discussionId: Long, deadline: Long) {
+        val targetDiscussion = discussionPort.findDiscussionById(discussionId)
+
+        targetDiscussion.deadlineUnix = deadline
+        discussionPort.updateDiscussion(targetDiscussion)
+        logger.info("Updated discussion: {}", targetDiscussion.id)
+    }
 }

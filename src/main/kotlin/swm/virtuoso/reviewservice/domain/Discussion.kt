@@ -2,9 +2,6 @@ package swm.virtuoso.reviewservice.domain
 
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
-import java.time.LocalDate
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
 data class Discussion(
     val id: Long?,
@@ -23,7 +20,7 @@ data class Discussion(
 
     var isClosed: Boolean = false,
 
-    val deadlineUnix: Long? = null,
+    var deadlineUnix: Long = 0,
 
     var createdUnix: Long? = null,
 
@@ -40,7 +37,7 @@ data class Discussion(
                 commitHash = null,
                 isClosed = false,
                 index = null,
-                deadlineUnix = request.deadline?.let { convertToEpoch(it) }
+                deadlineUnix = request.deadline
             )
         }
 
@@ -58,12 +55,6 @@ data class Discussion(
                 createdUnix = entity.createdUnix,
                 updatedUnix = entity.updatedUnix
             )
-        }
-
-        private fun convertToEpoch(dateString: String): Long {
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-            val localDate = LocalDate.parse(dateString, formatter)
-            return localDate.atStartOfDay(ZoneOffset.UTC).toEpochSecond()
         }
     }
 }
