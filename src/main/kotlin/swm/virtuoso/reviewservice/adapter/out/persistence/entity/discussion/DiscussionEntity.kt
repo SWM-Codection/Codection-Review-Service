@@ -48,7 +48,7 @@ data class DiscussionEntity(
 
     @field:Column(name = "deadline_unix")
     @ColumnDefault("0")
-    val deadlineUnix: Long = 0,
+    val deadlineUnix: Long? = null,
 
     @field:Column(name = "closed_unix")
     val closedUnix: Long? = null,
