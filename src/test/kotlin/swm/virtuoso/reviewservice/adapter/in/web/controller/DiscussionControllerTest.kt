@@ -113,7 +113,8 @@ class DiscussionControllerTest {
             content = "test content",
             repoId = 1L,
             posterId = 1L,
-            commitHash = "commitHash1"
+            commitHash = "commitHash1",
+            index = 1L
         )
 
         val assignees = listOf(
