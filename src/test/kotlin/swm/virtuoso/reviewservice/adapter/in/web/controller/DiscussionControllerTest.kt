@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
@@ -158,7 +159,7 @@ class DiscussionControllerTest {
         val repoId = 1L
         val isClosed = true
         val page = 0
-        val pageable = PageRequest.of(page, 20)
+        val pageable = PageRequest.of(page, 20, Sort.by(Sort.Direction.DESC, "updatedUnix"))
         val discussions = listOf(
             Discussion(
                 id = 1L,

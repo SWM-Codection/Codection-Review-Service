@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -159,7 +160,7 @@ class DiscussionController(
         @RequestParam isClosed: Boolean,
         @RequestParam page: Int
     ): DiscussionListResponse {
-        val pageable = PageRequest.of(page, 20)
+        val pageable = PageRequest.of(page, 20, Sort.by(Sort.Direction.DESC, "updatedUnix"))
         val discussions = discussionUseCase.getDiscussions(repoId, isClosed, pageable)
         return DiscussionListResponse(
             totalCount = discussions.totalElements,
