@@ -6,7 +6,7 @@
       <env name="CODECTION_DATABASE_USERNAME" value="sonar" />
       <env name="DEFAULT_SCHEMA" value="gitea" />
       <env name="EUREKA_SERVER_URL" value="http://localhost:8761/eureka" />
-      <env name="GIT_BASEURL" value="/Users/parksangcheol/Desktop/gitea/data/gitea-repositories" />
+      <env name="GIT_BASEURL" value="C:\Users\rlaxo\OneDrive\Desktop\Codection\gitea\data\gitea-repositories" />
       <env name="REVIEW_SERVICE_PORT" value="8081" />
     </envs>
     <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
