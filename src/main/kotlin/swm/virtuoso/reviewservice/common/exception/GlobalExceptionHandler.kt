@@ -18,6 +18,7 @@ class GlobalExceptionHandler {
         private const val COMMIT_NOT_EXIST_EXCEPTION = "Git-005"
         private const val NO_SUCH_ELEMENT_EXCEPTION = "Git-006"
         private const val ILLEGAL_ARGUMENT_EXCEPTION = "Git-007"
+        private const val NO_SUCH_DISCUSSION_COMMENT_EXCEPTION = "Git-008"
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -60,5 +61,11 @@ class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException::class)
     fun handlerIllegalArgumentException(exception: IllegalArgumentException): ErrorResponse {
         return ErrorResponse(HttpStatus.NOT_FOUND, ILLEGAL_ARGUMENT_EXCEPTION, exception.message!!)
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoSuchDiscussionCommentException::class)
+    fun handlerDiscussionCommentNotExistsException(exception: NoSuchDiscussionCommentException): ErrorResponse {
+        return ErrorResponse(HttpStatus.NOT_FOUND, NO_SUCH_DISCUSSION_COMMENT_EXCEPTION, exception.message!!)
     }
 }

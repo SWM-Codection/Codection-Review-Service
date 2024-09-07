@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCommentRepository
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
+import swm.virtuoso.reviewservice.common.exception.NoSuchDiscussionCommentException
 import swm.virtuoso.reviewservice.domain.DiscussionComment
 
 @Repository
@@ -30,7 +31,7 @@ class DiscussionCommentPersistenceAdapter(
 
     override fun findCommentById(commentId: Long): DiscussionComment {
         val commentEntity = discussionCommentRepository.findById(commentId).orElseThrow {
-            throw NoSuchElementException("디스커션 코멘트를 찾을 수 없습니다. id : $commentId")
+            throw NoSuchDiscussionCommentException()
         }
         return DiscussionComment.fromEntity(commentEntity)
     }
