@@ -7,15 +7,13 @@ import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCommentUseCase
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
-import swm.virtuoso.reviewservice.application.port.out.DiscussionReactionPort
-import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
 import swm.virtuoso.reviewservice.domain.DiscussionComment
 
 @Service
 class DiscussionCommentService(
     private val discussionCommentPort: DiscussionCommentPort,
     private val discussionPort: DiscussionPort,
-    private val discussionCodePort: DiscussionCodePort,
+    private val discussionCodePort: DiscussionCodePort
 ) : DiscussionCommentUseCase {
 
     private val logger = LoggerFactory.getLogger(DiscussionCommentService::class.java)

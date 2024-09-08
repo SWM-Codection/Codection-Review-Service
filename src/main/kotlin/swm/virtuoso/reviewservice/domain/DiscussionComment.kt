@@ -1,6 +1,5 @@
 package swm.virtuoso.reviewservice.domain
 
-import jakarta.annotation.Nullable
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyCommentRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
@@ -15,8 +14,8 @@ data class DiscussionComment(
     var startLine: Int? = null,
     var endLine: Int? = null,
     var content: String,
-    var createdUnix : Long? = null,
-    val updatedUnix : Long? = null,
+    var createdUnix: Long? = null,
+    val updatedUnix: Long? = null
 ) {
     companion object {
         fun fromPostRequest(request: PostCommentRequest): DiscussionComment {

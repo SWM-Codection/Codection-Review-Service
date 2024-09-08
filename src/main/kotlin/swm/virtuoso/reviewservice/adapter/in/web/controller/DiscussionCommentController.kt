@@ -55,7 +55,9 @@ class DiscussionCommentController(
         ]
     )
     fun getComment(
-        @Valid @RequestParam(value = "id") id: Long,
+        @Valid
+        @RequestParam(value = "id")
+        id: Long
     ): DiscussionCommentResponse {
         val discussionComment = discussionCommentUseCase.getCommentById(id)
         val discussionCommentReactions = discussionReactionUseCase.getDiscussionCommentReactions(id)

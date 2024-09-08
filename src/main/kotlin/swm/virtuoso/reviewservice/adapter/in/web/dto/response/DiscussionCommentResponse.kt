@@ -28,7 +28,7 @@ data class DiscussionCommentResponse(
                 content = discussionComment.content,
                 reactions = reactions,
                 createdUnix = discussionComment.createdUnix,
-                updatedUnix = discussionComment.updatedUnix,
+                updatedUnix = discussionComment.updatedUnix
             )
         }
     }
