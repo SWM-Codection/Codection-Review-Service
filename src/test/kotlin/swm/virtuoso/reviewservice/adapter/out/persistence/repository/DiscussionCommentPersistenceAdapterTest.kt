@@ -15,6 +15,7 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.Disc
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCommentRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
+import swm.virtuoso.reviewservice.common.exception.NoSuchDiscussionCommentException
 import swm.virtuoso.reviewservice.domain.DiscussionComment
 
 @DataJpaTest
@@ -119,7 +120,7 @@ class DiscussionCommentPersistenceAdapterTest {
         val commentId = 999L
 
         // when & then
-        assertThrows<NoSuchElementException> {
+        assertThrows<NoSuchDiscussionCommentException> {
             discussionCommentPersistenceAdapter.findCommentById(commentId)
         }
     }
@@ -159,7 +160,7 @@ class DiscussionCommentPersistenceAdapterTest {
         discussionCommentPersistenceAdapter.deleteCommentById(savedComment.id!!)
 
         // then
-        assertThrows<NoSuchElementException> {
+        assertThrows<NoSuchDiscussionCommentException> {
             discussionCommentPersistenceAdapter.findCommentById(savedComment.id!!)
         }
     }
