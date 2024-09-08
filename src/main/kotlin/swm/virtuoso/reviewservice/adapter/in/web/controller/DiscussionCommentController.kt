@@ -9,16 +9,20 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DeleteCommentRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyCommentRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionCommentResponse
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCommentUseCase
+import swm.virtuoso.reviewservice.application.port.`in`.DiscussionReactionUseCase
 import swm.virtuoso.reviewservice.common.exception.ErrorResponse
 import swm.virtuoso.reviewservice.domain.DiscussionComment
 
@@ -28,8 +32,37 @@ import swm.virtuoso.reviewservice.domain.DiscussionComment
 @RequestMapping("/discussion")
 @Tag(name = "Discussion Comment", description = "Discussion Comment API")
 class DiscussionCommentController(
-    val discussionCommentUseCase: DiscussionCommentUseCase
+    val discussionCommentUseCase: DiscussionCommentUseCase,
+    val discussionReactionUseCase: DiscussionReactionUseCase
 ) {
+
+    @GetMapping("/comment")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get comment By id", description = "id를 통해 코멘트 가져오기")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "코멘트 가져오기 성공",
+                content = [Content(schema = Schema(implementation = DiscussionCommentResponse::class))]
+            ),
+
+            ApiResponse(
+                responseCode = "404",
+                description = "해당하는 id를 가진 디스커션 코멘트가 없음.",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
+    fun getComment(
+        @Valid
+        @RequestParam(value = "id")
+        id: Long
+    ): DiscussionCommentResponse {
+        val discussionComment = discussionCommentUseCase.getCommentById(id)
+        val discussionCommentReactions = discussionReactionUseCase.getDiscussionCommentReactions(id)
+        return DiscussionCommentResponse.fromDiscussionComment(discussionComment, discussionCommentReactions)
+    }
 
     @PostMapping("/comment")
     @ResponseStatus(HttpStatus.CREATED)

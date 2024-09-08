@@ -4,4 +4,5 @@ import swm.virtuoso.reviewservice.domain.DiscussionReaction
 
 interface DiscussionReactionUseCase {
     fun addDiscussionReaction(reaction: DiscussionReaction): DiscussionReaction
+    fun getDiscussionCommentReactions(discussionCommentId: Long): List<DiscussionReaction>
 }

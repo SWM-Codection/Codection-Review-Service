@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCommentUseCase
+import swm.virtuoso.reviewservice.application.port.`in`.DiscussionReactionUseCase
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
 import swm.virtuoso.reviewservice.domain.DiscussionComment
 
@@ -31,6 +32,9 @@ class DiscussionCommentControllerTest {
 
     @MockBean
     private lateinit var discussionCommentUseCase: DiscussionCommentUseCase
+
+    @MockBean
+    private lateinit var discussionReactionUseCase: DiscussionReactionUseCase
 
     @Test
     @DisplayName("코멘트 등록")

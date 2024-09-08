@@ -31,4 +31,8 @@ class DiscussionReactionService(
 
         return savedReaction
     }
+
+    override fun getDiscussionCommentReactions(discussionCommentId: Long): List<DiscussionReaction> {
+        return discussionReactionPort.findReactionsByDiscussionCommentId(discussionCommentId)
+    }
 }

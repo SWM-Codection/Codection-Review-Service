@@ -19,4 +19,9 @@ class DiscussionReactionPersistenceAdapter(
         return discussionReactionRepository.findAllByDiscussionId(discussionId)
             .map { DiscussionReaction.fromEntity(it) }
     }
+
+    override fun findReactionsByDiscussionCommentId(discussionCommentId: Long): List<DiscussionReaction> {
+        return discussionReactionRepository.findAllByCommentId(discussionCommentId)
+            .map { DiscussionReaction.fromEntity(it) }
+    }
 }

@@ -13,7 +13,9 @@ data class DiscussionComment(
     val scope: CommentScopeEnum,
     var startLine: Int? = null,
     var endLine: Int? = null,
-    var content: String
+    var content: String,
+    var createdUnix: Long? = null,
+    val updatedUnix: Long? = null
 ) {
     companion object {
         fun fromPostRequest(request: PostCommentRequest): DiscussionComment {
@@ -38,7 +40,9 @@ data class DiscussionComment(
                 scope = entity.scope,
                 startLine = entity.startLine,
                 endLine = entity.endLine,
-                content = entity.content
+                content = entity.content,
+                createdUnix = entity.createdUnix,
+                updatedUnix = entity.updatedUnix
             )
         }
 

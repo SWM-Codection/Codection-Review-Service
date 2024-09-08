@@ -10,6 +10,8 @@ data class DiscussionCommentResponse(
     val startLine: Int?,
     val endLine: Int?,
     val content: String,
+    val createdUnix: Long?,
+    val updatedUnix: Long?,
     val reactions: List<DiscussionReaction>
 ) {
     companion object {
@@ -24,7 +26,9 @@ data class DiscussionCommentResponse(
                 startLine = discussionComment.startLine,
                 endLine = discussionComment.endLine,
                 content = discussionComment.content,
-                reactions = reactions
+                reactions = reactions,
+                createdUnix = discussionComment.createdUnix,
+                updatedUnix = discussionComment.updatedUnix
             )
         }
     }
