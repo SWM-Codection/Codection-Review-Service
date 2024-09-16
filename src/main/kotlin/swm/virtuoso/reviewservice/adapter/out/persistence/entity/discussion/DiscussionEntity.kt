@@ -66,7 +66,7 @@ data class DiscussionEntity(
                 commitHash = discussion.commitHash!!,
                 name = discussion.name,
                 content = discussion.content,
-                isClosed = false,
+                isClosed = discussion.isClosed,
                 numComments = 0,
                 pinOrder = 0,
                 deadlineUnix = discussion.deadlineUnix,

@@ -15,4 +15,5 @@ public interface DiscussionUseCase {
     fun getDiscussions(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion>
     fun modifyDiscussionDeadline(discussionId: Long, deadline: Long)
     fun modifyDiscussion(modifyDiscussionRequest: ModifyDiscussionRequest): Discussion
+    fun setDiscussionIsClosed(discussionId: Long, isClosed: Boolean)
 }
