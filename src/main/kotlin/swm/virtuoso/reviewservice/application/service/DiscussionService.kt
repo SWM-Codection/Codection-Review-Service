@@ -86,6 +86,16 @@ class DiscussionService(
         return discussionPort.updateDiscussion(discussion = targetDiscussion)
     }
 
+    @Transactional
+    override fun setDiscussionIsClosed(discussionId: Long, isClosed: Boolean) {
+        val targetDiscussion = discussionPort.findDiscussionById(discussionId)
+
+        targetDiscussion.isClosed = isClosed
+        discussionPort.updateDiscussion(targetDiscussion)
+        logger.info("Updated discussion: {}", targetDiscussion)
+    }
+
+    @Transactional
     override fun modifyDiscussionDeadline(discussionId: Long, deadline: Long) {
         val targetDiscussion = discussionPort.findDiscussionById(discussionId)
 

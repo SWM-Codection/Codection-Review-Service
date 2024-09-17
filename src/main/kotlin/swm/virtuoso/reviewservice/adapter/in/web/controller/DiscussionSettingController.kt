@@ -31,7 +31,7 @@ class DiscussionSettingController(
 
     @PutMapping("/assignees")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Get discussion contents", description = "디스커션 내용 반환")
+    @Operation(summary = "Modify Discussion Assignees", description = "디스커션 담당자 변경")
     @ApiResponses(
         value = [
             ApiResponse(
@@ -54,7 +54,7 @@ class DiscussionSettingController(
 
     @PatchMapping("/assign/{discussionId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Get discussion contents", description = "디스커션 내용 반환")
+    @Operation(summary = "Reset Discussion Deadline", description = "디스커션 마감일 재지정")
     @ApiResponses(
         value = [
             ApiResponse(
@@ -70,5 +70,25 @@ class DiscussionSettingController(
     )
     fun resetDiscussionDeadline(@PathVariable discussionId: Long, @RequestParam deadline: Long = 0) {
         discussionUseCase.modifyDiscussionDeadline(discussionId, deadline)
+    }
+
+    @PatchMapping("/state/{discussionId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Update Discussion Closed State", description = "디스커컨 닫힘 여부 재설정")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "닫힘 상태 변경 성공"
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "디스커션 정보를 찾을 수 없음",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
+    fun setReviewClosedState(@PathVariable discussionId: Long, @RequestParam isClosed: Boolean) {
+        discussionUseCase.setDiscussionIsClosed(discussionId, isClosed)
     }
 }
