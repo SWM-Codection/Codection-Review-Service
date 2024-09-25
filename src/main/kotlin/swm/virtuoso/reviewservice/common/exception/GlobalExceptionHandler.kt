@@ -60,7 +60,7 @@ class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException::class)
     fun handlerIllegalArgumentException(exception: IllegalArgumentException): ErrorResponse {
-        return ErrorResponse(HttpStatus.NOT_FOUND, ILLEGAL_ARGUMENT_EXCEPTION, exception.message!!)
+        return ErrorResponse(HttpStatus.BAD_REQUEST, ILLEGAL_ARGUMENT_EXCEPTION, exception.message!!)
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
