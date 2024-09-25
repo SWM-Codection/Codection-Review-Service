@@ -32,7 +32,7 @@ data class DiscussionCommentResponse(
                 createdUnix = discussionComment.createdUnix,
                 updatedUnix = discussionComment.updatedUnix,
                 codeId = discussionComment.codeId,
-                discussionId = discussionComment.id,
+                discussionId = discussionComment.id
             )
         }
     }
