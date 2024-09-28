@@ -7,6 +7,8 @@ data class DiscussionCommentResponse(
     val id: Long,
     val posterId: Long,
     val groupId: Long?,
+    val discussionId: Long,
+    val codeId: Long?,
     val scope: String,
     val startLine: Int?,
     val endLine: Int?,
@@ -30,7 +32,9 @@ data class DiscussionCommentResponse(
                 content = discussionComment.content,
                 reactions = reactions,
                 createdUnix = discussionComment.createdUnix,
-                updatedUnix = discussionComment.updatedUnix
+                updatedUnix = discussionComment.updatedUnix,
+                codeId = discussionComment.codeId,
+                discussionId = discussionComment.discussionId
             )
         }
     }
