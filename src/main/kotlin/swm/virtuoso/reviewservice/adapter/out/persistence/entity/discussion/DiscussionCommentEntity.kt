@@ -63,6 +63,7 @@ data class DiscussionCommentEntity(
         if (isFirstDiscussionFileComment()) {
             this.groupId = this.id
         }
+
     }
 
 

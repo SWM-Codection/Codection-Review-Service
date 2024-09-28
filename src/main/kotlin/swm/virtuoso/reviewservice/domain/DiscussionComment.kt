@@ -23,6 +23,7 @@ data class DiscussionComment(
             return DiscussionComment(
                 id = null,
                 discussionId = request.discussionId,
+                groupId = request.groupId,
                 codeId = request.codeId,
                 posterId = request.posterId,
                 scope = request.scope,
