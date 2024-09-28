@@ -5,6 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.PostPersist
 import jakarta.persistence.Table
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.BaseTimeEntity
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
@@ -22,6 +23,9 @@ data class DiscussionCommentEntity(
 
     @field:Column(name = "code_id")
     val codeId: Long? = null,
+    // groupId = 답변이 이어지는 곳에서 처음 생성된 comment의 id
+    @field:Column(name = "group_id")
+    var groupId: Long? = null,
 
     @field:Column(nullable = false, name = "poster_id")
     val posterId: Long,
@@ -44,6 +48,7 @@ data class DiscussionCommentEntity(
                 id = domain.id,
                 discussionId = domain.discussionId,
                 codeId = domain.codeId,
+                groupId = domain.groupId,
                 posterId = domain.posterId,
                 scope = domain.scope,
                 startLine = domain.startLine,
@@ -51,5 +56,18 @@ data class DiscussionCommentEntity(
                 content = domain.content
             )
         }
+    }
+
+    @PostPersist
+    fun setGroupIdForDiscussionFileComment() {
+        if (isFirstDiscussionFileComment()) {
+            this.groupId = this.id
+        }
+    }
+
+
+
+    fun isFirstDiscussionFileComment(): Boolean {
+        return this.scope == CommentScopeEnum.LOCAL && this.groupId == null
     }
 }

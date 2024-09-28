@@ -7,4 +7,5 @@ interface DiscussionCommentUseCase {
     fun deleteComment(commentId: Long)
     fun modifyComment(discussionComment: DiscussionComment)
     fun getCommentById(commentId: Long): DiscussionComment
+    fun getCommentsByCodeId(commentId: Long): List<DiscussionComment>
 }

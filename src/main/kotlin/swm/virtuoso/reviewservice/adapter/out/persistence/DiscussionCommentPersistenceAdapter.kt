@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCommentRepository
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
+import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
 import swm.virtuoso.reviewservice.common.exception.NoSuchDiscussionCommentException
 import swm.virtuoso.reviewservice.domain.DiscussionComment
 
@@ -25,6 +26,11 @@ class DiscussionCommentPersistenceAdapter(
             .map { DiscussionComment.fromEntity(it) }
     }
 
+    override fun findCommentsByCodeId(codeId: Long): List<DiscussionComment> {
+        return discussionCommentRepository.findAllByCodeId(codeId)
+            .map { DiscussionComment.fromEntity(it) }
+    }
+
     override fun deleteCommentById(commentId: Long) {
         discussionCommentRepository.deleteById(commentId)
     }
@@ -37,7 +43,7 @@ class DiscussionCommentPersistenceAdapter(
     }
 
     override fun updateComment(modifiedComment: DiscussionComment) {
-        val exisingComment = findCommentById(modifiedComment.discussionId)
+        val exisingComment = findCommentById(modifiedComment.id!!)
 
         modifiedComment.let { comment ->
             require(exisingComment.codeId == modifiedComment.codeId) {
@@ -48,9 +54,9 @@ class DiscussionCommentPersistenceAdapter(
             }
         }
 
-        // TODO discussion이 존재하지 않을 경우 예외처리
-
+        modifiedComment.groupId = exisingComment.groupId
         val modifiedDiscussionComment = DiscussionCommentEntity.fromDiscussionComment(modifiedComment)
+
         discussionCommentRepository.save(modifiedDiscussionComment)
     }
 }

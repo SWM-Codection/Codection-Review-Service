@@ -9,7 +9,6 @@ data class ModifyCommentRequest(
     val discussionId: Long,
     @field:NotNull(message = "Comment ID cannot be null")
     val discussionCommentId: Long,
-
     val codeId: Long? = null,
     @field:NotNull(message = "Poster ID cannot be null")
     val posterId: Long,

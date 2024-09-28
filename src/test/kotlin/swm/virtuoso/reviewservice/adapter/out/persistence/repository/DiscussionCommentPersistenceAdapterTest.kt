@@ -2,6 +2,7 @@ package swm.virtuoso.reviewservice.adapter.out.persistence.repository
 
 import org.hibernate.validator.internal.util.Contracts.assertNotNull
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -9,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.test.context.ActiveProfiles
 import swm.virtuoso.reviewservice.adapter.out.persistence.DiscussionCommentPersistenceAdapter
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCodeEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
+import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCodeRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCommentRepository
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
 import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
@@ -25,6 +29,9 @@ import swm.virtuoso.reviewservice.domain.DiscussionComment
 class DiscussionCommentPersistenceAdapterTest {
 
     @Autowired
+    private lateinit var discussionCodeRepository: DiscussionCodeRepository
+
+    @Autowired
     private lateinit var discussionCommentPersistenceAdapter: DiscussionCommentPersistenceAdapter
 
     @Autowired
@@ -36,6 +43,75 @@ class DiscussionCommentPersistenceAdapterTest {
     @Test
     @DisplayName("코멘트 등록")
     fun `saveComment should save comment and return saved comment`() {
+        // given
+
+        // given
+        val savedDiscussion = DiscussionEntity(
+            id = null,
+            name = "test discussion 3",
+            content = "content 3",
+            repoId = 1,
+            posterId = 3,
+            commitHash = "commitHash3",
+            isClosed = false,
+            numComments = 0,
+            pinOrder = 0,
+            deadlineUnix = 0,
+            isLocked = false
+        )
+
+        val discussionId = discussionRepository.save(savedDiscussion).id!!
+
+        val discussionComment = DiscussionComment(
+            id = null,
+            discussionId = discussionId,
+            codeId = null,
+            posterId = 1L,
+            scope = CommentScopeEnum.GLOBAL,
+            startLine = null,
+            endLine = null,
+            content = "Test comment"
+        )
+
+        val discussionCodeEntity = DiscussionCodeEntity(
+            id = null,
+            discussionId = discussionId,
+            filePath = "ddd",
+            startLine = 1,
+            endLine = 2,
+        )
+
+        val savedCode = discussionCodeRepository.save(discussionCodeEntity)
+
+        val discussionFileComment = DiscussionComment(
+            id = null,
+            discussionId = discussionId,
+            codeId = savedCode.id,
+            posterId = 1L,
+            scope = CommentScopeEnum.LOCAL,
+            startLine = 1,
+            endLine = 2,
+            content = "Test comment"
+        )
+
+
+        // when
+        val savedComment = discussionCommentPersistenceAdapter.insertComment(discussionComment)
+        val savedFileComment = discussionCommentPersistenceAdapter.insertComment(discussionFileComment)
+
+        // then
+        assertNotNull(savedComment.id)
+        assertEquals(discussionComment.content, savedComment.content)
+        assertEquals(savedFileComment.groupId, savedFileComment.id)
+        assertEquals(savedComment.groupId, null)
+        assertEquals(discussionComment.posterId, savedComment.posterId)
+        assertEquals(discussionComment.discussionId, savedComment.discussionId)
+    }
+
+    @Test
+    @DisplayName("코멘트 답변 등록")
+    fun `saveComment should save comment`() {
+
         // given
         val savedDiscussion = DiscussionEntity(
             id = null,
@@ -52,25 +128,24 @@ class DiscussionCommentPersistenceAdapterTest {
         )
         val discussionId = discussionRepository.save(savedDiscussion).id!!
 
-        val discussionComment = DiscussionComment(
+        val discussionFileCommentReply = DiscussionComment(
             id = null,
             discussionId = savedDiscussion.id!!,
             codeId = null,
             posterId = 1L,
-            scope = CommentScopeEnum.GLOBAL,
-            startLine = null,
-            endLine = null,
+            scope = CommentScopeEnum.LOCAL,
+            startLine = 1,
+            endLine = 2,
             content = "Test comment"
         )
 
+
         // when
-        val savedComment = discussionCommentPersistenceAdapter.insertComment(discussionComment)
+        val savedComment = discussionCommentPersistenceAdapter.insertComment(discussionFileCommentReply)
 
         // then
         assertNotNull(savedComment.id)
-        assertEquals(discussionComment.content, savedComment.content)
-        assertEquals(discussionComment.posterId, savedComment.posterId)
-        assertEquals(discussionComment.discussionId, savedComment.discussionId)
+        assertNull(discussionFileCommentReply.groupId)
     }
 
     @Test
@@ -186,7 +261,7 @@ class DiscussionCommentPersistenceAdapterTest {
 
         val discussionComment = DiscussionComment(
             id = null,
-            discussionId = savedDiscussion.id!!,
+            discussionId = discussionId,
             codeId = null,
             posterId = 1L,
             scope = CommentScopeEnum.GLOBAL,
@@ -194,15 +269,47 @@ class DiscussionCommentPersistenceAdapterTest {
             endLine = null,
             content = "Test comment"
         )
+
+        val discussionCode: DiscussionCodeEntity = DiscussionCodeEntity(
+            id = null,
+            discussionId = discussionId,
+            filePath = "dd",
+            startLine = 1,
+            endLine = 2,
+        )
+
+        val savedCode = discussionCodeRepository.save(discussionCode)
+
+        val discussionFileComment = DiscussionComment(
+            id = null,
+            discussionId = discussionId,
+            codeId = savedCode.id,
+            posterId = 1L,
+            scope = CommentScopeEnum.LOCAL,
+            startLine = 1,
+            endLine = 3,
+            content = "Test comment"
+        )
+
         val savedComment = discussionCommentPersistenceAdapter.insertComment(discussionComment)
+        val savedFileComment = discussionCommentPersistenceAdapter.insertComment(discussionFileComment)
 
         val modifiedComment = savedComment.copy(content = "Updated comment")
 
+        val modifiedFileComment = savedFileComment.copy(content = "Updated comment")
+
         // when
         discussionCommentPersistenceAdapter.updateComment(modifiedComment)
+        discussionCommentPersistenceAdapter.updateComment(modifiedFileComment)
 
         // then
         val updatedComment = discussionCommentPersistenceAdapter.findCommentById(savedComment.id!!)
+        val updatedFileComment = discussionCommentPersistenceAdapter.findCommentById(savedFileComment.id!!)
+
         assertEquals(modifiedComment.content, updatedComment.content)
+        assertEquals(modifiedFileComment.content, updatedFileComment.content)
+        assertEquals(modifiedFileComment.groupId, updatedFileComment.groupId)
+
     }
+
 }

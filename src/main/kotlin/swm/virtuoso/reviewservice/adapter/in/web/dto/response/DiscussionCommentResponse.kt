@@ -6,6 +6,7 @@ import swm.virtuoso.reviewservice.domain.DiscussionReaction
 data class DiscussionCommentResponse(
     val id: Long,
     val posterId: Long,
+    val groupId: Long?,
     val scope: String,
     val startLine: Int?,
     val endLine: Int?,
@@ -17,12 +18,13 @@ data class DiscussionCommentResponse(
     companion object {
         fun fromDiscussionComment(
             discussionComment: DiscussionComment,
-            reactions: List<DiscussionReaction>
+            reactions: List<DiscussionReaction>,
         ): DiscussionCommentResponse {
             return DiscussionCommentResponse(
                 id = discussionComment.id!!,
                 scope = discussionComment.scope.toString(),
                 posterId = discussionComment.posterId,
+                groupId = discussionComment.groupId,
                 startLine = discussionComment.startLine,
                 endLine = discussionComment.endLine,
                 content = discussionComment.content,

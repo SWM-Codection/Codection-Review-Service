@@ -9,6 +9,7 @@ data class DiscussionComment(
     val id: Long? = null,
     val discussionId: Long,
     val codeId: Long? = null,
+    var groupId: Long? = null,
     val posterId: Long,
     val scope: CommentScopeEnum,
     var startLine: Int? = null,
@@ -27,7 +28,7 @@ data class DiscussionComment(
                 scope = request.scope,
                 startLine = request.startLine,
                 endLine = request.endLine,
-                content = request.content
+                content = request.content,
             )
         }
 
@@ -37,12 +38,14 @@ data class DiscussionComment(
                 discussionId = entity.discussionId,
                 codeId = entity.codeId,
                 posterId = entity.posterId,
+                groupId = entity.groupId,
                 scope = entity.scope,
                 startLine = entity.startLine,
                 endLine = entity.endLine,
                 content = entity.content,
                 createdUnix = entity.createdUnix,
-                updatedUnix = entity.updatedUnix
+                updatedUnix = entity.updatedUnix,
+
             )
         }
 

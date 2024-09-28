@@ -5,4 +5,5 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.Disc
 
 interface DiscussionCommentRepository : JpaRepository<DiscussionCommentEntity, Long> {
     fun findAllByDiscussionId(discussionId: Long): List<DiscussionCommentEntity>
+    fun findAllByCodeId(codeId: Long): List<DiscussionCommentEntity>
 }

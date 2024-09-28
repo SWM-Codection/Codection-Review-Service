@@ -1,6 +1,7 @@
 package swm.virtuoso.reviewservice.adapter.`in`.web.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -10,6 +11,7 @@ import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -62,6 +64,25 @@ class DiscussionCommentController(
         val discussionComment = discussionCommentUseCase.getCommentById(id)
         val discussionCommentReactions = discussionReactionUseCase.getDiscussionCommentReactions(id)
         return DiscussionCommentResponse.fromDiscussionComment(discussionComment, discussionCommentReactions)
+    }
+
+    @GetMapping("/comments/{codeId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "get comment by codeId")
+    @ApiResponses(
+        ApiResponse(
+            responseCode = "200",
+            description = "코멘트 가져오기 성공",
+            content = [Content(
+                array = ArraySchema(schema = Schema(implementation = DiscussionCommentResponse::class))
+            )]
+        ),
+    )
+    fun getCommentByCodeId(@PathVariable codeId: Long): List<DiscussionCommentResponse> {
+        return discussionCommentUseCase.getCommentsByCodeId(codeId).map {
+            val reactions = discussionReactionUseCase.getDiscussionCommentReactions(it.id!!);
+            DiscussionCommentResponse.fromDiscussionComment(it, reactions)
+        }
     }
 
     @PostMapping("/comment")
@@ -149,4 +170,6 @@ class DiscussionCommentController(
             request.discussionCommentId
         )
     }
+
+
 }
