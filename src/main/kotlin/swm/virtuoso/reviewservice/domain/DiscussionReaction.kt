@@ -1,6 +1,6 @@
 package swm.virtuoso.reviewservice.domain
 
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostReactionRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ReactionRequest
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionReactionEntity
 import swm.virtuoso.reviewservice.common.enums.ReactionTypeEnum
 
@@ -12,7 +12,7 @@ data class DiscussionReaction(
     val userId: Long
 ) {
     companion object {
-        fun fromPostRequest(request: PostReactionRequest): DiscussionReaction {
+        fun fromReactionRequest(request: ReactionRequest): DiscussionReaction {
             return DiscussionReaction(
                 type = request.type,
                 discussionId = request.discussionId,

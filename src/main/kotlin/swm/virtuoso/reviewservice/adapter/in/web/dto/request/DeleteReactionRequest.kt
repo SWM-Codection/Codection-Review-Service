@@ -3,7 +3,7 @@ package swm.virtuoso.reviewservice.adapter.`in`.web.dto.request
 import jakarta.validation.constraints.NotNull
 import swm.virtuoso.reviewservice.common.enums.ReactionTypeEnum
 
-data class PostReactionRequest(
+data class DeleteReactionRequest(
     @field:NotNull(message = "type cannot be null")
     override val type: ReactionTypeEnum,
     @field:NotNull(message = "Discussion ID cannot be null")
