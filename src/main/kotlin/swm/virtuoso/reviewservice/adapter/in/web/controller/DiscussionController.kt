@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -32,6 +31,7 @@ import swm.virtuoso.reviewservice.application.port.`in`.GiteaUseCase
 import swm.virtuoso.reviewservice.common.exception.ErrorResponse
 import swm.virtuoso.reviewservice.domain.Discussion
 import swm.virtuoso.reviewservice.domain.DiscussionAvailability
+import swm.virtuoso.reviewservice.domain.DiscussionSortType
 
 @RestController
 @RequestMapping("/discussion")
@@ -158,9 +158,11 @@ class DiscussionController(
     fun getDiscussionList(
         @PathVariable repoId: Long,
         @RequestParam isClosed: Boolean,
-        @RequestParam page: Int
+        @RequestParam page: Int,
+        @RequestParam sort: String
     ): DiscussionListResponse {
-        val pageable = PageRequest.of(page, 20, Sort.by(Sort.Direction.DESC, "updatedUnix"))
+        val discussionSortType = DiscussionSortType.fromSortString(sort)
+        val pageable = PageRequest.of(page, 20, discussionSortType.toSort())
         val discussions = discussionUseCase.getDiscussions(repoId, isClosed, pageable)
         return DiscussionListResponse(
             totalCount = discussions.totalElements,
