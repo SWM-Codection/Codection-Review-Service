@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyAssigneesRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.UpdateAssigneeRequest
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionAssigneesUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 import kotlin.test.Test
@@ -37,9 +37,9 @@ class DiscussionSettingControllerTest {
     @DisplayName("담당자를 수정")
     fun `should modify assignees`() {
         // Given
-        val request = ModifyAssigneesRequest(discussionId = 1L, assignees = listOf(1L, 2L, 3L))
+        val request = UpdateAssigneeRequest(discussionId = 1L, assigneeId = 1L)
 
-        doNothing().`when`(discussionAssigneesUseCase).modifyAssignees(request.discussionId, request.assignees)
+        doNothing().`when`(discussionAssigneesUseCase).changeAssignee(request.discussionId, request.assigneeId)
 
         // When & Then
         mockMvc.perform(
@@ -61,7 +61,7 @@ class DiscussionSettingControllerTest {
 
         // When & Then
         mockMvc.perform(
-            patch("/discussion/assign/$discussionId")
+            patch("/discussion/deadline/$discussionId")
                 .param("deadline", deadline.toString())
         )
             .andExpect(status().isNoContent)
