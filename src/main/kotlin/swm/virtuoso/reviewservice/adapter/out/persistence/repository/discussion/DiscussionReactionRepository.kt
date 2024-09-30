@@ -16,10 +16,10 @@ interface DiscussionReactionRepository : JpaRepository<DiscussionReactionEntity,
         SELECT entity
         FROM DiscussionReactionEntity entity 
         WHERE 1 = 1  
-            AND entity.discussionId = #{#reaction.discussionId} 
-            AND entity.commentId = #{#reaction.commentId} 
-            AND entity.userId = #{#reaction.userId}
-            AND entity.type = #{#reaction.type}
+            AND entity.discussionId = :#{#reaction.discussionId} 
+            AND entity.commentId = :#{#reaction.commentId} 
+            AND entity.userId = :#{#reaction.userId}
+            AND entity.type = :#{#reaction.type}
     """
     )
     fun findByDiscussionReaction(@Param("reaction") discussionReaction: DiscussionReaction): Optional<DiscussionReactionEntity>
