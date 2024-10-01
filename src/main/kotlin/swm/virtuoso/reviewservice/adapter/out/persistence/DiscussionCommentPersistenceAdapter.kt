@@ -25,6 +25,11 @@ class DiscussionCommentPersistenceAdapter(
             .map { DiscussionComment.fromEntity(it) }
     }
 
+    override fun findCommentsByCodeId(codeId: Long): List<DiscussionComment> {
+        return discussionCommentRepository.findAllByCodeId(codeId)
+            .map { DiscussionComment.fromEntity(it) }
+    }
+
     override fun deleteCommentById(commentId: Long) {
         discussionCommentRepository.deleteById(commentId)
     }
@@ -37,9 +42,9 @@ class DiscussionCommentPersistenceAdapter(
     }
 
     override fun updateComment(modifiedComment: DiscussionComment) {
-        val exisingComment = findCommentById(modifiedComment.discussionId)
+        val exisingComment = findCommentById(modifiedComment.id!!)
 
-        modifiedComment.let { comment ->
+        modifiedComment.let {
             require(exisingComment.codeId == modifiedComment.codeId) {
                 "수정된 코멘트와 기존 코멘트의 코드블록 정보가 일치하지 않습니다."
             }
@@ -48,9 +53,9 @@ class DiscussionCommentPersistenceAdapter(
             }
         }
 
-        // TODO discussion이 존재하지 않을 경우 예외처리
-
+        modifiedComment.groupId = exisingComment.groupId
         val modifiedDiscussionComment = DiscussionCommentEntity.fromDiscussionComment(modifiedComment)
+
         discussionCommentRepository.save(modifiedDiscussionComment)
     }
 }
