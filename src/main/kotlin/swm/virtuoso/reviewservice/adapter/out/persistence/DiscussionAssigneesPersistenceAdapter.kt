@@ -11,6 +11,11 @@ class DiscussionAssigneesPersistenceAdapter(
     private val discussionAssigneesRepository: DiscussionAssigneesRepository
 ) : DiscussionAssigneesPort {
 
+    override fun insertDiscussionAssignee(discussionAssignee: DiscussionAssignee) {
+        val entity = DiscussionAssigneesEntity.fromDiscussionAssignee(discussionAssignee)
+        discussionAssigneesRepository.save(entity)
+    }
+
     override fun insertDiscussionAssignees(discussionAssignees: List<DiscussionAssignee>) {
         val entities = discussionAssignees.map { assignee ->
             DiscussionAssigneesEntity.fromDiscussionAssignee(assignee)
@@ -25,5 +30,19 @@ class DiscussionAssigneesPersistenceAdapter(
 
     override fun deleteDiscussionAssigneesByAssigneesIn(discussionId: Long, assignees: List<Long>) {
         discussionAssigneesRepository.deleteByDiscussionIdAndAssigneeIdIn(discussionId, assignees)
+    }
+
+    override fun findByDiscussionIdAndAssigneeId(discussionId: Long, assigneeId: Long): DiscussionAssignee? {
+        val entity = discussionAssigneesRepository.findByDiscussionIdAndAssigneeId(discussionId, assigneeId)
+            ?: return null
+        return DiscussionAssignee.fromEntity(entity)
+    }
+
+    override fun deleteByDiscussionAssigneeById(discussionAssigneeId: Long) {
+        discussionAssigneesRepository.deleteById(discussionAssigneeId)
+    }
+
+    override fun deleteAllByDiscussionId(discussionId: Long) {
+        discussionAssigneesRepository.deleteAllByDiscussionId(discussionId)
     }
 }

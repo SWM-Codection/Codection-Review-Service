@@ -8,6 +8,7 @@ data class PostCommentRequest(
     @field:NotNull(message = "Discussion ID cannot be null")
     val discussionId: Long,
     val codeId: Long? = null,
+    val groupId: Long? = null,
     @field:NotNull(message = "Poster ID cannot be null")
     val posterId: Long,
     @field:NotNull(message = "Scope cannot be empty")

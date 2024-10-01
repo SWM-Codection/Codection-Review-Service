@@ -14,20 +14,21 @@ class DiscussionAssigneesService(
 ) : DiscussionAssigneesUseCase {
 
     @Transactional
-    override fun modifyAssignees(discussionId: Long, assignees: List<Long>) {
+    override fun changeAssignee(discussionId: Long, assigneeId: Long) {
         discussionPort.findDiscussionById(discussionId)
+        val assignee = discussionAssigneesPort.findByDiscussionIdAndAssigneeId(discussionId, assigneeId)
 
-        val prevAssignees = discussionAssigneesPort.findDiscussionAssigneesByDiscussionId(discussionId)
-        val prevAssigneeIds = prevAssignees.map { it.assigneeId }
-
-        val toRemove = prevAssigneeIds.filterNot { it in assignees }
-        discussionAssigneesPort.deleteDiscussionAssigneesByAssigneesIn(discussionId, toRemove)
-
-        val toAdd = assignees.filterNot { it in prevAssigneeIds }
-        val newAssignees = toAdd.map { assigneeId ->
-            DiscussionAssignee(discussionId = discussionId, assigneeId = assigneeId)
+        assignee?.let {
+            discussionAssigneesPort.deleteByDiscussionAssigneeById(it.id!!)
+        } ?: run {
+            discussionAssigneesPort.insertDiscussionAssignee(
+                DiscussionAssignee(id = null, assigneeId = assigneeId, discussionId = discussionId)
+            )
         }
+    }
 
-        discussionAssigneesPort.insertDiscussionAssignees(newAssignees)
+    @Transactional
+    override fun clearAssigneesByDiscussionId(discussionId: Long) {
+        discussionAssigneesPort.deleteAllByDiscussionId(discussionId)
     }
 }

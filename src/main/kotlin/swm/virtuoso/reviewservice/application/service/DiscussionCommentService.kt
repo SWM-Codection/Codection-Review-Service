@@ -23,6 +23,10 @@ class DiscussionCommentService(
         return discussion
     }
 
+    override fun getCommentsByCodeId(commentId: Long): List<DiscussionComment> {
+        return discussionCommentPort.findCommentsByCodeId(commentId)
+    }
+
     @Transactional
     override fun createComment(discussionComment: DiscussionComment): DiscussionComment {
         val discussion = discussionPort.findDiscussionById(discussionComment.discussionId)

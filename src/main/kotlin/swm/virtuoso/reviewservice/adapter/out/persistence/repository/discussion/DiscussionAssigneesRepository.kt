@@ -6,4 +6,6 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.Disc
 interface DiscussionAssigneesRepository : JpaRepository<DiscussionAssigneesEntity, Long> {
     fun findAllByDiscussionId(discussionId: Long): List<DiscussionAssigneesEntity>
     fun deleteByDiscussionIdAndAssigneeIdIn(discussionId: Long, assigneeIds: List<Long>)
+    fun findByDiscussionIdAndAssigneeId(discussionId: Long, assigneeId: Long): DiscussionAssigneesEntity?
+    fun deleteAllByDiscussionId(discussionId: Long)
 }
