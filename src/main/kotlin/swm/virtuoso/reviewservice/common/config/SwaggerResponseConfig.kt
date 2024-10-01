@@ -18,7 +18,7 @@ class SwaggerResponseConfig {
     @Bean
     fun customGlobalHeaderOpenApiCustomizer(requestMappings: RequestMappingHandlerMapping) = OpenApiCustomizer { openApi ->
         requestMappings.handlerMethods
-            .filter { (_,handlerMethod) -> handlerMethod.method.getAnnotationsByType(SwaggerResponse::class.java).isNotEmpty() }
+            .filter { (_, handlerMethod) -> handlerMethod.method.getAnnotationsByType(SwaggerResponse::class.java).isNotEmpty() }
             .forEach { (mappingInfo, handlerMethod) ->
                 // Because I'm lazy person, this implementation only handles first mapping
                 val pattern = mappingInfo.pathPatternsCondition?.patterns?.first()?.patternString
@@ -39,11 +39,14 @@ class SwaggerResponseConfig {
                     val swaggerResponses = handlerMethod.method.getAnnotationsByType(SwaggerResponse::class.java)
                     swaggerResponses.forEach {
                         operation.responses
-                            .addApiResponse(it.responseStatus, ApiResponse().apply {
-                                val schema = extractSchema(Components(), it.responseType.java, null, arrayOf(), SpecVersion.V30)
-                                description = it.description
-                                content = Content().addMediaType("*/*", MediaType().schema(schema))
-                            })
+                            .addApiResponse(
+                                it.responseStatus,
+                                ApiResponse().apply {
+                                    val schema = extractSchema(Components(), it.responseType.java, null, arrayOf(), SpecVersion.V30)
+                                    description = it.description
+                                    content = Content().addMediaType("*/*", MediaType().schema(schema))
+                                }
+                            )
                     }
                 }
             }
