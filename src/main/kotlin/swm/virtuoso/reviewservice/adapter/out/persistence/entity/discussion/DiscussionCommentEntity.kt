@@ -63,10 +63,7 @@ data class DiscussionCommentEntity(
         if (isFirstDiscussionFileComment()) {
             this.groupId = this.id
         }
-
     }
-
-
 
     fun isFirstDiscussionFileComment(): Boolean {
         return this.scope == CommentScopeEnum.LOCAL && this.groupId == null

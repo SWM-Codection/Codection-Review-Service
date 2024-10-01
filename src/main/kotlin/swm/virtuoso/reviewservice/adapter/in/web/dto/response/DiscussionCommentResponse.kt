@@ -20,7 +20,7 @@ data class DiscussionCommentResponse(
     companion object {
         fun fromDiscussionComment(
             discussionComment: DiscussionComment,
-            reactions: List<DiscussionReaction>,
+            reactions: List<DiscussionReaction>
         ): DiscussionCommentResponse {
             return DiscussionCommentResponse(
                 id = discussionComment.id!!,

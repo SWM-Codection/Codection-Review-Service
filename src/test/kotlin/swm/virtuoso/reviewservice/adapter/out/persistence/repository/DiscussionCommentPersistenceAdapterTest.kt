@@ -78,7 +78,7 @@ class DiscussionCommentPersistenceAdapterTest {
             discussionId = discussionId,
             filePath = "ddd",
             startLine = 1,
-            endLine = 2,
+            endLine = 2
         )
 
         val savedCode = discussionCodeRepository.save(discussionCodeEntity)
@@ -93,7 +93,6 @@ class DiscussionCommentPersistenceAdapterTest {
             endLine = 2,
             content = "Test comment"
         )
-
 
         // when
         val savedComment = discussionCommentPersistenceAdapter.insertComment(discussionComment)
@@ -111,7 +110,6 @@ class DiscussionCommentPersistenceAdapterTest {
     @Test
     @DisplayName("코멘트 답변 등록")
     fun `saveComment should save comment`() {
-
         // given
         val savedDiscussion = DiscussionEntity(
             id = null,
@@ -138,7 +136,6 @@ class DiscussionCommentPersistenceAdapterTest {
             endLine = 2,
             content = "Test comment"
         )
-
 
         // when
         val savedComment = discussionCommentPersistenceAdapter.insertComment(discussionFileCommentReply)
@@ -275,7 +272,7 @@ class DiscussionCommentPersistenceAdapterTest {
             discussionId = discussionId,
             filePath = "dd",
             startLine = 1,
-            endLine = 2,
+            endLine = 2
         )
 
         val savedCode = discussionCodeRepository.save(discussionCode)
@@ -309,7 +306,5 @@ class DiscussionCommentPersistenceAdapterTest {
         assertEquals(modifiedComment.content, updatedComment.content)
         assertEquals(modifiedFileComment.content, updatedFileComment.content)
         assertEquals(modifiedFileComment.groupId, updatedFileComment.groupId)
-
     }
-
 }

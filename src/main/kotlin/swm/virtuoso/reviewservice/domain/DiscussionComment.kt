@@ -29,7 +29,7 @@ data class DiscussionComment(
                 scope = request.scope,
                 startLine = request.startLine,
                 endLine = request.endLine,
-                content = request.content,
+                content = request.content
             )
         }
 
@@ -45,7 +45,7 @@ data class DiscussionComment(
                 endLine = entity.endLine,
                 content = entity.content,
                 createdUnix = entity.createdUnix,
-                updatedUnix = entity.updatedUnix,
+                updatedUnix = entity.updatedUnix
 
             )
         }

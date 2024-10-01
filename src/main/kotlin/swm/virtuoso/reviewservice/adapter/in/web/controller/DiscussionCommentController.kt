@@ -73,14 +73,16 @@ class DiscussionCommentController(
         ApiResponse(
             responseCode = "200",
             description = "코멘트 가져오기 성공",
-            content = [Content(
-                array = ArraySchema(schema = Schema(implementation = DiscussionCommentResponse::class))
-            )]
-        ),
+            content = [
+                Content(
+                    array = ArraySchema(schema = Schema(implementation = DiscussionCommentResponse::class))
+                )
+            ]
+        )
     )
     fun getCommentByCodeId(@PathVariable codeId: Long): List<DiscussionCommentResponse> {
         return discussionCommentUseCase.getCommentsByCodeId(codeId).map {
-            val reactions = discussionReactionUseCase.getDiscussionCommentReactions(it.id!!);
+            val reactions = discussionReactionUseCase.getDiscussionCommentReactions(it.id!!)
             DiscussionCommentResponse.fromDiscussionComment(it, reactions)
         }
     }
@@ -170,6 +172,4 @@ class DiscussionCommentController(
             request.discussionCommentId
         )
     }
-
-
 }

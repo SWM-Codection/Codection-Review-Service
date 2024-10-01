@@ -4,7 +4,6 @@ import org.springframework.stereotype.Repository
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
 import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionCommentRepository
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
-import swm.virtuoso.reviewservice.common.enums.CommentScopeEnum
 import swm.virtuoso.reviewservice.common.exception.NoSuchDiscussionCommentException
 import swm.virtuoso.reviewservice.domain.DiscussionComment
 
@@ -45,7 +44,7 @@ class DiscussionCommentPersistenceAdapter(
     override fun updateComment(modifiedComment: DiscussionComment) {
         val exisingComment = findCommentById(modifiedComment.id!!)
 
-        modifiedComment.let { comment ->
+        modifiedComment.let {
             require(exisingComment.codeId == modifiedComment.codeId) {
                 "수정된 코멘트와 기존 코멘트의 코드블록 정보가 일치하지 않습니다."
             }
