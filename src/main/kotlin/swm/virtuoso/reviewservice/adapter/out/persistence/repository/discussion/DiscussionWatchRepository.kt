@@ -5,7 +5,6 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.Disc
 import java.util.*
 
 interface DiscussionWatchRepository : JpaRepository<DiscussionWatchEntity, Long> {
-    fun existsByUserIdAndDiscussionId(userId :Long, discussionId :Long): Boolean
-    fun findByUserIdAndDiscussionId(userId :Long, discussionId :Long): Optional<DiscussionWatchEntity>
-
+    fun existsByUserIdAndDiscussionId(userId: Long, discussionId: Long): Boolean
+    fun findByUserIdAndDiscussionId(userId: Long, discussionId: Long): Optional<DiscussionWatchEntity>
 }

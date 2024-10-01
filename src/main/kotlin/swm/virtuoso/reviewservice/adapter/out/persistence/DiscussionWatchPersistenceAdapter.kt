@@ -11,7 +11,6 @@ class DiscussionWatchPersistenceAdapter(
     private val discussionWatchRepository: DiscussionWatchRepository
 ) : DiscussionWatchPort {
 
-
     override fun findById(id: Long): DiscussionWatch {
         val entity = discussionWatchRepository.findById(id).orElseThrow {
             throw IllegalArgumentException("No discussion watch found for id $id")
@@ -21,7 +20,7 @@ class DiscussionWatchPersistenceAdapter(
             id = entity.id!!,
             userId = entity.userId,
             discussionId = entity.discussionId,
-            isWatching = entity.isWatching,
+            isWatching = entity.isWatching
         )
     }
 
@@ -34,21 +33,18 @@ class DiscussionWatchPersistenceAdapter(
             id = entity.id!!,
             userId = entity.userId,
             discussionId = entity.discussionId,
-            isWatching = entity.isWatching,
+            isWatching = entity.isWatching
         )
     }
 
     override fun checkWatchDuplication(userId: Long, discussionId: Long) {
-
         val result = discussionWatchRepository.existsByUserIdAndDiscussionId(discussionId, userId)
         //
         if (result == true) {
             // TODO Global ExceptionHandler
             throw IllegalArgumentException("watch is duplicated")
         }
-
     }
-
 
     override fun save(userId: Long, discussionId: Long) {
         discussionWatchRepository.save(
@@ -56,22 +52,19 @@ class DiscussionWatchPersistenceAdapter(
                 id = null,
                 discussionId = discussionId,
                 userId = userId,
-                isWatching = true,
+                isWatching = true
             )
         )
     }
 
     override fun update(discussionWatch: DiscussionWatch) {
-
-
         discussionWatchRepository.save(
             DiscussionWatchEntity(
                 id = discussionWatch.discussionId,
                 userId = discussionWatch.userId,
                 discussionId = discussionWatch.discussionId,
-                isWatching = discussionWatch.isWatching,
+                isWatching = discussionWatch.isWatching
             )
         )
     }
-
 }

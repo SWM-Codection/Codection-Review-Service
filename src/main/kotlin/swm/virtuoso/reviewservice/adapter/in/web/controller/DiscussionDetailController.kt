@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DeleteReactionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ChangeDiscussionWatchRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DeleteReactionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionWatchRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostReactionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionContentResponse
@@ -36,7 +36,7 @@ import swm.virtuoso.reviewservice.domain.ExtractedLine
 class DiscussionDetailController(
     private val discussionFileUseCase: DiscussionFileUseCase,
     private val discussionReactionUseCase: DiscussionReactionUseCase,
-    private val discussionWatchUseCase: DiscussionWatchUseCase,
+    private val discussionWatchUseCase: DiscussionWatchUseCase
 ) {
 
     @GetMapping("/{discussionId}/contents")
@@ -133,8 +133,7 @@ class DiscussionDetailController(
     fun changeWatch(
         @Valid @RequestBody
         request: ChangeDiscussionWatchRequest
-    ) : Boolean {
-
+    ): Boolean {
         if (request.id == null) {
             return discussionWatchUseCase.createWatchStatus(request)
         }
@@ -156,9 +155,8 @@ class DiscussionDetailController(
     )
     fun getWatch(
         @Valid @RequestBody
-        request : DiscussionWatchRequest
-    ) : DiscussionWatchResponse {
-
+        request: DiscussionWatchRequest
+    ): DiscussionWatchResponse {
         return discussionWatchUseCase.getDiscussionWatch(request)
     }
 }
