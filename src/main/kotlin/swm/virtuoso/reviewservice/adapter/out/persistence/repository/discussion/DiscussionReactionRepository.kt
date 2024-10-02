@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionReactionEntity
 import swm.virtuoso.reviewservice.domain.DiscussionReaction
-import java.util.Optional
 
 interface DiscussionReactionRepository : JpaRepository<DiscussionReactionEntity, Long> {
     fun findAllByDiscussionId(discussionId: Long): List<DiscussionReactionEntity>
@@ -22,5 +21,5 @@ interface DiscussionReactionRepository : JpaRepository<DiscussionReactionEntity,
             AND entity.type = :#{#reaction.type}
     """
     )
-    fun findByDiscussionReaction(@Param("reaction") discussionReaction: DiscussionReaction): Optional<DiscussionReactionEntity>
+    fun findByDiscussionReaction(@Param("reaction") discussionReaction: DiscussionReaction): DiscussionReactionEntity?
 }

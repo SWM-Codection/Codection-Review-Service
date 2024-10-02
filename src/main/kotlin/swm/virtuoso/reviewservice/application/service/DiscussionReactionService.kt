@@ -25,7 +25,6 @@ class DiscussionReactionService(
                 "디스커션 id와 코멘트의 디스커션 id가 일치하지 않습니다."
             }
         }
-
         val savedReaction = discussionReactionPort.insertReaction(reaction)
         logger.info("Saved reaction with ID: {}", savedReaction.id)
 
