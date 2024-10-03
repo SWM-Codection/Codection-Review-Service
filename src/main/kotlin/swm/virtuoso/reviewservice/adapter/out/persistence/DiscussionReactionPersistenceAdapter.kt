@@ -11,8 +11,18 @@ class DiscussionReactionPersistenceAdapter(
     private val discussionReactionRepository: DiscussionReactionRepository
 ) : DiscussionReactionPort {
     override fun insertReaction(discussionReaction: DiscussionReaction): DiscussionReaction {
-        val reactionEntity = DiscussionReactionEntity.fromDiscussionReaction(discussionReaction)
-        return DiscussionReaction.fromEntity(discussionReactionRepository.save(reactionEntity))
+        val reactionEntity = discussionReactionRepository.findByDiscussionReaction(discussionReaction)
+            ?: discussionReactionRepository.save(DiscussionReactionEntity.fromDiscussionReaction(discussionReaction))
+        return DiscussionReaction.fromEntity(reactionEntity)
+    }
+
+    override fun removeReaction(discussionReaction: DiscussionReaction): Boolean {
+        val entity = discussionReactionRepository
+            .findByDiscussionReaction(discussionReaction)
+        if (entity == null) {
+            throw RuntimeException("Could not find DiscussionReactionEntity from DiscussionReaction")
+        }
+        return runCatching { discussionReactionRepository.delete(entity) }.isSuccess
     }
 
     override fun findReactionsByDiscussionId(discussionId: Long): List<DiscussionReaction> {

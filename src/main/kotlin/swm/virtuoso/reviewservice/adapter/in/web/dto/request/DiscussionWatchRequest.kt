@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull
 
 data class DiscussionWatchRequest(
     @field:NotNull
-    val userId : Long,
+    val userId: Long,
     @field:NotNull
     val discussionId: Long
 )

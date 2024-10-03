@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ChangeDiscussionWatchRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DeleteReactionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionWatchRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostReactionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionContentResponse
@@ -34,7 +36,7 @@ import swm.virtuoso.reviewservice.domain.ExtractedLine
 class DiscussionDetailController(
     private val discussionFileUseCase: DiscussionFileUseCase,
     private val discussionReactionUseCase: DiscussionReactionUseCase,
-    private val discussionWatchUseCase: DiscussionWatchUseCase,
+    private val discussionWatchUseCase: DiscussionWatchUseCase
 ) {
 
     @GetMapping("/{discussionId}/contents")
@@ -87,7 +89,33 @@ class DiscussionDetailController(
         @Valid @RequestBody
         request: PostReactionRequest
     ): Long {
-        return discussionReactionUseCase.addDiscussionReaction(DiscussionReaction.fromPostRequest(request)).id!!
+        val discussionReaction = DiscussionReaction.fromReactionRequest(request)
+        return discussionReactionUseCase.addDiscussionReaction(discussionReaction).id!!
+    }
+
+    @DeleteMapping("/reaction")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "remove reaction", description = "게시글 혹은 코멘트에 반응 제거")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "반응 제거 성공",
+                content = [Content(schema = Schema(implementation = Unit::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "디스커션 혹은 코멘트 정보를 찾을 수 없음",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            )
+        ]
+    )
+    fun removeReaction(
+        @Valid @RequestBody
+        request: DeleteReactionRequest
+    ) {
+        val discussionReaction = DiscussionReaction.fromReactionRequest(request)
+        discussionReactionUseCase.removeDiscussionReaction(discussionReaction)
     }
 
     @PutMapping("/watch")
@@ -105,8 +133,7 @@ class DiscussionDetailController(
     fun changeWatch(
         @Valid @RequestBody
         request: ChangeDiscussionWatchRequest
-    ) : Boolean {
-
+    ): Boolean {
         if (request.id == null) {
             return discussionWatchUseCase.createWatchStatus(request)
         }
@@ -128,9 +155,8 @@ class DiscussionDetailController(
     )
     fun getWatch(
         @Valid @RequestBody
-        request : DiscussionWatchRequest
-    ) : DiscussionWatchResponse {
-
+        request: DiscussionWatchRequest
+    ): DiscussionWatchResponse {
         return discussionWatchUseCase.getDiscussionWatch(request)
     }
 }

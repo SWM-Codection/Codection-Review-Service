@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull
 import swm.virtuoso.reviewservice.common.enums.ReactionTypeEnum
 import swm.virtuoso.reviewservice.common.enums.ReactionTypeEnumDeserializer
 
-data class PostReactionRequest(
+data class DeleteReactionRequest(
     @field:NotNull(message = "type cannot be null")
     @field:JsonDeserialize(using = ReactionTypeEnumDeserializer::class)
     override val type: ReactionTypeEnum,
