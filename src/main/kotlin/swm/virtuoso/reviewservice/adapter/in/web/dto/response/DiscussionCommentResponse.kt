@@ -8,6 +8,7 @@ data class DiscussionCommentResponse(
     val posterId: Long,
     val groupId: Long?,
     val discussionId: Long,
+    val filePath: String?,
     val codeId: Long?,
     val scope: String,
     val startLine: Int?,
@@ -20,7 +21,8 @@ data class DiscussionCommentResponse(
     companion object {
         fun fromDiscussionComment(
             discussionComment: DiscussionComment,
-            reactions: List<DiscussionReaction>
+            reactions: List<DiscussionReaction>,
+            filePath: String? = null,
         ): DiscussionCommentResponse {
             return DiscussionCommentResponse(
                 id = discussionComment.id!!,
@@ -34,7 +36,8 @@ data class DiscussionCommentResponse(
                 createdUnix = discussionComment.createdUnix,
                 updatedUnix = discussionComment.updatedUnix,
                 codeId = discussionComment.codeId,
-                discussionId = discussionComment.discussionId
+                discussionId = discussionComment.discussionId,
+                filePath = filePath,
             )
         }
     }
