@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyAssigneesRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.UpdateAssigneeRequest
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionAssigneesUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 import swm.virtuoso.reviewservice.common.exception.ErrorResponse
@@ -31,7 +32,7 @@ class DiscussionSettingController(
 
     @PutMapping("/assignees")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Modify Discussion Assignees", description = "디스커션 담당자 변경")
+    @Operation(summary = "Update Discussion Assignees", description = "디스커션 담당자 변경")
     @ApiResponses(
         value = [
             ApiResponse(
@@ -45,14 +46,31 @@ class DiscussionSettingController(
             )
         ]
     )
-    fun modifyAssignees(
+    fun updateAssignee(
         @Valid @RequestBody
-        request: ModifyAssigneesRequest
+        request: UpdateAssigneeRequest
     ) {
-        discussionAssigneesUseCase.modifyAssignees(request.discussionId, request.assignees)
+        discussionAssigneesUseCase.changeAssignee(request.discussionId, request.assigneeId)
     }
 
-    @PatchMapping("/assign/{discussionId}")
+    @DeleteMapping("/assignees/{discussionId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Clear Discussion Assignees", description = "디스커션 담당자 초기화")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "디스커션 담당자 초기화"
+            )
+        ]
+    )
+    fun clearAssignee(
+        @PathVariable discussionId: Long
+    ) {
+        discussionAssigneesUseCase.clearAssigneesByDiscussionId(discussionId)
+    }
+
+    @PatchMapping("/deadline/{discussionId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Reset Discussion Deadline", description = "디스커션 마감일 재지정")
     @ApiResponses(
@@ -68,8 +86,8 @@ class DiscussionSettingController(
             )
         ]
     )
-    fun resetDiscussionDeadline(@PathVariable discussionId: Long, @RequestParam deadline: Long = 0) {
-        discussionUseCase.modifyDiscussionDeadline(discussionId, deadline)
+    fun resetDiscussionDeadline(@PathVariable discussionId: Long, @RequestParam deadline: String = "0") {
+        discussionUseCase.modifyDiscussionDeadline(discussionId, deadline.toLong())
     }
 
     @PatchMapping("/state/{discussionId}")

@@ -10,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
@@ -27,6 +26,7 @@ import swm.virtuoso.reviewservice.application.port.`in`.GiteaUseCase
 import swm.virtuoso.reviewservice.domain.Discussion
 import swm.virtuoso.reviewservice.domain.DiscussionAssignee
 import swm.virtuoso.reviewservice.domain.DiscussionCode
+import swm.virtuoso.reviewservice.domain.DiscussionSortType
 
 @WebMvcTest(DiscussionController::class)
 @ActiveProfiles("test")
@@ -156,29 +156,27 @@ class DiscussionControllerTest {
     @Test
     @DisplayName("디스커션 목록 반환")
     fun `should get discussion list`() {
+        data class DiscussionListQueryParams(val isClosed: Boolean, val page: Int, val sort: String)
+        fun generateDiscussions(repoId: Long) = fun (count: Long) =
+            (1..count).map {
+                Discussion(
+                    id = it,
+                    name = "discussion $it",
+                    content = "content $it",
+                    repoId = repoId,
+                    posterId = it,
+                    commitHash = "commitHash$it"
+                )
+            }
+
         // Given
         val repoId = 1L
-        val isClosed = true
-        val page = 0
-        val pageable = PageRequest.of(page, 20, Sort.by(Sort.Direction.DESC, "updatedUnix"))
-        val discussions = listOf(
-            Discussion(
-                id = 1L,
-                name = "discussion 1",
-                content = "content 1",
-                repoId = repoId,
-                posterId = 1L,
-                commitHash = "commitHash1"
-            ),
-            Discussion(
-                id = 2L,
-                name = "discussion 2",
-                content = "content 2",
-                repoId = repoId,
-                posterId = 2L,
-                commitHash = "commitHash2"
-            )
-        )
+        val (isClosed, page, sort) = DiscussionListQueryParams(true, 0, "")
+
+        val discussions = generateDiscussions(repoId)(2)
+
+        val sortType = DiscussionSortType.fromSortString(sort)
+        val pageable = PageRequest.of(page, 20, sortType.toSort())
         val expectedDiscussionList = PageImpl(discussions, pageable, discussions.size.toLong())
 
         whenever(discussionUseCase.getDiscussions(repoId, isClosed, pageable)).thenReturn(expectedDiscussionList)
@@ -188,6 +186,7 @@ class DiscussionControllerTest {
             get("/discussion/$repoId/list")
                 .param("isClosed", isClosed.toString())
                 .param("page", page.toString())
+                .param("sort", sort)
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.totalCount").value(expectedDiscussionList.totalElements))

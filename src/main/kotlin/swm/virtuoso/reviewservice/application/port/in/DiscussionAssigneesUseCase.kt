@@ -1,5 +1,6 @@
 package swm.virtuoso.reviewservice.application.port.`in`
 
 public interface DiscussionAssigneesUseCase {
-    fun modifyAssignees(discussionId: Long, assignees: List<Long>)
+    fun changeAssignee(discussionId: Long, assigneeId: Long)
+    fun clearAssigneesByDiscussionId(discussionId: Long)
 }

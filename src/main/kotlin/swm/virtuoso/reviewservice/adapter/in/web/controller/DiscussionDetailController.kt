@@ -11,14 +11,19 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ChangeDiscussionWatchRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionWatchRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostReactionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionContentResponse
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionWatchResponse
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionFileUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionReactionUseCase
+import swm.virtuoso.reviewservice.application.port.`in`.DiscussionWatchUseCase
 import swm.virtuoso.reviewservice.common.exception.ErrorResponse
 import swm.virtuoso.reviewservice.domain.DiscussionReaction
 import swm.virtuoso.reviewservice.domain.ExtractedLine
@@ -28,7 +33,8 @@ import swm.virtuoso.reviewservice.domain.ExtractedLine
 @Tag(name = "Discussion Detail", description = "Discussion Detail API")
 class DiscussionDetailController(
     private val discussionFileUseCase: DiscussionFileUseCase,
-    private val discussionReactionUseCase: DiscussionReactionUseCase
+    private val discussionReactionUseCase: DiscussionReactionUseCase,
+    private val discussionWatchUseCase: DiscussionWatchUseCase,
 ) {
 
     @GetMapping("/{discussionId}/contents")
@@ -52,6 +58,7 @@ class DiscussionDetailController(
                 content = [Content(schema = Schema(implementation = ExtractedLine::class, type = "array"))]
             )
         ]
+
     )
     fun getDiscussionContents(
         @PathVariable discussionId: Long
@@ -81,5 +88,49 @@ class DiscussionDetailController(
         request: PostReactionRequest
     ): Long {
         return discussionReactionUseCase.addDiscussionReaction(DiscussionReaction.fromPostRequest(request)).id!!
+    }
+
+    @PutMapping("/watch")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @Operation(summary = "change watch status", description = "디스커션 게시글 구독")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "202",
+                description = "상태 변경 성공",
+                content = [Content(schema = Schema(implementation = Boolean::class))]
+            )
+        ]
+    )
+    fun changeWatch(
+        @Valid @RequestBody
+        request: ChangeDiscussionWatchRequest
+    ) : Boolean {
+
+        if (request.id == null) {
+            return discussionWatchUseCase.createWatchStatus(request)
+        }
+
+        return discussionWatchUseCase.changeWatchStatus(request)
+    }
+
+    @GetMapping("/watch")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "get watch", description = "유저의 디스커션에 대한 구독 상태 확인")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "확인 성공",
+                content = [Content(schema = Schema(implementation = DiscussionWatchResponse::class))]
+            )
+        ]
+    )
+    fun getWatch(
+        @Valid @RequestBody
+        request : DiscussionWatchRequest
+    ) : DiscussionWatchResponse {
+
+        return discussionWatchUseCase.getDiscussionWatch(request)
     }
 }
