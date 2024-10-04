@@ -41,7 +41,7 @@ class DiscussionFileService(
         return result
     }
 
-    override fun getDiscussionFilePathByCommentId(commentId : Long): String {
+    override fun getDiscussionFilePathByCommentId(commentId: Long): String {
         val code = discussionCodePort.findDiscussionCodeById(commentId)
         return code.filePath
     }

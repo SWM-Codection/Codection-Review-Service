@@ -22,7 +22,7 @@ data class DiscussionCommentResponse(
         fun fromDiscussionComment(
             discussionComment: DiscussionComment,
             reactions: List<DiscussionReaction>,
-            filePath: String? = null,
+            filePath: String? = null
         ): DiscussionCommentResponse {
             return DiscussionCommentResponse(
                 id = discussionComment.id!!,
@@ -37,7 +37,7 @@ data class DiscussionCommentResponse(
                 updatedUnix = discussionComment.updatedUnix,
                 codeId = discussionComment.codeId,
                 discussionId = discussionComment.discussionId,
-                filePath = filePath,
+                filePath = filePath
             )
         }
     }

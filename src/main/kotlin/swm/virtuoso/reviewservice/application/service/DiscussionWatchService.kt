@@ -7,24 +7,20 @@ import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionWatchR
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionWatchUseCase
 import swm.virtuoso.reviewservice.application.port.out.DiscussionWatchPort
 
-
 @Service
 class DiscussionWatchService(
     private val discussionWatchPort: DiscussionWatchPort
 ) : DiscussionWatchUseCase {
 
     override fun changeWatchStatus(changeDiscussionWatchRequest: ChangeDiscussionWatchRequest): Boolean {
-
         val discussionWatch = discussionWatchPort.findById(changeDiscussionWatchRequest.id!!)
         discussionWatch.changeWatchingStatus()
         discussionWatchPort.update(discussionWatch)
 
         return discussionWatch.isWatching
-
     }
 
     override fun createWatchStatus(changeDiscussionWatchRequest: ChangeDiscussionWatchRequest): Boolean {
-
         discussionWatchPort.checkWatchDuplication(
             changeDiscussionWatchRequest.userId,
             changeDiscussionWatchRequest.discussionId
@@ -32,11 +28,9 @@ class DiscussionWatchService(
 
         discussionWatchPort.save(changeDiscussionWatchRequest.userId, changeDiscussionWatchRequest.discussionId)
         return false
-
     }
 
     override fun getDiscussionWatch(changeDiscussionWatchRequest: DiscussionWatchRequest): DiscussionWatchResponse {
-
         val discussionWatch = discussionWatchPort.findByUserIdAndDiscussionId(
             userId = changeDiscussionWatchRequest.userId,
             changeDiscussionWatchRequest.discussionId
@@ -44,10 +38,7 @@ class DiscussionWatchService(
 
         return DiscussionWatchResponse(
             id = discussionWatch.id,
-            isWatching = discussionWatch.isWatching,
+            isWatching = discussionWatch.isWatching
         )
-
     }
-
-
 }
