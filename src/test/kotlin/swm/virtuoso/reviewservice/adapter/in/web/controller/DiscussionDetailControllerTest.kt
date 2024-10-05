@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostReactionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionContentResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.model.FileContent
-import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCommentUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionFileUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionReactionUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionWatchUseCase
