@@ -1,6 +1,7 @@
 package swm.virtuoso.reviewservice.adapter.`in`.web.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -23,7 +24,10 @@ import swm.virtuoso.reviewservice.application.port.`in`.DiscussionFileUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionReactionUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionWatchUseCase
 import swm.virtuoso.reviewservice.common.enums.ReactionTypeEnum
+import swm.virtuoso.reviewservice.common.enums.ReactionTypeEnumDeserializer
+import swm.virtuoso.reviewservice.common.enums.ReactionTypeEnumSerializer
 import swm.virtuoso.reviewservice.domain.DiscussionReaction
+import kotlin.test.BeforeTest
 
 @WebMvcTest(DiscussionDetailController::class)
 @ActiveProfiles("test")
@@ -31,6 +35,9 @@ class DiscussionDetailControllerTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
+
+    @MockBean
+    private lateinit var discussionWatchUseCase: DiscussionWatchUseCase
 
     @MockBean
     private lateinit var discussionFileUseCase: DiscussionFileUseCase
@@ -43,6 +50,16 @@ class DiscussionDetailControllerTest {
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
+
+    @BeforeTest
+    fun setup() {
+        objectMapper.registerModules(
+            SimpleModule().apply {
+                addSerializer(ReactionTypeEnum::class.java, ReactionTypeEnumSerializer())
+                addDeserializer(ReactionTypeEnum::class.java, ReactionTypeEnumDeserializer())
+            }
+        )
+    }
 
     @Test
     @DisplayName("디스커션 컨텐츠(파일, 코드, 코멘트) 반환")
@@ -85,12 +102,12 @@ class DiscussionDetailControllerTest {
         )
 
         whenever(discussionReactionUseCase.addDiscussionReaction(any())).thenReturn(discussionReaction)
-
+        val jsonValue = objectMapper.writeValueAsString(request)
         // When & Then
         mockMvc.perform(
             post("/discussion/reaction")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
+                .content(jsonValue)
         )
             .andExpect(status().isCreated)
             .andExpect(content().string(reactionId.toString()))

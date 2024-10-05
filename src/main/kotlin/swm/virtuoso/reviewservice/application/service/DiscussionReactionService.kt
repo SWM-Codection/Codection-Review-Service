@@ -25,11 +25,21 @@ class DiscussionReactionService(
                 "디스커션 id와 코멘트의 디스커션 id가 일치하지 않습니다."
             }
         }
-
         val savedReaction = discussionReactionPort.insertReaction(reaction)
         logger.info("Saved reaction with ID: {}", savedReaction.id)
 
         return savedReaction
+    }
+
+    override fun removeDiscussionReaction(reaction: DiscussionReaction) {
+        discussionPort.findDiscussionById(reaction.discussionId)
+        // validate reaction
+        require(reaction.commentId != null) { "리액션 코멘트 id가 존재하지 않습니다." }
+        require(reaction.discussionId == discussionCommentPort.findCommentById(reaction.commentId).discussionId) {
+            "디스커션 id와 코멘트의 디스커션 id가 일치하지 않습니다."
+        }
+        // FIXME: For now, i don't have any fancy-solution for handle remove failure
+        discussionReactionPort.removeReaction(reaction)
     }
 
     override fun getDiscussionCommentReactions(discussionCommentId: Long): List<DiscussionReaction> {
