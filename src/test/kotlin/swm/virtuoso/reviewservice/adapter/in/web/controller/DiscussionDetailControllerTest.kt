@@ -19,8 +19,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostReactionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionContentResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.model.FileContent
+import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCommentUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionFileUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionReactionUseCase
+import swm.virtuoso.reviewservice.application.port.`in`.DiscussionWatchUseCase
 import swm.virtuoso.reviewservice.common.enums.ReactionTypeEnum
 import swm.virtuoso.reviewservice.domain.DiscussionReaction
 
@@ -36,6 +38,9 @@ class DiscussionDetailControllerTest {
 
     @MockBean
     private lateinit var discussionReactionUseCase: DiscussionReactionUseCase
+
+    @MockBean
+    private lateinit var discussionWatchUseCase: DiscussionWatchUseCase
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
