@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "3.3.1"
     id("io.spring.dependency-management") version "1.1.5"
     id("org.jlleitschuh.gradle.ktlint") version "11.6.0"
+    id("com.bmuschko.docker-spring-boot-application") version "9.4.0"
     kotlin("plugin.jpa") version "1.9.24"
     kotlin("jvm") version "1.9.24"
     kotlin("plugin.spring") version "1.9.24"
@@ -78,4 +79,11 @@ tasks.register("cloneTestRepo", Exec::class) {
 
 tasks.named("test") {
     dependsOn(tasks.named("cloneTestRepo"))
+}
+
+docker {
+    springBootApplication {
+        baseImage.set("ubuntu/jre:17-22.04_49")
+        jvmArgs.set(listOf("-Dspring.profiles.active=production", "-Xmx2048m"))
+    }
 }
