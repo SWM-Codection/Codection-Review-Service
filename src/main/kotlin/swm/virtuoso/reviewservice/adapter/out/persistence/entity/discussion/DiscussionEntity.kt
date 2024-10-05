@@ -7,8 +7,8 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.annotations.ColumnDefault
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.BaseTimeEntity
+import swm.virtuoso.reviewservice.domain.Discussion
 
 @Entity
 @Table(name = "discussion")
@@ -20,13 +20,13 @@ data class DiscussionEntity(
     @field:Column(nullable = false, name = "repo_id")
     val repoId: Long,
 
-    @field:Column(nullable = false, name = "index")
+    @field:Column(name = "idx")
     val index: Long? = null,
 
     @field:Column(nullable = false, name = "poster_id")
     val posterId: Long,
 
-    @field:Column(nullable = false, name = "commit_hash")
+    @field:Column(name = "commit_hash")
     val commitHash: String? = null,
 
     @field:Column(name = "name")
@@ -47,6 +47,7 @@ data class DiscussionEntity(
     val pinOrder: Int? = null,
 
     @field:Column(name = "deadline_unix")
+    @ColumnDefault("0")
     val deadlineUnix: Long? = null,
 
     @field:Column(name = "closed_unix")
@@ -56,19 +57,19 @@ data class DiscussionEntity(
     val isLocked: Boolean?
 ) : BaseTimeEntity() {
     companion object {
-        fun from(createDiscussionRequest: PostDiscussionRequest, index: Long, commitHash: String?): DiscussionEntity {
+        fun fromDiscussion(discussion: Discussion): DiscussionEntity {
             return DiscussionEntity(
-                id = null,
-                repoId = createDiscussionRequest.repoId,
-                index = index,
-                posterId = createDiscussionRequest.posterId,
-                commitHash = commitHash,
-                name = createDiscussionRequest.name,
-                content = createDiscussionRequest.content,
-                isClosed = false,
+                id = discussion.id,
+                repoId = discussion.repoId,
+                index = discussion.index,
+                posterId = discussion.posterId,
+                commitHash = discussion.commitHash!!,
+                name = discussion.name,
+                content = discussion.content,
+                isClosed = discussion.isClosed,
                 numComments = 0,
                 pinOrder = 0,
-                deadlineUnix = null,
+                deadlineUnix = discussion.deadlineUnix,
                 isLocked = false
             )
         }

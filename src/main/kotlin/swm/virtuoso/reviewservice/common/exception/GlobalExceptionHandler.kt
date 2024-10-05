@@ -15,6 +15,10 @@ class GlobalExceptionHandler {
         private const val EMPTY_PATH_EXCEPTION = "Git-002"
         private const val RESPONSE_STATUS_EXCEPTION = "Git-003"
         private const val NO_SUCH_GIT_PATH_EXCEPTION = "Git-004"
+        private const val COMMIT_NOT_EXIST_EXCEPTION = "Git-005"
+        private const val NO_SUCH_ELEMENT_EXCEPTION = "Git-006"
+        private const val ILLEGAL_ARGUMENT_EXCEPTION = "Git-007"
+        private const val NO_SUCH_DISCUSSION_COMMENT_EXCEPTION = "Git-008"
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -39,5 +43,29 @@ class GlobalExceptionHandler {
     @ExceptionHandler(NoSuchGitPathException::class)
     fun handlerNoSuchGitPathException(exception: NoSuchGitPathException): ErrorResponse {
         return ErrorResponse(HttpStatus.NOT_FOUND, NO_SUCH_GIT_PATH_EXCEPTION, exception.message!!)
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ExceptionHandler(CommitNotExistException::class)
+    fun handlerCommitNotExistException(exception: CommitNotExistException): ErrorResponse {
+        return ErrorResponse(HttpStatus.NOT_FOUND, COMMIT_NOT_EXIST_EXCEPTION, exception.message!!)
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoSuchElementException::class)
+    fun handlerNoSuchElementException(exception: NoSuchElementException): ErrorResponse {
+        return ErrorResponse(HttpStatus.NOT_FOUND, NO_SUCH_ELEMENT_EXCEPTION, exception.message!!)
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handlerIllegalArgumentException(exception: IllegalArgumentException): ErrorResponse {
+        return ErrorResponse(HttpStatus.BAD_REQUEST, ILLEGAL_ARGUMENT_EXCEPTION, exception.message!!)
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoSuchDiscussionCommentException::class)
+    fun handlerDiscussionCommentNotExistsException(exception: NoSuchDiscussionCommentException): ErrorResponse {
+        return ErrorResponse(HttpStatus.NOT_FOUND, NO_SUCH_DISCUSSION_COMMENT_EXCEPTION, exception.message!!)
     }
 }

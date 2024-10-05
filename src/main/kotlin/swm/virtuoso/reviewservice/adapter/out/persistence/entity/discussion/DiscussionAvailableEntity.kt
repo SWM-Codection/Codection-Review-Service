@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import swm.virtuoso.reviewservice.adapter.out.persistence.entity.BaseTimeEntity
+import swm.virtuoso.reviewservice.domain.DiscussionAvailability
 
 @Entity
 @Table(name = "discussion_available")
@@ -18,6 +19,16 @@ data class DiscussionAvailableEntity(
     @field:Column(nullable = false, name = "repo_id")
     val repoId: Long,
 
-    @field:Column(name = "is_discussion_enabled")
-    val isDiscussionEnabled: Boolean
-) : BaseTimeEntity()
+    @field:Column(name = "is_discussion_availabled")
+    val available: Boolean
+) : BaseTimeEntity() {
+    companion object {
+        fun fromDiscussionAvailability(discussionAvailability: DiscussionAvailability): DiscussionAvailableEntity {
+            return DiscussionAvailableEntity(
+                id = discussionAvailability.id,
+                repoId = discussionAvailability.repoId,
+                available = discussionAvailability.available
+            )
+        }
+    }
+}

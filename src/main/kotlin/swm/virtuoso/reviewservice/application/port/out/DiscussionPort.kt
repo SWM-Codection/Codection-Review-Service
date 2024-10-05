@@ -1,10 +1,13 @@
 package swm.virtuoso.reviewservice.application.port.out
 
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
-import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import swm.virtuoso.reviewservice.domain.Discussion
 
 public interface DiscussionPort {
-    fun saveDiscussion(createDiscussionRequest: PostDiscussionRequest, lastCommitHash: String?): DiscussionEntity
+    fun insertDiscussion(discussion: Discussion): Discussion
+    fun updateDiscussion(discussion: Discussion): Discussion
     fun countDiscussion(repoId: Long, isClosed: Boolean): Int
-    fun findDiscussionList(repoId: Long, isClosed: Boolean): List<DiscussionEntity>
+    fun findDiscussions(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion>
+    fun findDiscussionById(discussionId: Long): Discussion
 }

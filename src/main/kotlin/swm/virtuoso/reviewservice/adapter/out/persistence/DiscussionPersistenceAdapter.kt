@@ -1,106 +1,60 @@
 package swm.virtuoso.reviewservice.adapter.out.persistence
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
-import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.*
-import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.*
-import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
-import swm.virtuoso.reviewservice.application.port.out.DiscussionCommentPort
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionEntity
+import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.IssueIndexEntity
+import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionIndexRepository
+import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
 import swm.virtuoso.reviewservice.application.port.out.DiscussionPort
-import swm.virtuoso.reviewservice.application.port.out.DiscussionUserPort
+import swm.virtuoso.reviewservice.domain.Discussion
 
 @Repository
 class DiscussionPersistenceAdapter(
     private val discussionRepository: DiscussionRepository,
-    private val discussionCodeRepository: DiscussionCodeRepository,
-    private val discussionIndexRepository: DiscussionIndexRepository,
-    private val discussionUserRepository: DiscussionUserRepository,
-    private val discussionCommentRepository: DiscussionCommentRepository
-) : DiscussionPort, DiscussionCodePort, DiscussionUserPort, DiscussionCommentPort {
+    private val discussionIndexRepository: DiscussionIndexRepository
+) : DiscussionPort {
 
-    private fun getIndex(repoId: Long): Long =
-        discussionIndexRepository.findById(repoId)
+    private fun getNextIndex(repoId: Long): Long {
+        return discussionIndexRepository.findById(repoId)
             .map { it.maxIndex + 1 }
             .orElse(1)
+    }
 
-    override fun saveDiscussion(
-        createDiscussionRequest: PostDiscussionRequest,
-        lastCommitHash: String?
-    ): DiscussionEntity {
-        val index = getIndex(createDiscussionRequest.repoId)
-        val discussionEntity = discussionRepository.save(
-            DiscussionEntity.from(
-                createDiscussionRequest = createDiscussionRequest,
-                index = index,
-                commitHash = lastCommitHash
-            )
-        )
-
-        createDiscussionRequest.discussionFiles.map { discussionFile ->
-            discussionCodeRepository.save(
-                DiscussionCodeEntity.from(
-                    discussionFile = discussionFile,
-                    discussionId = discussionEntity.id!!
-                )
-            )
-        }
+    override fun insertDiscussion(discussion: Discussion): Discussion {
+        discussion.index = getNextIndex(discussion.repoId)
+        val newDiscussion = discussionRepository.save(DiscussionEntity.fromDiscussion(discussion))
 
         discussionIndexRepository.save(
             IssueIndexEntity(
-                groupId = createDiscussionRequest.repoId,
-                maxIndex = index
+                groupId = newDiscussion.repoId,
+                maxIndex = newDiscussion.index!!
             )
         )
-
-        return discussionEntity
+        return Discussion.fromEntity(newDiscussion)
     }
 
-    override fun saveDiscussionUser(userId: Long, discussionId: Long) {
-        discussionUserRepository.save(
-            DiscussionUserEntity(
-                id = null,
-                uid = userId,
-                discussionId = discussionId,
-                isRead = true,
-                isMentioned = false
-            )
-        )
+    override fun updateDiscussion(discussion: Discussion): Discussion {
+        val updatedDiscussion = discussionRepository.save(DiscussionEntity.fromDiscussion(discussion))
+
+        return Discussion.fromEntity(updatedDiscussion)
     }
 
     override fun countDiscussion(repoId: Long, isClosed: Boolean): Int {
         return discussionRepository.countByRepoIdAndIsClosed(repoId, isClosed)
     }
 
-    override fun findDiscussionList(repoId: Long, isClosed: Boolean): List<DiscussionEntity> {
-        return discussionRepository.findAllByRepoIdAndIsClosed(repoId, isClosed)
+    override fun findDiscussions(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion> {
+        return discussionRepository.findAllByRepoIdAndIsClosed(repoId, isClosed, pageable)
+            .map { Discussion.fromEntity(it) }
     }
 
-    override fun findDiscussionFiles(discussionId: Long): List<DiscussionCodeEntity> {
-        return discussionCodeRepository.findAllByDiscussionId(discussionId)
-    }
+    override fun findDiscussionById(discussionId: Long): Discussion {
+        val discussionEntity = discussionRepository.findByIdOrNull(discussionId)
+            ?: throw NoSuchElementException("디스커션 정보를 찾을 수 없습니다.")
 
-    override fun saveComment(postCommentRequest: PostCommentRequest): DiscussionCommentEntity {
-        saveDiscussionUser(
-            userId = postCommentRequest.posterId,
-            discussionId = postCommentRequest.discussionId
-        )
-
-        return discussionCommentRepository.save(
-            DiscussionCommentEntity(
-                id = null,
-                discussionId = postCommentRequest.discussionId,
-                codeId = postCommentRequest.codeId,
-                posterId = postCommentRequest.posterId,
-                scope = postCommentRequest.scope,
-                startLine = postCommentRequest.startLine,
-                endLine = postCommentRequest.endLine,
-                content = postCommentRequest.content
-            )
-        )
-    }
-
-    override fun findCommentsByDiscussionId(discussionId: Long): List<DiscussionCommentEntity> {
-        return discussionCommentRepository.findAllByDiscussionId(discussionId)
+        return Discussion.fromEntity(discussionEntity)
     }
 }

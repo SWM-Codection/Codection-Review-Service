@@ -1,8 +1,11 @@
 package swm.virtuoso.reviewservice.application.port.`in`
 
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
-import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.DiscussionCommentEntity
+import swm.virtuoso.reviewservice.domain.DiscussionComment
 
-public interface DiscussionCommentUseCase {
-    fun createComment(request: PostCommentRequest): DiscussionCommentEntity
+interface DiscussionCommentUseCase {
+    fun createComment(discussionComment: DiscussionComment): DiscussionComment
+    fun deleteComment(commentId: Long)
+    fun modifyComment(discussionComment: DiscussionComment)
+    fun getCommentById(commentId: Long): DiscussionComment
+    fun getCommentsByCodeId(commentId: Long): List<DiscussionComment>
 }
