@@ -45,9 +45,6 @@ class DiscussionDetailControllerTest {
     @MockBean
     private lateinit var discussionReactionUseCase: DiscussionReactionUseCase
 
-    @MockBean
-    private lateinit var discussionWatchUseCase: DiscussionWatchUseCase
-
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
