@@ -1,7 +1,6 @@
 package swm.virtuoso.reviewservice.application.port.out
 
 import swm.virtuoso.reviewservice.domain.DiscussionWatch
-import java.util.*
 
 interface DiscussionWatchPort {
 

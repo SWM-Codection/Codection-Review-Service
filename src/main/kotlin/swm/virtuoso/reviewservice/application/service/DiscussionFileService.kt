@@ -41,6 +41,11 @@ class DiscussionFileService(
         return result
     }
 
+    override fun getDiscussionFilePathByCommentId(commentId: Long): String {
+        val code = discussionCodePort.findDiscussionCodeById(commentId)
+        return code.filePath
+    }
+
     private fun extractGlobalComments(
         comments: List<DiscussionComment>,
         reactions: List<DiscussionReaction>

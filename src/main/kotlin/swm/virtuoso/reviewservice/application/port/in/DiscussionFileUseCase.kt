@@ -6,4 +6,5 @@ import swm.virtuoso.reviewservice.domain.ExtractedLine
 public interface DiscussionFileUseCase {
     fun getDiscussionContents(discussionId: Long): DiscussionContentResponse
     fun extractLinesWithNumbers(target: String, startLine: Int, endLine: Int): List<ExtractedLine>
+    fun getDiscussionFilePathByCommentId(commentId: Long): String
 }

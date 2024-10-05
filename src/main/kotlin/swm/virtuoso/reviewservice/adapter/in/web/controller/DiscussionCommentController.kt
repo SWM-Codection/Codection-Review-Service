@@ -24,6 +24,7 @@ import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyCommentRequ
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostCommentRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionCommentResponse
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCommentUseCase
+import swm.virtuoso.reviewservice.application.port.`in`.DiscussionFileUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionReactionUseCase
 import swm.virtuoso.reviewservice.common.exception.ErrorResponse
 import swm.virtuoso.reviewservice.domain.DiscussionComment
@@ -35,6 +36,7 @@ import swm.virtuoso.reviewservice.domain.DiscussionComment
 @Tag(name = "Discussion Comment", description = "Discussion Comment API")
 class DiscussionCommentController(
     val discussionCommentUseCase: DiscussionCommentUseCase,
+    val discussionFileUseCase: DiscussionFileUseCase,
     val discussionReactionUseCase: DiscussionReactionUseCase
 ) {
 
@@ -63,6 +65,10 @@ class DiscussionCommentController(
     ): DiscussionCommentResponse {
         val discussionComment = discussionCommentUseCase.getCommentById(id)
         val discussionCommentReactions = discussionReactionUseCase.getDiscussionCommentReactions(id)
+        if (discussionComment.codeId != null) {
+            val filePath = discussionFileUseCase.getDiscussionFilePathByCommentId(discussionComment.codeId)
+            return DiscussionCommentResponse.fromDiscussionComment(discussionComment, discussionCommentReactions, filePath)
+        }
         return DiscussionCommentResponse.fromDiscussionComment(discussionComment, discussionCommentReactions)
     }
 
