@@ -89,6 +89,6 @@ docker {
     }
 
     tasks.dockerCreateDockerfile {
-        runCommand("apt update && apt install -y netcat")
+        runCommand("apt update && apt install netcat-traditional")
     }
 }
