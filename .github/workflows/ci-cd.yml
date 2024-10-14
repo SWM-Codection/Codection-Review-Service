@@ -9,9 +9,9 @@ on:
 
 env:
   ECS_CONTAINER_NAME: reviewServiceEcsServer
-  ECS_CLUSTER_NAME: codection-cluster
+  ECS_CLUSTER_NAME: codectionEcsCluster
   ECS_SERVICE_NAME: reviewServiceEcsServer
-  ECS_TASK_DEFINITION: reviewServiceECsFamily
+  ECS_TASK_DEFINITION: reviewServiceEcsFamily
 
 jobs:
   build:
@@ -62,12 +62,11 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: codection-discussion-server
-          IMAGE_TAG: ${{ github.sha }}
         run: |
           ./gradlew dockerCreateDockerfile
-          docker build ./build --file ./build/docker/Dockerfile --tag $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          echo "image=$REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          docker build ./build --file ./build/docker/Dockerfile --tag $REGISTRY/$REPOSITORY:latest
+          docker push $REGISTRY/$REPOSITORY:latest
+          echo "image=$REGISTRY/$REPOSITORY:latest" >> $GITHUB_OUTPUT
 
       # task definition 다운로드
       - name: Download task definition
