@@ -67,7 +67,7 @@ jobs:
           ./gradlew dockerCreateDockerfile
           docker build ./build --file ./build/docker/Dockerfile --tag $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          echo "${{env.REGISTRY}}/${{env.REPOSITORY}}:${{env.IMAGE_TAG}}" >> $GITHUB_OUTPUT
+          echo "image=$REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       # task definition 다운로드
       - name: Download task definition
