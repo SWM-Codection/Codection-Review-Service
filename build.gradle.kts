@@ -82,8 +82,13 @@ tasks.named("test") {
 }
 
 docker {
+
     springBootApplication {
-        baseImage.set("ubuntu/jre:17-22.04_49")
-        jvmArgs.set(listOf("-Dspring.profiles.active=production", "-Xmx2048m"))
+
+        baseImage.set("eclipse-temurin:17")
+    }
+
+    tasks.dockerCreateDockerfile {
+        runCommand("apt update && apt install -y netcat")
     }
 }
