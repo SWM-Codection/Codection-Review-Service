@@ -34,14 +34,14 @@ jobs:
         shell: bash
 
       # Gradle을 사용하여 빌드 및 테스트 실행
-#      - name: Build and test
-#        env:
-#          CODECTION_DATABASE_URL: jdbc:postgresql://localhost:5432/postgres
-#          CODECTION_DATABASE_USERNAME: postgres
-#          CODECTION_DATABASE_PASSWORD: postgres
-#          REVIEW_SERVICE_PORT: 8081
-#          GIT_BASEURL: $HOME
-#        run: ./gradlew clean build
+      - name: Build and test
+        env:
+          CODECTION_DATABASE_URL: jdbc:postgresql://localhost:5432/postgres
+          CODECTION_DATABASE_USERNAME: postgres
+          CODECTION_DATABASE_PASSWORD: postgres
+          REVIEW_SERVICE_PORT: 8081
+          GIT_BASEURL: $HOME
+        run: ./gradlew clean build -x test
 
       # AWS 설정
       - name: Configure AWS credentials
