@@ -64,7 +64,7 @@ jobs:
           REPOSITORY: codection-discussion-server
         run: |
           ./gradlew dockerCreateDockerfile
-          docker build ./build --file ./build/docker/Dockerfile --tag $REGISTRY/$REPOSITORY:latest
+          docker buildx build ./build --file ./build/docker/Dockerfile --platform=linux/arm64 --tag $REGISTRY/$REPOSITORY:latest
           docker push $REGISTRY/$REPOSITORY:latest
           echo "image=$REGISTRY/$REPOSITORY:latest" >> $GITHUB_OUTPUT
 
