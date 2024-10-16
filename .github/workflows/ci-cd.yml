@@ -1,0 +1,92 @@
+name: CI/CD
+
+on:
+
+  push:
+    branches: "main"
+
+  workflow_dispatch:
+
+env:
+  ECS_CONTAINER_NAME: reviewServiceEcsServer
+  ECS_CLUSTER_NAME: codectionEcsCluster
+  ECS_SERVICE_NAME: reviewServiceEcsService
+  ECS_TASK_DEFINITION: reviewServiceEcsFamily
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout
+        uses: actions/checkout@v4
+
+      # CI jdk 설정
+      - name: setup java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # gradlew 권한 설정
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        shell: bash
+
+      # Gradle을 사용하여 빌드 및 테스트 실행
+      - name: Build and test
+        env:
+          CODECTION_DATABASE_URL: jdbc:postgresql://localhost:5432/postgres
+          CODECTION_DATABASE_USERNAME: postgres
+          CODECTION_DATABASE_PASSWORD: postgres
+          REVIEW_SERVICE_PORT: 8081
+          GIT_BASEURL: $HOME
+        run: ./gradlew clean build -x test
+
+      # AWS 설정
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      # ECR 로그인
+      - name: Login To ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+        # 생성된 이미지 이름 및 태그 정보 입력 및 ecr에 이미지 배포
+      - name: Build, tag, and push docker image to Amazon ECR
+        id: build-image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: codection-discussion-server
+        run: |
+          ./gradlew dockerCreateDockerfile
+          docker buildx create --name mpbuilder --bootstrap --use
+          docker buildx build ./build/docker --file ./build/docker/Dockerfile --platform linux/arm64,linux/amd64 --tag $REGISTRY/$REPOSITORY:latest --push
+          echo "image=$REGISTRY/$REPOSITORY:latest" >> $GITHUB_OUTPUT
+
+      # task definition 다운로드
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} --query taskDefinition > task-definition.json
+
+      # 태스크 definition 정보 수정
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.ECS_CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+
+      # 수정된 task definition ecs에서 새로운 태스크 생성
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE_NAME }}
+          cluster: ${{ env.ECS_CLUSTER_NAME }}
+          wait-for-service-stability: true
