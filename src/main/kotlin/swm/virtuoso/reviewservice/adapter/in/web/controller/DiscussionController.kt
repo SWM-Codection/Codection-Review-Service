@@ -208,4 +208,34 @@ class DiscussionController(
 
         discussionUseCase.modifyDiscussion(request)
     }
+
+    @GetMapping("/{repoId}/max-pin")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Is pin allow", description = "디스커션 pin 설정 가능 여부")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "pin 가능 여부 반환"
+            )
+        ]
+    )
+    fun isNewPinAllowed(@PathVariable repoId: Long): Boolean {
+        return discussionUseCase.isNewPinAllowed(repoId)
+    }
+
+    @PostMapping("/{discussionId}/pin")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Pin or Unpin discussion", description = "디스커션 pin 상태 변경")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "204",
+                description = "pin 상태 변경 성공"
+            )
+        ]
+    )
+    fun pinOrUnpinDiscussion(@PathVariable discussionId: Long) {
+        discussionUseCase.pinOrUnpinDiscussion(discussionId)
+    }
 }

@@ -16,4 +16,6 @@ public interface DiscussionUseCase {
     fun modifyDiscussionDeadline(discussionId: Long, deadline: Long)
     fun modifyDiscussion(modifyDiscussionRequest: ModifyDiscussionRequest): Discussion
     fun setDiscussionIsClosed(discussionId: Long, isClosed: Boolean)
+    fun isNewPinAllowed(repoId: Long): Boolean
+    fun pinOrUnpinDiscussion(discussionId: Long)
 }

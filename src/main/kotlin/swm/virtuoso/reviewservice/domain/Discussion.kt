@@ -24,7 +24,9 @@ data class Discussion(
 
     var createdUnix: Long? = null,
 
-    var updatedUnix: Long? = null
+    var updatedUnix: Long? = null,
+
+    val pinOrder: Int? = null,
 ) {
     companion object {
         fun fromPostRequest(request: PostDiscussionRequest): Discussion {
@@ -37,7 +39,7 @@ data class Discussion(
                 commitHash = null,
                 isClosed = false,
                 index = null,
-                deadlineUnix = request.deadline
+                deadlineUnix = request.deadline,
             )
         }
 
@@ -53,7 +55,8 @@ data class Discussion(
                 isClosed = entity.isClosed,
                 deadlineUnix = entity.deadlineUnix,
                 createdUnix = entity.createdUnix,
-                updatedUnix = entity.updatedUnix
+                updatedUnix = entity.updatedUnix,
+                pinOrder = entity.pinOrder
             )
         }
     }

@@ -10,4 +10,7 @@ public interface DiscussionPort {
     fun countDiscussion(repoId: Long, isClosed: Boolean): Int
     fun findDiscussions(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion>
     fun findDiscussionById(discussionId: Long): Discussion
+    fun isNewPinAllowed(repoId: Long): Boolean
+    fun pinDiscussion(discussion: Discussion): Discussion
+    fun unpinDiscussion(discussion: Discussion): Discussion
 }

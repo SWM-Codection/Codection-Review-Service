@@ -1,5 +1,6 @@
 package swm.virtuoso.reviewservice.adapter.out.persistence
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
@@ -16,6 +17,9 @@ class DiscussionPersistenceAdapter(
     private val discussionRepository: DiscussionRepository,
     private val discussionIndexRepository: DiscussionIndexRepository
 ) : DiscussionPort {
+
+    @Value("\${max-pin}")
+    private val maxPin: Int = 3
 
     private fun getNextIndex(repoId: Long): Long {
         return discussionIndexRepository.findById(repoId)
@@ -56,5 +60,38 @@ class DiscussionPersistenceAdapter(
             ?: throw NoSuchElementException("디스커션 정보를 찾을 수 없습니다.")
 
         return Discussion.fromEntity(discussionEntity)
+    }
+
+    override fun isNewPinAllowed(repoId: Long): Boolean {
+        return discussionRepository.countPinnedDiscussions(repoId) < maxPin
+    }
+
+    override fun pinDiscussion(discussion: Discussion): Discussion {
+        val discussionEntity = DiscussionEntity.fromDiscussion(discussion)
+        val pinnedCount = discussionRepository.countPinnedDiscussions(discussion.repoId)
+
+        // 이미 고정된 디스커션이 maxPin보다 많으면 예외 발생
+        if (pinnedCount >= maxPin) {
+            throw IllegalStateException("pin 부여 갯수가 최대입니다.")
+        }
+
+        val updatedDiscussion = discussionEntity.copy(pinOrder = discussionEntity.pinOrder!!.plus(1))
+        return Discussion.fromEntity(discussionRepository.save(updatedDiscussion))
+    }
+
+    override fun unpinDiscussion(discussion: Discussion): Discussion {
+        val discussionEntity = DiscussionEntity.fromDiscussion(discussion)
+
+        // 같은 repoId에서 pinOrder가 더 큰 모든 디스커션의 pinOrder를 하나씩 줄임
+        val pinnedDiscussions = discussionRepository.findByRepoIdAndPinOrderGreaterThan(discussion.repoId, discussion.pinOrder!!)
+
+        pinnedDiscussions.forEach { entity ->
+            val updatedEntity = entity.copy(pinOrder = entity.pinOrder?.minus(1))
+            discussionRepository.save(updatedEntity)
+        }
+
+        // 인자로 받은 discussion의 pinOrder를 0으로 설정하고 저장
+        val unpinnedDiscussion = discussionEntity.copy(pinOrder = 0)
+        return Discussion.fromEntity(discussionRepository.save(unpinnedDiscussion))
     }
 }

@@ -103,4 +103,22 @@ class DiscussionService(
         discussionPort.updateDiscussion(targetDiscussion)
         logger.info("Updated discussion: {}", targetDiscussion.id)
     }
+
+    override fun isNewPinAllowed(repoId: Long): Boolean {
+        return discussionPort.isNewPinAllowed(repoId)
+    }
+
+    @Transactional
+    override fun pinOrUnpinDiscussion(discussionId: Long) {
+        val targetDiscussion = discussionPort.findDiscussionById(discussionId)
+        val changedDiscussion: Discussion
+        logger.info("Before updated discussion pinOrder: {}", targetDiscussion.pinOrder)
+
+        if(targetDiscussion.pinOrder!! == 0) {
+            changedDiscussion = discussionPort.pinDiscussion(targetDiscussion)
+        } else {
+            changedDiscussion = discussionPort.unpinDiscussion(targetDiscussion)
+        }
+        logger.info("After updated discussion pinOrder: {}", changedDiscussion.pinOrder)
+    }
 }
