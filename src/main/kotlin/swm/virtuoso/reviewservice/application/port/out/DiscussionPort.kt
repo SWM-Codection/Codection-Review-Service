@@ -13,4 +13,5 @@ public interface DiscussionPort {
     fun isNewPinAllowed(repoId: Long): Boolean
     fun pinDiscussion(discussion: Discussion): Discussion
     fun unpinDiscussion(discussion: Discussion): Discussion
+    fun findPinnedDiscussions(repoId: Long): List<Discussion>
 }

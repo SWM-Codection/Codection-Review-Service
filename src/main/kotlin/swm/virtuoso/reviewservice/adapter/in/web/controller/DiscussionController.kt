@@ -238,4 +238,23 @@ class DiscussionController(
     fun pinOrUnpinDiscussion(@PathVariable discussionId: Long) {
         discussionUseCase.pinOrUnpinDiscussion(discussionId)
     }
+
+    @GetMapping("/{repoId}/pin")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Pinned Discussion List", description = "pin 상태인 디스커션만 반환")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "pin 등록 된 디스커션 반환"
+            )
+        ]
+    )
+    fun getPinnedDiscussions(@PathVariable repoId: Long): DiscussionListResponse {
+        val discussions = discussionUseCase.getPinnedDiscussions(repoId)
+        return DiscussionListResponse(
+            totalCount = discussions.count().toLong(),
+            discussions = discussions
+        )
+    }
 }

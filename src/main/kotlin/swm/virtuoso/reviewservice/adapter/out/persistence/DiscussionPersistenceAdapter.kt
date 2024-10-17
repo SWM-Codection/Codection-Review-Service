@@ -94,4 +94,12 @@ class DiscussionPersistenceAdapter(
         val unpinnedDiscussion = discussionEntity.copy(pinOrder = 0)
         return Discussion.fromEntity(discussionRepository.save(unpinnedDiscussion))
     }
+
+    override fun findPinnedDiscussions(repoId: Long): List<Discussion> {
+        val pinnedDiscussionEntities = discussionRepository.findByRepoIdAndPinOrderGreaterThan(repoId, 0)
+        val pinnedDiscussions: List<Discussion> = pinnedDiscussionEntities.map { entity ->
+            Discussion.fromEntity(entity)
+        }
+        return pinnedDiscussions
+    }
 }

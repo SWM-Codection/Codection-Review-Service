@@ -121,4 +121,10 @@ class DiscussionService(
         }
         logger.info("After updated discussion pinOrder: {}", changedDiscussion.pinOrder)
     }
+
+    override fun getPinnedDiscussions(repoId: Long): List<Discussion> {
+        return discussionPort.findPinnedDiscussions(repoId)
+    }
+
+
 }
