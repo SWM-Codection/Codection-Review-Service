@@ -122,6 +122,20 @@ class DiscussionService(
         logger.info("After updated discussion pinOrder: {}", changedDiscussion.pinOrder)
     }
 
+    @Transactional
+    override fun unpinDiscussion(discussionId: Long) {
+        val targetDiscussion = discussionPort.findDiscussionById(discussionId)
+        val changedDiscussion: Discussion
+        logger.info("Before updated discussion pinOrder: {}", targetDiscussion.pinOrder)
+
+        if(targetDiscussion.pinOrder!! == 0) {
+            throw IllegalStateException("디스커션 $discussionId 은 unpin 상태 입니다.")
+        } else {
+            changedDiscussion = discussionPort.unpinDiscussion(targetDiscussion)
+        }
+        logger.info("After updated discussion pinOrder: {}", changedDiscussion.pinOrder)
+    }
+
     override fun getPinnedDiscussions(repoId: Long): List<Discussion> {
         return discussionPort.findPinnedDiscussions(repoId)
     }

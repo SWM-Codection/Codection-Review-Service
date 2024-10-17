@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -256,5 +257,20 @@ class DiscussionController(
             totalCount = discussions.count().toLong(),
             discussions = discussions
         )
+    }
+
+    @DeleteMapping("/{discussionId}/unpin")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Unpin discussion", description = "디스커션 unpin 상태 변경")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "204",
+                description = "unpin 변경 성공"
+            )
+        ]
+    )
+    fun unpinDiscussion(@PathVariable discussionId: Long) {
+        discussionUseCase.unpinDiscussion(discussionId)
     }
 }

@@ -18,5 +18,6 @@ public interface DiscussionUseCase {
     fun setDiscussionIsClosed(discussionId: Long, isClosed: Boolean)
     fun isNewPinAllowed(repoId: Long): Boolean
     fun pinOrUnpinDiscussion(discussionId: Long)
+    fun unpinDiscussion(discussionId: Long)
     fun getPinnedDiscussions(repoId: Long): List<Discussion>
 }
