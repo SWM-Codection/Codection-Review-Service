@@ -109,19 +109,4 @@ class DiscussionSettingController(
     fun setReviewClosedState(@PathVariable discussionId: Long, @RequestParam isClosed: Boolean) {
         discussionUseCase.setDiscussionIsClosed(discussionId, isClosed)
     }
-
-    /*@PutMapping("/{discussionId}/pin")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    @Operation(summary = "change pin status", description = "디스커션 게시글 pin")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "202",
-                description = "상태 변경 성공",
-                content = [Content(schema = Schema(implementation = Boolean::class))]
-            )
-        ]
-    )
-    fun changeWatch(@PathVariable discussionId: Long): Boolean {
-    }*/
 }
