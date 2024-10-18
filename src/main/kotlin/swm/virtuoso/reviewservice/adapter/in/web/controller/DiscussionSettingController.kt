@@ -1,10 +1,6 @@
 package swm.virtuoso.reviewservice.adapter.`in`.web.controller
 
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.Content
-import io.swagger.v3.oas.annotations.media.Schema
-import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -34,7 +30,7 @@ class DiscussionSettingController(
     @PutMapping("/assignees")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Update Discussion Assignees", description = "디스커션 담당자 변경")
-    @SwaggerResponse("200","디스커션 담당자 목록 수정")
+    @SwaggerResponse("200", "디스커션 담당자 목록 수정")
     @SwaggerResponse("404", "디스커션 정보를 찾을 수 없음", ErrorResponse::class)
     fun updateAssignee(
         @Valid @RequestBody
