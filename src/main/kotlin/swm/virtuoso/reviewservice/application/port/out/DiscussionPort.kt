@@ -14,4 +14,6 @@ public interface DiscussionPort {
     fun pinDiscussion(discussion: Discussion): Discussion
     fun unpinDiscussion(discussion: Discussion): Discussion
     fun findPinnedDiscussions(repoId: Long): List<Discussion>
+    fun decreasePinOrderAfterTarget(discussion: Discussion)
+    fun increasePinOrderAfterTarget(discussion: Discussion)
 }

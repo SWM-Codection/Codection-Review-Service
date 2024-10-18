@@ -68,7 +68,7 @@ data class DiscussionEntity(
                 content = discussion.content,
                 isClosed = discussion.isClosed,
                 numComments = 0,
-                pinOrder = 0,
+                pinOrder = discussion.pinOrder,
                 deadlineUnix = discussion.deadlineUnix,
                 isLocked = false
             )

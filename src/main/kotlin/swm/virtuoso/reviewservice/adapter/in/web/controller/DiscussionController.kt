@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionAvailableRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyDiscussionRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.MoveDiscussionPinRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionCountResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionListResponse
@@ -272,5 +273,22 @@ class DiscussionController(
     )
     fun unpinDiscussion(@PathVariable discussionId: Long) {
         discussionUseCase.unpinDiscussion(discussionId)
+    }
+
+    @PostMapping("/move-pin")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Move discussion pin", description = "디스커션 pin 순서 변경")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "204",
+                description = "pin 순서 변경 성공"
+            )
+        ]
+    )
+    fun movePinDiscussion(
+        @RequestBody request: MoveDiscussionPinRequest
+    ) {
+        discussionUseCase.moveDiscussionPin(request.id, request.position)
     }
 }

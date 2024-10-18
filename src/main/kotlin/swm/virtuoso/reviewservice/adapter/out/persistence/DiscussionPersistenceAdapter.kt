@@ -83,12 +83,7 @@ class DiscussionPersistenceAdapter(
         val discussionEntity = DiscussionEntity.fromDiscussion(discussion)
 
         // 같은 repoId에서 pinOrder가 더 큰 모든 디스커션의 pinOrder를 하나씩 줄임
-        val pinnedDiscussions = discussionRepository.findByRepoIdAndPinOrderGreaterThan(discussion.repoId, discussion.pinOrder!!)
-
-        pinnedDiscussions.forEach { entity ->
-            val updatedEntity = entity.copy(pinOrder = entity.pinOrder?.minus(1))
-            discussionRepository.save(updatedEntity)
-        }
+        discussionRepository.decreasePinOrderAfterTargetPosition(discussion.repoId, discussion.pinOrder)
 
         // 인자로 받은 discussion의 pinOrder를 0으로 설정하고 저장
         val unpinnedDiscussion = discussionEntity.copy(pinOrder = 0)
@@ -96,10 +91,18 @@ class DiscussionPersistenceAdapter(
     }
 
     override fun findPinnedDiscussions(repoId: Long): List<Discussion> {
-        val pinnedDiscussionEntities = discussionRepository.findByRepoIdAndPinOrderGreaterThan(repoId, 0)
+        val pinnedDiscussionEntities = discussionRepository.findByRepoIdAndPinOrderGreaterThanOrderByPinOrderAsc(repoId, 0)
         val pinnedDiscussions: List<Discussion> = pinnedDiscussionEntities.map { entity ->
             Discussion.fromEntity(entity)
         }
         return pinnedDiscussions
+    }
+
+    override fun decreasePinOrderAfterTarget(discussion: Discussion) {
+        discussionRepository.decreasePinOrderAfterTargetPosition(discussion.repoId, discussion.pinOrder!!)
+    }
+
+    override fun increasePinOrderAfterTarget(discussion: Discussion) {
+        discussionRepository.increasePinOrderAfterTargetPosition(discussion.repoId, discussion.pinOrder!!)
     }
 }

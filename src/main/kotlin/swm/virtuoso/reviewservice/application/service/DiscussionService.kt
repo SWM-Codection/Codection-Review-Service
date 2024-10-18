@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyDiscussionRequest
+import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 import swm.virtuoso.reviewservice.application.port.out.DiscussionAssigneesPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
@@ -22,7 +23,7 @@ class DiscussionService(
     private val discussionUserPort: DiscussionUserPort,
     private val discussionCodePort: DiscussionCodePort,
     private val discussionAssigneesPort: DiscussionAssigneesPort,
-    private val giteaPort: GiteaPort
+    private val giteaPort: GiteaPort,
 ) : DiscussionUseCase {
 
     private val logger = LoggerFactory.getLogger(DiscussionService::class.java)
@@ -140,5 +141,16 @@ class DiscussionService(
         return discussionPort.findPinnedDiscussions(repoId)
     }
 
+    @Transactional
+    override fun moveDiscussionPin(discussionId: Long, newPinOrder: Int) {
+        if (newPinOrder < 1) {
+            throw IllegalStateException("새로운 pinOrder는 0이 될 수 없습니다.")
+        }
+        val targetDiscussion = discussionPort.findDiscussionById(discussionId)
 
+        discussionPort.decreasePinOrderAfterTarget(targetDiscussion)
+        val newDiscussion = targetDiscussion.copy(pinOrder = newPinOrder)
+        discussionPort.increasePinOrderAfterTarget(newDiscussion)
+        discussionPort.updateDiscussion(newDiscussion)
+    }
 }
