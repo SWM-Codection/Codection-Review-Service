@@ -36,6 +36,12 @@ class DiscussionWatchService(
             discussionId = discussionId
         )
 
+        if (discussionWatch == null) {
+            return DiscussionWatchResponse(
+                id = -1L,
+                isWatching = false
+            )
+        }
 
         return DiscussionWatchResponse(
             id = discussionWatch.id,

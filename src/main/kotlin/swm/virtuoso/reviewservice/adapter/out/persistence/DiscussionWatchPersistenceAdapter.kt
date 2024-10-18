@@ -24,19 +24,12 @@ class DiscussionWatchPersistenceAdapter(
         )
     }
 
-    override fun findByUserIdAndDiscussionId(userId: Long, discussionId: Long): DiscussionWatch {
-        val search = discussionWatchRepository.findByUserIdAndDiscussionId(userId, discussionId)
+    override fun findByUserIdAndDiscussionId(userId: Long, discussionId: Long): DiscussionWatch? {
+        val entity = discussionWatchRepository.findByUserIdAndDiscussionId(userId, discussionId).orElseGet(null)
 
-        if (search.isEmpty) {
-            return DiscussionWatch(
-                id = null,
-                userId = userId,
-                discussionId = discussionId,
-                isWatching = false
-            )
+        if (entity == null) {
+            return null
         }
-
-        val entity = search.get()
 
         return DiscussionWatch(
             id = entity.id!!,

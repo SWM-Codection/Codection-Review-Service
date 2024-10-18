@@ -134,7 +134,7 @@ class DiscussionDetailController(
         @Valid @RequestBody
         request: ChangeDiscussionWatchRequest
     ): Boolean {
-        if (request.id == null) {
+        if (request.id == -1L) {
             return discussionWatchUseCase.createWatchStatus(request)
         }
 
