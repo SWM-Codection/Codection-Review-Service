@@ -11,6 +11,7 @@ import swm.virtuoso.reviewservice.adapter.out.persistence.entity.discussion.Disc
 interface DiscussionRepository : JpaRepository<DiscussionEntity, Long> {
     fun countByRepoIdAndIsClosed(repoId: Long, isClosed: Boolean): Int
     fun findAllByRepoIdAndIsClosed(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<DiscussionEntity>
+
     @Query(
         """
         SELECT COUNT(entity)
@@ -21,8 +22,10 @@ interface DiscussionRepository : JpaRepository<DiscussionEntity, Long> {
     )
     fun countPinnedDiscussions(@Param("repoId") repoId: Long): Int
     fun findByRepoIdAndPinOrderGreaterThanOrderByPinOrderAsc(repoId: Long, pinOrder: Int): List<DiscussionEntity>
+
     @Modifying
-    @Query("""
+    @Query(
+        """
         UPDATE DiscussionEntity entity
         SET entity.pinOrder = entity.pinOrder - 1
         WHERE entity.repoId = :repoId
@@ -32,7 +35,8 @@ interface DiscussionRepository : JpaRepository<DiscussionEntity, Long> {
     fun decreasePinOrderAfterTargetPosition(repoId: Long, targetPosition: Int)
 
     @Modifying
-    @Query("""
+    @Query(
+        """
         UPDATE DiscussionEntity entity
         SET entity.pinOrder = entity.pinOrder + 1
         WHERE entity.repoId = :repoId

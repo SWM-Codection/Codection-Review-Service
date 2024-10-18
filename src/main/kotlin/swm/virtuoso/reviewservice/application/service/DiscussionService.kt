@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyDiscussionRequest
-import swm.virtuoso.reviewservice.adapter.out.persistence.repository.discussion.DiscussionRepository
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 import swm.virtuoso.reviewservice.application.port.out.DiscussionAssigneesPort
 import swm.virtuoso.reviewservice.application.port.out.DiscussionCodePort
@@ -23,7 +22,7 @@ class DiscussionService(
     private val discussionUserPort: DiscussionUserPort,
     private val discussionCodePort: DiscussionCodePort,
     private val discussionAssigneesPort: DiscussionAssigneesPort,
-    private val giteaPort: GiteaPort,
+    private val giteaPort: GiteaPort
 ) : DiscussionUseCase {
 
     private val logger = LoggerFactory.getLogger(DiscussionService::class.java)
@@ -115,7 +114,7 @@ class DiscussionService(
         val changedDiscussion: Discussion
         logger.info("Before updated discussion pinOrder: {}", targetDiscussion.pinOrder)
 
-        if(targetDiscussion.pinOrder!! == 0) {
+        if (targetDiscussion.pinOrder!! == 0) {
             changedDiscussion = discussionPort.pinDiscussion(targetDiscussion)
         } else {
             changedDiscussion = discussionPort.unpinDiscussion(targetDiscussion)
@@ -129,7 +128,7 @@ class DiscussionService(
         val changedDiscussion: Discussion
         logger.info("Before updated discussion pinOrder: {}", targetDiscussion.pinOrder)
 
-        if(targetDiscussion.pinOrder!! == 0) {
+        if (targetDiscussion.pinOrder!! == 0) {
             throw IllegalStateException("디스커션 $discussionId 은 unpin 상태 입니다.")
         } else {
             changedDiscussion = discussionPort.unpinDiscussion(targetDiscussion)
