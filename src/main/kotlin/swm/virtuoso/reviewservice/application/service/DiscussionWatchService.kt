@@ -30,15 +30,17 @@ class DiscussionWatchService(
         return false
     }
 
-    override fun getDiscussionWatch(changeDiscussionWatchRequest: DiscussionWatchRequest): DiscussionWatchResponse {
+    override fun getDiscussionWatch(userId: Long, discussionId: Long): DiscussionWatchResponse {
         val discussionWatch = discussionWatchPort.findByUserIdAndDiscussionId(
-            userId = changeDiscussionWatchRequest.userId,
-            changeDiscussionWatchRequest.discussionId
+            userId = userId,
+            discussionId = discussionId
         )
+
 
         return DiscussionWatchResponse(
             id = discussionWatch.id,
             isWatching = discussionWatch.isWatching
         )
+
     }
 }
