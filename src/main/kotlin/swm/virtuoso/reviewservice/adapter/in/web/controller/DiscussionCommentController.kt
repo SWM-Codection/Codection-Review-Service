@@ -26,6 +26,7 @@ import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionCommen
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionCommentUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionFileUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionReactionUseCase
+import swm.virtuoso.reviewservice.common.annotation.SwaggerResponse
 import swm.virtuoso.reviewservice.common.exception.ErrorResponse
 import swm.virtuoso.reviewservice.domain.DiscussionComment
 
@@ -43,21 +44,8 @@ class DiscussionCommentController(
     @GetMapping("/comment")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get comment By id", description = "id를 통해 코멘트 가져오기")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "코멘트 가져오기 성공",
-                content = [Content(schema = Schema(implementation = DiscussionCommentResponse::class))]
-            ),
-
-            ApiResponse(
-                responseCode = "404",
-                description = "해당하는 id를 가진 디스커션 코멘트가 없음.",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            )
-        ]
-    )
+    @SwaggerResponse("200", "코멘트 가져오기 성공", DiscussionCommentResponse::class)
+    @SwaggerResponse("404", "해당하는 id 를 가진 디스커션 코멘트가 없음.", ErrorResponse::class)
     fun getComment(
         @Valid
         @RequestParam(value = "id")
@@ -75,17 +63,7 @@ class DiscussionCommentController(
     @GetMapping("/comments/{codeId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "get comment by codeId")
-    @ApiResponses(
-        ApiResponse(
-            responseCode = "200",
-            description = "코멘트 가져오기 성공",
-            content = [
-                Content(
-                    array = ArraySchema(schema = Schema(implementation = DiscussionCommentResponse::class))
-                )
-            ]
-        )
-    )
+    @SwaggerResponse("200", "코멘트 가져오기 성공", DiscussionCommentResponse::class)
     fun getCommentByCodeId(@PathVariable codeId: Long): List<DiscussionCommentResponse> {
         return discussionCommentUseCase.getCommentsByCodeId(codeId).map {
             val reactions = discussionReactionUseCase.getDiscussionCommentReactions(it.id!!)
@@ -96,25 +74,9 @@ class DiscussionCommentController(
     @PostMapping("/comment")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Post comment", description = "새로운 코멘트 작성")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "201",
-                description = "코멘트 작성 성공",
-                content = [Content(schema = Schema(implementation = Long::class))]
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "레포지토리 혹은 Git Path 정보를 찾을 수 없음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "레포지토리 정보와 디스커션 정보가 일치하지 않음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            )
-        ]
-    )
+    @SwaggerResponse("201", "코멘트 작성 성공", Long::class)
+    @SwaggerResponse("404", "레포지토리 혹은 GitPath 정보를 찾을 수 없음", ErrorResponse::class)
+    @SwaggerResponse("400", "레포지토리 정보와 디스커션 정보가 일치하지 않음", ErrorResponse::class)
     fun postComment(
         @Valid @RequestBody
         request: PostCommentRequest
@@ -127,24 +89,9 @@ class DiscussionCommentController(
     @PutMapping("/comment")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "modify comment", description = "코멘트 수정")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "201",
-                description = "코멘트 수정 성공"
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "디스커션 정보 혹은 코드 블록의 정보를 찾을 수 없음.",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "레포지토리 정보와 디스커션 정보가 일치하지 않음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            )
-        ]
-    )
+    @SwaggerResponse("201", "코멘트 수정 성공")
+    @SwaggerResponse("404", "디스커션 정보 혹은 코드 블록의 정보를 찾을 수 없음.", ErrorResponse::class)
+    @SwaggerResponse("400", "레포지토리 정보와 디스커션 정보가 일치하지 않음", ErrorResponse::class)
     fun modifyComment(
         @Valid @RequestBody
         request: ModifyCommentRequest
@@ -157,19 +104,8 @@ class DiscussionCommentController(
     @DeleteMapping("/comment")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "modify comment", description = "코멘트 삭제")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "201",
-                description = "코멘트 삭제 성공"
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "레포지토리 혹은 Git Path 정보를 찾을 수 없음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            )
-        ]
-    )
+    @SwaggerResponse("201", "코멘트 삭제 성공")
+    @SwaggerResponse("404", "레포지토리 혹은 Git Path 정보를 찾을 수 없음", ErrorResponse::class)
     fun deleteComment(
         @Valid @RequestBody
         request: DeleteCommentRequest

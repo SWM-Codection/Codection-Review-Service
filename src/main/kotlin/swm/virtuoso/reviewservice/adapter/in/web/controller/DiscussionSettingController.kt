@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.UpdateAssigneeRequest
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionAssigneesUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
+import swm.virtuoso.reviewservice.common.annotation.SwaggerResponse
 import swm.virtuoso.reviewservice.common.exception.ErrorResponse
 
 @RestController
@@ -33,19 +34,8 @@ class DiscussionSettingController(
     @PutMapping("/assignees")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Update Discussion Assignees", description = "디스커션 담당자 변경")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "디스커션 담당자 목록 수정"
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "디스커션 정보를 찾을 수 없음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            )
-        ]
-    )
+    @SwaggerResponse("200","디스커션 담당자 목록 수정")
+    @SwaggerResponse("404", "디스커션 정보를 찾을 수 없음", ErrorResponse::class)
     fun updateAssignee(
         @Valid @RequestBody
         request: UpdateAssigneeRequest
@@ -56,14 +46,7 @@ class DiscussionSettingController(
     @DeleteMapping("/assignees/{discussionId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Clear Discussion Assignees", description = "디스커션 담당자 초기화")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "디스커션 담당자 초기화"
-            )
-        ]
-    )
+    @SwaggerResponse("200", "디스커션 담당자 초기화")
     fun clearAssignee(
         @PathVariable discussionId: Long
     ) {
@@ -73,19 +56,8 @@ class DiscussionSettingController(
     @PatchMapping("/deadline/{discussionId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Reset Discussion Deadline", description = "디스커션 마감일 재지정")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "마감일 재설정 성공"
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "디스커션 정보를 찾을 수 없음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            )
-        ]
-    )
+    @SwaggerResponse("200", "마감일 재설정 성공")
+    @SwaggerResponse("404", "디스커션 정보를 찾을 수 없음", ErrorResponse::class)
     fun resetDiscussionDeadline(@PathVariable discussionId: Long, @RequestParam deadline: String = "0") {
         discussionUseCase.modifyDiscussionDeadline(discussionId, deadline.toLong())
     }
@@ -93,19 +65,8 @@ class DiscussionSettingController(
     @PatchMapping("/state/{discussionId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Update Discussion Closed State", description = "디스커컨 닫힘 여부 재설정")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "닫힘 상태 변경 성공"
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "디스커션 정보를 찾을 수 없음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            )
-        ]
-    )
+    @SwaggerResponse("200", "닫힘 상태 변경 성공")
+    @SwaggerResponse("404", "디스커션 정보를 찾을 수 없음", ErrorResponse::class)
     fun setReviewClosedState(@PathVariable discussionId: Long, @RequestParam isClosed: Boolean) {
         discussionUseCase.setDiscussionIsClosed(discussionId, isClosed)
     }
