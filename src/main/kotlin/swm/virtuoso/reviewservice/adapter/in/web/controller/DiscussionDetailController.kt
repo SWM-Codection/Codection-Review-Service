@@ -1,10 +1,6 @@
 package swm.virtuoso.reviewservice.adapter.`in`.web.controller
 
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.Content
-import io.swagger.v3.oas.annotations.media.Schema
-import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -26,9 +22,9 @@ import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionWatchR
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionFileUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionReactionUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionWatchUseCase
+import swm.virtuoso.reviewservice.common.annotation.SwaggerResponse
 import swm.virtuoso.reviewservice.common.exception.ErrorResponse
 import swm.virtuoso.reviewservice.domain.DiscussionReaction
-import swm.virtuoso.reviewservice.domain.ExtractedLine
 
 @RestController
 @RequestMapping("/discussion")
@@ -42,26 +38,8 @@ class DiscussionDetailController(
     @GetMapping("/{discussionId}/contents")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get discussion contents", description = "디스커션 내용 반환")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "디스커션 내용 반환 성공",
-                content = [Content(schema = Schema(implementation = DiscussionContentResponse::class))]
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "레포지토리 혹은 디스커션 정보를 찾을 수 없음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            ),
-            ApiResponse(
-                responseCode = "400",
-                description = "지정되었던 파일의 범위를 넘어선 범위임",
-                content = [Content(schema = Schema(implementation = ExtractedLine::class, type = "array"))]
-            )
-        ]
-
-    )
+    @SwaggerResponse("200", "디스커션 내용 반환 성공", DiscussionContentResponse::class)
+    @SwaggerResponse("404", "레포지토리 혹은 디스커션 정보를 찾을 수 없음", ErrorResponse::class)
     fun getDiscussionContents(
         @PathVariable discussionId: Long
     ): DiscussionContentResponse {
@@ -71,20 +49,8 @@ class DiscussionDetailController(
     @PostMapping("/reaction")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "give reaction", description = "게시글 혹은 코멘트에 반응 추가")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "204",
-                description = "반응 추가 성공",
-                content = [Content(schema = Schema(implementation = Long::class))]
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "디스커션 혹은 코멘트 정보를 찾을 수 없음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            )
-        ]
-    )
+    @SwaggerResponse("204", "반응 추가 성공", Long::class)
+    @SwaggerResponse("404", "디스커션 혹은 코멘트 정보를 찾을 수 없음", ErrorResponse::class)
     fun giveReaction(
         @Valid @RequestBody
         request: PostReactionRequest
@@ -96,20 +62,8 @@ class DiscussionDetailController(
     @DeleteMapping("/reaction")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "remove reaction", description = "게시글 혹은 코멘트에 반응 제거")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "반응 제거 성공",
-                content = [Content(schema = Schema(implementation = Unit::class))]
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "디스커션 혹은 코멘트 정보를 찾을 수 없음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            )
-        ]
-    )
+    @SwaggerResponse("200", "반응 제거 성공", Unit::class)
+    @SwaggerResponse("404", "디스커션 혹은 코멘트 정보를 찾을 수 없음", ErrorResponse::class)
     fun removeReaction(
         @Valid @RequestBody
         request: DeleteReactionRequest
@@ -121,15 +75,7 @@ class DiscussionDetailController(
     @PutMapping("/watch")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "change watch status", description = "디스커션 게시글 구독")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "202",
-                description = "상태 변경 성공",
-                content = [Content(schema = Schema(implementation = Boolean::class))]
-            )
-        ]
-    )
+    @SwaggerResponse("202", "상태 변경 성공", Boolean::class)
     fun changeWatch(
         @Valid @RequestBody
         request: ChangeDiscussionWatchRequest
@@ -144,15 +90,7 @@ class DiscussionDetailController(
     @GetMapping("/watch")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "get watch", description = "유저의 디스커션에 대한 구독 상태 확인")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "확인 성공",
-                content = [Content(schema = Schema(implementation = DiscussionWatchResponse::class))]
-            )
-        ]
-    )
+    @SwaggerResponse("200", "확인 성공", DiscussionWatchResponse::class)
     fun getWatch(
         @Valid @RequestBody
         request: DiscussionWatchRequest
