@@ -2,7 +2,6 @@ package swm.virtuoso.reviewservice.application.service
 
 import org.springframework.stereotype.Service
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ChangeDiscussionWatchRequest
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionWatchRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionWatchResponse
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionWatchUseCase
 import swm.virtuoso.reviewservice.application.port.out.DiscussionWatchPort
@@ -13,7 +12,7 @@ class DiscussionWatchService(
 ) : DiscussionWatchUseCase {
 
     override fun changeWatchStatus(changeDiscussionWatchRequest: ChangeDiscussionWatchRequest): Boolean {
-        val discussionWatch = discussionWatchPort.findById(changeDiscussionWatchRequest.id!!)
+        val discussionWatch = discussionWatchPort.findById(changeDiscussionWatchRequest.id)
         discussionWatch.changeWatchingStatus()
         discussionWatchPort.update(discussionWatch)
 
@@ -47,6 +46,5 @@ class DiscussionWatchService(
             id = discussionWatch.id,
             isWatching = discussionWatch.isWatching
         )
-
     }
 }
