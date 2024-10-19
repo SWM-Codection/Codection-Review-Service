@@ -21,7 +21,17 @@ interface DiscussionRepository : JpaRepository<DiscussionEntity, Long> {
         """
     )
     fun countPinnedDiscussions(@Param("repoId") repoId: Long): Int
-    fun findByRepoIdAndPinOrderGreaterThanOrderByPinOrderAsc(repoId: Long, pinOrder: Int): List<DiscussionEntity>
+
+    @Query(
+        """
+    SELECT entity
+    FROM DiscussionEntity entity
+    WHERE entity.repoId = :repoId
+      AND entity.pinOrder > :pinOrder
+    ORDER BY entity.pinOrder ASC
+    """
+    )
+    fun findPinnedDiscussions(@Param("repoId") repoId: Long, @Param("pinOrder") pinOrder: Int): List<DiscussionEntity>
 
     @Modifying
     @Query(

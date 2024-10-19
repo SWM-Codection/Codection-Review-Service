@@ -71,9 +71,7 @@ class DiscussionPersistenceAdapter(
         val pinnedCount = discussionRepository.countPinnedDiscussions(discussion.repoId)
 
         // 이미 고정된 디스커션이 maxPin보다 많으면 예외 발생
-        if (pinnedCount >= maxPin) {
-            throw IllegalStateException("pin 부여 갯수가 최대입니다.")
-        }
+        discussionEntity.canPinDiscussion(pinnedCount, maxPin)
 
         val updatedDiscussion = discussionEntity.copy(pinOrder = discussionEntity.pinOrder!!.plus(1))
         return Discussion.fromEntity(discussionRepository.save(updatedDiscussion))
@@ -91,7 +89,7 @@ class DiscussionPersistenceAdapter(
     }
 
     override fun findPinnedDiscussions(repoId: Long): List<Discussion> {
-        val pinnedDiscussionEntities = discussionRepository.findByRepoIdAndPinOrderGreaterThanOrderByPinOrderAsc(repoId, 0)
+        val pinnedDiscussionEntities = discussionRepository.findPinnedDiscussions(repoId, 0)
         val pinnedDiscussions: List<Discussion> = pinnedDiscussionEntities.map { entity ->
             Discussion.fromEntity(entity)
         }

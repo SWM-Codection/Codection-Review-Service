@@ -30,6 +30,7 @@ import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionRespon
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GiteaUseCase
+import swm.virtuoso.reviewservice.common.annotation.SwaggerResponse
 import swm.virtuoso.reviewservice.common.exception.ErrorResponse
 import swm.virtuoso.reviewservice.domain.Discussion
 import swm.virtuoso.reviewservice.domain.DiscussionAvailability
@@ -214,14 +215,7 @@ class DiscussionController(
     @GetMapping("/{repoId}/max-pin")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Is pin allow", description = "디스커션 pin 설정 가능 여부")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "pin 가능 여부 반환"
-            )
-        ]
-    )
+    @SwaggerResponse(responseStatus = "200", description = "pin 가능 여부 반환", responseType = Boolean::class)
     fun isNewPinAllowed(@PathVariable repoId: Long): Boolean {
         return discussionUseCase.isNewPinAllowed(repoId)
     }
@@ -229,14 +223,7 @@ class DiscussionController(
     @PostMapping("/{discussionId}/pin")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Pin or Unpin discussion", description = "디스커션 pin 상태 변경")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "204",
-                description = "pin 상태 변경 성공"
-            )
-        ]
-    )
+    @SwaggerResponse(responseStatus = "204", description = "pin 상태 변경 성공")
     fun pinOrUnpinDiscussion(@PathVariable discussionId: Long) {
         discussionUseCase.pinOrUnpinDiscussion(discussionId)
     }
@@ -244,13 +231,10 @@ class DiscussionController(
     @GetMapping("/{repoId}/pin")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Pinned Discussion List", description = "pin 상태인 디스커션만 반환")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "pin 등록 된 디스커션 반환"
-            )
-        ]
+    @SwaggerResponse(
+        responseStatus = "200",
+        description = "pin 등록 된 디스커션 반환",
+        responseType = DiscussionListResponse::class
     )
     fun getPinnedDiscussions(@PathVariable repoId: Long): DiscussionListResponse {
         val discussions = discussionUseCase.getPinnedDiscussions(repoId)
@@ -263,14 +247,7 @@ class DiscussionController(
     @DeleteMapping("/{discussionId}/unpin")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Unpin discussion", description = "디스커션 unpin 상태 변경")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "204",
-                description = "unpin 변경 성공"
-            )
-        ]
-    )
+    @SwaggerResponse(responseStatus = "204", description = "unpin 변경 성공")
     fun unpinDiscussion(@PathVariable discussionId: Long) {
         discussionUseCase.unpinDiscussion(discussionId)
     }
@@ -278,17 +255,8 @@ class DiscussionController(
     @PostMapping("/move-pin")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Move discussion pin", description = "디스커션 pin 순서 변경")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "204",
-                description = "pin 순서 변경 성공"
-            )
-        ]
-    )
-    fun movePinDiscussion(
-        @RequestBody request: MoveDiscussionPinRequest
-    ) {
+    @SwaggerResponse(responseStatus = "204", description = "pin 순서 변경 성공")
+    fun movePinDiscussion(@RequestBody request: MoveDiscussionPinRequest) {
         discussionUseCase.moveDiscussionPin(request.id, request.position)
     }
 }
