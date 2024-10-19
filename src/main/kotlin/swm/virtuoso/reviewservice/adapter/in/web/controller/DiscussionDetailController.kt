@@ -18,6 +18,7 @@ import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionWatchR
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionFileUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionReactionUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionWatchUseCase
+import swm.virtuoso.reviewservice.common.annotation.SwaggerResponse
 import swm.virtuoso.reviewservice.common.exception.ErrorResponse
 import swm.virtuoso.reviewservice.domain.DiscussionReaction
 import swm.virtuoso.reviewservice.domain.ExtractedLine
@@ -63,20 +64,8 @@ class DiscussionDetailController(
     @GetMapping("/reaction")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "give reaction", description = "게시글 혹은 코멘트에 반응 추가")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "204",
-                description = "반응 추가 성공",
-                content = [Content(schema = Schema(implementation = Long::class))]
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "디스커션 혹은 코멘트 정보를 찾을 수 없음",
-                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
-            )
-        ]
-    )
+    @SwaggerResponse(responseStatus =  "204", description = "반응 추가 성공", Long::class)
+    @SwaggerResponse(responseStatus =  "404", description = "디스커션 혹은 코멘트 정보를 찾을 수 없음", ErrorResponse::class)
     fun getReaction(
         @RequestParam commentId: Long
     ): List<DiscussionReaction> {
