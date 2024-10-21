@@ -19,6 +19,8 @@ spring:
         globally_quoted_identifiers: true
     database: postgresql
 
+max-pin: 3
+
 #eureka:
 #  instance:
 #    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}

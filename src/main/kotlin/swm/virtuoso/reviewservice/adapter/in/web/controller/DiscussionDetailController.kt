@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ChangeDiscussionWatchRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DeleteReactionRequest
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionWatchRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostReactionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionContentResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionWatchResponse
@@ -44,6 +44,17 @@ class DiscussionDetailController(
         @PathVariable discussionId: Long
     ): DiscussionContentResponse {
         return discussionFileUseCase.getDiscussionContents(discussionId)
+    }
+
+    @GetMapping("/reaction")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "give reaction", description = "게시글 혹은 코멘트에 반응 추가")
+    @SwaggerResponse(responseStatus = "204", description = "반응 추가 성공", Long::class)
+    @SwaggerResponse(responseStatus = "404", description = "디스커션 혹은 코멘트 정보를 찾을 수 없음", ErrorResponse::class)
+    fun getReaction(
+        @RequestParam commentId: Long
+    ): List<DiscussionReaction> {
+        return discussionReactionUseCase.getDiscussionCommentReactions(commentId)
     }
 
     @PostMapping("/reaction")
@@ -80,7 +91,7 @@ class DiscussionDetailController(
         @Valid @RequestBody
         request: ChangeDiscussionWatchRequest
     ): Boolean {
-        if (request.id == null) {
+        if (request.id == -1L) {
             return discussionWatchUseCase.createWatchStatus(request)
         }
 
@@ -92,9 +103,9 @@ class DiscussionDetailController(
     @Operation(summary = "get watch", description = "유저의 디스커션에 대한 구독 상태 확인")
     @SwaggerResponse("200", "확인 성공", DiscussionWatchResponse::class)
     fun getWatch(
-        @Valid @RequestBody
-        request: DiscussionWatchRequest
+        @RequestParam discussionId: Long,
+        @RequestParam userId: Long
     ): DiscussionWatchResponse {
-        return discussionWatchUseCase.getDiscussionWatch(request)
+        return discussionWatchUseCase.getDiscussionWatch(userId, discussionId)
     }
 }

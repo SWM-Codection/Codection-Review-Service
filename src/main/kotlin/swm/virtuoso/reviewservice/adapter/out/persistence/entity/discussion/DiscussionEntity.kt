@@ -56,6 +56,13 @@ data class DiscussionEntity(
     @field:Column(name = "is_locked")
     val isLocked: Boolean?
 ) : BaseTimeEntity() {
+    fun canPinDiscussion(pinnedCount: Int, maxPin: Int): Boolean {
+        if (pinnedCount >= maxPin) {
+            throw IllegalStateException("pin 부여 갯수가 최대입니다.")
+        }
+        return true
+    }
+
     companion object {
         fun fromDiscussion(discussion: Discussion): DiscussionEntity {
             return DiscussionEntity(
@@ -68,7 +75,7 @@ data class DiscussionEntity(
                 content = discussion.content,
                 isClosed = discussion.isClosed,
                 numComments = 0,
-                pinOrder = 0,
+                pinOrder = discussion.pinOrder,
                 deadlineUnix = discussion.deadlineUnix,
                 isLocked = false
             )

@@ -5,7 +5,7 @@ import swm.virtuoso.reviewservice.domain.DiscussionWatch
 interface DiscussionWatchPort {
 
     fun findById(id: Long): DiscussionWatch
-    fun findByUserIdAndDiscussionId(userId: Long, discussionId: Long): DiscussionWatch
+    fun findByUserIdAndDiscussionId(userId: Long, discussionId: Long): DiscussionWatch?
     fun checkWatchDuplication(userId: Long, discussionId: Long)
     fun save(userId: Long, discussionId: Long)
     fun update(discussionWatch: DiscussionWatch)

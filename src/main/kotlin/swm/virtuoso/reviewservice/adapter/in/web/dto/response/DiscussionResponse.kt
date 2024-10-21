@@ -15,7 +15,8 @@ data class DiscussionResponse(
     val deadline: Long? = null,
     val assignees: List<Long>,
     val createdUnix: Long? = null,
-    val updatedUnix: Long? = null
+    val updatedUnix: Long? = null,
+    val pinOrder: Int
 ) {
     companion object {
         fun fromDiscussion(discussion: Discussion, assignees: List<DiscussionAssignee>): DiscussionResponse {
@@ -33,7 +34,8 @@ data class DiscussionResponse(
                 deadline = discussion.deadlineUnix,
                 assignees = assigneeIds,
                 createdUnix = discussion.createdUnix,
-                updatedUnix = discussion.updatedUnix
+                updatedUnix = discussion.updatedUnix,
+                pinOrder = discussion.pinOrder!!
             )
         }
     }
