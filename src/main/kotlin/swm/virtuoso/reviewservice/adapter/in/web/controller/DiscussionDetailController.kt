@@ -8,7 +8,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ChangeDiscussionWatchRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DeleteReactionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionWatchRequest
@@ -64,14 +73,13 @@ class DiscussionDetailController(
     @GetMapping("/reaction")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "give reaction", description = "게시글 혹은 코멘트에 반응 추가")
-    @SwaggerResponse(responseStatus =  "204", description = "반응 추가 성공", Long::class)
-    @SwaggerResponse(responseStatus =  "404", description = "디스커션 혹은 코멘트 정보를 찾을 수 없음", ErrorResponse::class)
+    @SwaggerResponse(responseStatus = "204", description = "반응 추가 성공", Long::class)
+    @SwaggerResponse(responseStatus = "404", description = "디스커션 혹은 코멘트 정보를 찾을 수 없음", ErrorResponse::class)
     fun getReaction(
         @RequestParam commentId: Long
     ): List<DiscussionReaction> {
         return discussionReactionUseCase.getDiscussionCommentReactions(commentId)
     }
-
 
     @PostMapping("/reaction")
     @ResponseStatus(HttpStatus.CREATED)
