@@ -103,4 +103,51 @@ class DiscussionService(
         discussionPort.updateDiscussion(targetDiscussion)
         logger.info("Updated discussion: {}", targetDiscussion.id)
     }
+
+    override fun isNewPinAllowed(repoId: Long): Boolean {
+        return discussionPort.isNewPinAllowed(repoId)
+    }
+
+    @Transactional
+    override fun pinOrUnpinDiscussion(discussionId: Long) {
+        val targetDiscussion = discussionPort.findDiscussionById(discussionId)
+        val changedDiscussion: Discussion
+        logger.info("Before updated discussion pinOrder: {}", targetDiscussion.pinOrder)
+
+        if (targetDiscussion.pinOrder!! == 0) {
+            changedDiscussion = discussionPort.pinDiscussion(targetDiscussion)
+        } else {
+            changedDiscussion = discussionPort.unpinDiscussion(targetDiscussion)
+        }
+        logger.info("After updated discussion pinOrder: {}", changedDiscussion.pinOrder)
+    }
+
+    @Transactional
+    override fun unpinDiscussion(discussionId: Long) {
+        val targetDiscussion = discussionPort.findDiscussionById(discussionId)
+        logger.info("Before updated discussion pinOrder: {}", targetDiscussion.pinOrder)
+
+        if (targetDiscussion.pinOrder!! == 0) {
+            throw IllegalStateException("디스커션 $discussionId 은 unpin 상태 입니다.")
+        }
+        val changedDiscussion = discussionPort.unpinDiscussion(targetDiscussion)
+        logger.info("After updated discussion pinOrder: {}", changedDiscussion.pinOrder)
+    }
+
+    override fun getPinnedDiscussions(repoId: Long): List<Discussion> {
+        return discussionPort.findPinnedDiscussions(repoId)
+    }
+
+    @Transactional
+    override fun moveDiscussionPin(discussionId: Long, newPinOrder: Int) {
+        if (newPinOrder < 1) {
+            throw IllegalStateException("새로운 pinOrder는 0이 될 수 없습니다.")
+        }
+        val targetDiscussion = discussionPort.findDiscussionById(discussionId)
+
+        discussionPort.decreasePinOrderAfterTarget(targetDiscussion)
+        val newDiscussion = targetDiscussion.copy(pinOrder = newPinOrder)
+        discussionPort.increasePinOrderAfterTarget(newDiscussion)
+        discussionPort.updateDiscussion(newDiscussion)
+    }
 }

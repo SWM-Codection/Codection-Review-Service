@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionAvailableRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyDiscussionRequest
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.MoveDiscussionPinRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionCountResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionListResponse
@@ -28,6 +30,7 @@ import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionRespon
 import swm.virtuoso.reviewservice.application.port.`in`.DiscussionUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GitUseCase
 import swm.virtuoso.reviewservice.application.port.`in`.GiteaUseCase
+import swm.virtuoso.reviewservice.common.annotation.SwaggerResponse
 import swm.virtuoso.reviewservice.common.exception.ErrorResponse
 import swm.virtuoso.reviewservice.domain.Discussion
 import swm.virtuoso.reviewservice.domain.DiscussionAvailability
@@ -207,5 +210,53 @@ class DiscussionController(
         // TODO 프론트에서 modify를 호출한 뒤 완료되면 페이지를 리로드 하면서 각 페이지를 가져오는 방식으로 변경
 
         discussionUseCase.modifyDiscussion(request)
+    }
+
+    @GetMapping("/{repoId}/max-pin")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Is pin allow", description = "디스커션 pin 설정 가능 여부")
+    @SwaggerResponse(responseStatus = "200", description = "pin 가능 여부 반환", responseType = Boolean::class)
+    fun isNewPinAllowed(@PathVariable repoId: Long): Boolean {
+        return discussionUseCase.isNewPinAllowed(repoId)
+    }
+
+    @PostMapping("/{discussionId}/pin")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Pin or Unpin discussion", description = "디스커션 pin 상태 변경")
+    @SwaggerResponse(responseStatus = "204", description = "pin 상태 변경 성공")
+    fun pinOrUnpinDiscussion(@PathVariable discussionId: Long) {
+        discussionUseCase.pinOrUnpinDiscussion(discussionId)
+    }
+
+    @GetMapping("/{repoId}/pin")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Pinned Discussion List", description = "pin 상태인 디스커션만 반환")
+    @SwaggerResponse(
+        responseStatus = "200",
+        description = "pin 등록 된 디스커션 반환",
+        responseType = DiscussionListResponse::class
+    )
+    fun getPinnedDiscussions(@PathVariable repoId: Long): DiscussionListResponse {
+        val discussions = discussionUseCase.getPinnedDiscussions(repoId)
+        return DiscussionListResponse(
+            totalCount = discussions.count().toLong(),
+            discussions = discussions
+        )
+    }
+
+    @DeleteMapping("/{discussionId}/unpin")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Unpin discussion", description = "디스커션 unpin 상태 변경")
+    @SwaggerResponse(responseStatus = "204", description = "unpin 변경 성공")
+    fun unpinDiscussion(@PathVariable discussionId: Long) {
+        discussionUseCase.unpinDiscussion(discussionId)
+    }
+
+    @PostMapping("/move-pin")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Move discussion pin", description = "디스커션 pin 순서 변경")
+    @SwaggerResponse(responseStatus = "204", description = "pin 순서 변경 성공")
+    fun movePinDiscussion(@RequestBody request: MoveDiscussionPinRequest) {
+        discussionUseCase.moveDiscussionPin(request.id, request.position)
     }
 }
