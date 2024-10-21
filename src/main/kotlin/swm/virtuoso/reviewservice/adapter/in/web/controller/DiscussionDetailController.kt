@@ -171,4 +171,15 @@ class DiscussionDetailController(
     ): DiscussionWatchResponse {
         return discussionWatchUseCase.getDiscussionWatch(userId, discussionId)
     }
+
+    @GetMapping("/code")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "get codeBlock", description = "코드 블록 가져오기")
+    @SwaggerResponse("200", "가져오기 성공", String::class)
+    fun getFilePath(
+        @RequestParam
+        codeId: Long
+    ): String {
+        return discussionFileUseCase.getDiscussionFilePathByCommentId(codeId)
+    }
 }
