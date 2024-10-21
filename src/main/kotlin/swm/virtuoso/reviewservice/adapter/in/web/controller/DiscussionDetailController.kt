@@ -64,14 +64,13 @@ class DiscussionDetailController(
     @GetMapping("/reaction")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "give reaction", description = "게시글 혹은 코멘트에 반응 추가")
-    @SwaggerResponse(responseStatus =  "204", description = "반응 추가 성공", Long::class)
-    @SwaggerResponse(responseStatus =  "404", description = "디스커션 혹은 코멘트 정보를 찾을 수 없음", ErrorResponse::class)
+    @SwaggerResponse(responseStatus = "204", description = "반응 추가 성공", Long::class)
+    @SwaggerResponse(responseStatus = "404", description = "디스커션 혹은 코멘트 정보를 찾을 수 없음", ErrorResponse::class)
     fun getReaction(
         @RequestParam commentId: Long
     ): List<DiscussionReaction> {
         return discussionReactionUseCase.getDiscussionCommentReactions(commentId)
     }
-
 
     @PostMapping("/reaction")
     @ResponseStatus(HttpStatus.CREATED)
@@ -163,5 +162,16 @@ class DiscussionDetailController(
         request: DiscussionWatchRequest
     ): DiscussionWatchResponse {
         return discussionWatchUseCase.getDiscussionWatch(request)
+    }
+
+    @GetMapping("/code")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "get codeBlock", description = "코드 블록 가져오기")
+    @SwaggerResponse("200", "가져오기 성공", String::class)
+    fun getFilePath(
+        @RequestParam
+        codeId: Long
+    ): String {
+        return discussionFileUseCase.getDiscussionFilePathByCommentId(codeId)
     }
 }
