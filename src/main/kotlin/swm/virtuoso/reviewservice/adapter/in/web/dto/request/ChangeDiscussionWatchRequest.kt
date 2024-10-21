@@ -3,11 +3,11 @@ package swm.virtuoso.reviewservice.adapter.`in`.web.dto.request
 import jakarta.validation.constraints.NotNull
 
 data class ChangeDiscussionWatchRequest(
-
-    val id: Long? = null,
-    @field:NotNull
+    @field:NotNull(message = "id not found")
+    val id: Long,
+    @field:NotNull(message = "userId not found")
     val userId: Long,
-    @field:NotNull
+    @field:NotNull(message = "discussionId not found")
     val discussionId: Long
 
 )

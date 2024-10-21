@@ -24,9 +24,11 @@ class DiscussionWatchPersistenceAdapter(
         )
     }
 
-    override fun findByUserIdAndDiscussionId(userId: Long, discussionId: Long): DiscussionWatch {
-        val entity = discussionWatchRepository.findByUserIdAndDiscussionId(userId, discussionId).orElseThrow {
-            throw IllegalArgumentException("No discussion watch found for userid: $userId, discussion id: $discussionId")
+    override fun findByUserIdAndDiscussionId(userId: Long, discussionId: Long): DiscussionWatch? {
+        val entity = discussionWatchRepository.findByUserIdAndDiscussionId(userId, discussionId).orElseGet(null)
+
+        if (entity == null) {
+            return null
         }
 
         return DiscussionWatch(

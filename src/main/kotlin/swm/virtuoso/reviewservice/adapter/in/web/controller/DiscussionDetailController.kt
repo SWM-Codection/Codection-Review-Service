@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ChangeDiscussionWatchRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DeleteReactionRequest
-import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionWatchRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.PostReactionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionContentResponse
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.response.DiscussionWatchResponse
@@ -134,7 +134,7 @@ class DiscussionDetailController(
         @Valid @RequestBody
         request: ChangeDiscussionWatchRequest
     ): Boolean {
-        if (request.id == null) {
+        if (request.id == -1L) {
             return discussionWatchUseCase.createWatchStatus(request)
         }
 
@@ -154,9 +154,9 @@ class DiscussionDetailController(
         ]
     )
     fun getWatch(
-        @Valid @RequestBody
-        request: DiscussionWatchRequest
+        @RequestParam discussionId: Long,
+        @RequestParam userId: Long
     ): DiscussionWatchResponse {
-        return discussionWatchUseCase.getDiscussionWatch(request)
+        return discussionWatchUseCase.getDiscussionWatch(userId, discussionId)
     }
 }
