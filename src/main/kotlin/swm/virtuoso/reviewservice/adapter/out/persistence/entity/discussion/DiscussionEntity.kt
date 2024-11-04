@@ -77,6 +77,7 @@ data class DiscussionEntity(
                 numComments = 0,
                 pinOrder = discussion.pinOrder,
                 deadlineUnix = discussion.deadlineUnix,
+                closedUnix = discussion.closedUnix,
                 isLocked = false
             )
         }

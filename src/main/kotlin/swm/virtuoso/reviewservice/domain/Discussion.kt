@@ -26,6 +26,8 @@ data class Discussion(
 
     var updatedUnix: Long? = null,
 
+    var closedUnix: Long? = null,
+
     val pinOrder: Int = 0
 ) {
     companion object {
@@ -56,6 +58,7 @@ data class Discussion(
                 deadlineUnix = entity.deadlineUnix,
                 createdUnix = entity.createdUnix,
                 updatedUnix = entity.updatedUnix,
+                closedUnix = entity.closedUnix,
                 pinOrder = entity.pinOrder!!
             )
         }
