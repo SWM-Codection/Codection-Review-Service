@@ -15,6 +15,7 @@ import swm.virtuoso.reviewservice.application.port.out.GiteaPort
 import swm.virtuoso.reviewservice.domain.Discussion
 import swm.virtuoso.reviewservice.domain.DiscussionAssignee
 import swm.virtuoso.reviewservice.domain.DiscussionCode
+import java.time.Instant
 
 @Service
 class DiscussionService(
@@ -90,7 +91,13 @@ class DiscussionService(
     override fun setDiscussionIsClosed(discussionId: Long, isClosed: Boolean) {
         val targetDiscussion = discussionPort.findDiscussionById(discussionId)
 
-        targetDiscussion.isClosed = isClosed
+        if (isClosed) {
+            targetDiscussion.isClosed = isClosed
+            targetDiscussion.closedUnix = Instant.now().epochSecond
+        } else {
+            targetDiscussion.isClosed = isClosed
+            targetDiscussion.closedUnix = null
+        }
         discussionPort.updateDiscussion(targetDiscussion)
         logger.info("Updated discussion: {}", targetDiscussion)
     }
