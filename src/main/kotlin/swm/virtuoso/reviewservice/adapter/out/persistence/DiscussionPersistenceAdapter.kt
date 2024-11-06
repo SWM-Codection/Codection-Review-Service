@@ -46,10 +46,6 @@ class DiscussionPersistenceAdapter(
         return Discussion.fromEntity(updatedDiscussion)
     }
 
-    override fun deleteAllDiscussions(discussions: Iterable<Long>) {
-        discussionRepository.deleteAllByIdInBatch(discussions)
-    }
-
     override fun countDiscussion(repoId: Long, isClosed: Boolean): Int {
         return discussionRepository.countByRepoIdAndIsClosed(repoId, isClosed)
     }

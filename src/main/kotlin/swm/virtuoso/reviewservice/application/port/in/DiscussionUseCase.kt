@@ -21,5 +21,4 @@ public interface DiscussionUseCase {
     fun unpinDiscussion(discussionId: Long)
     fun getPinnedDiscussions(repoId: Long): List<Discussion>
     fun moveDiscussionPin(discussionId: Long, newPinOrder: Int)
-    fun deleteDiscussions(discussionIds: List<Long>)
 }

@@ -157,9 +157,4 @@ class DiscussionService(
         discussionPort.increasePinOrderAfterTarget(newDiscussion)
         discussionPort.updateDiscussion(newDiscussion)
     }
-
-    @Transactional
-    override fun deleteDiscussions(discussionIds: List<Long>) {
-        discussionPort.deleteAllDiscussions(discussionIds)
-    }
 }

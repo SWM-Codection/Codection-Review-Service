@@ -7,7 +7,6 @@ import swm.virtuoso.reviewservice.domain.Discussion
 public interface DiscussionPort {
     fun insertDiscussion(discussion: Discussion): Discussion
     fun updateDiscussion(discussion: Discussion): Discussion
-    fun deleteAllDiscussions(discussions: Iterable<Long>)
     fun countDiscussion(repoId: Long, isClosed: Boolean): Int
     fun findDiscussions(repoId: Long, isClosed: Boolean, pageable: Pageable): Page<Discussion>
     fun findDiscussionById(discussionId: Long): Discussion
