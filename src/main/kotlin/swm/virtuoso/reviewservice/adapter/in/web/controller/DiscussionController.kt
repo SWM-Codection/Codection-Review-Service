@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DeleteDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.DiscussionAvailableRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.ModifyDiscussionRequest
 import swm.virtuoso.reviewservice.adapter.`in`.web.dto.request.MoveDiscussionPinRequest
@@ -192,5 +193,13 @@ class DiscussionController(
     @SwaggerResponse(responseStatus = "204", description = "pin 순서 변경 성공")
     fun movePinDiscussion(@RequestBody request: MoveDiscussionPinRequest) {
         discussionUseCase.moveDiscussionPin(request.id, request.position)
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete discussion", description = "디스커션 삭제")
+    @SwaggerResponse(responseStatus = "204", description = "디스커션 삭제 성공")
+    fun deleteDiscussion(@RequestBody request: DeleteDiscussionRequest) {
+        discussionUseCase.deleteDiscussions(request.ids)
     }
 }
